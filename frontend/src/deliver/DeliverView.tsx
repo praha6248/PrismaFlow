@@ -1,0 +1,508 @@
+import {
+  Background,
+  BackgroundVariant,
+  MarkerType,
+  ReactFlow,
+  ReactFlowProvider,
+  useReactFlow,
+  useViewport,
+  type Connection,
+  type Edge,
+  type OnEdgesChange,
+  type OnNodesChange,
+} from "@xyflow/react";
+import { Minus, Plus } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { api, waitForJob } from "../api";
+import { PageTitle, u, SHADOW } from "../components/ui";
+import { ProgressContent } from "../discover/BottomBar";
+import type { DeliverState, Flow, FlowAudit, FlowElement, FlowScreen, Handoff, ScreenKind, Suggestion } from "../types";
+import { AuditPanel } from "./AuditPanel";
+import { HandoffModal } from "./HandoffModal";
+import { ScreenNode, type ScreenActions, type ScreenFlowNode } from "./ScreenNode";
+import { Toolbox } from "./Toolbox";
+
+const PANEL_TOP = 136.8;
+const PANEL_HEIGHT = 293.7;
+const nodeTypes = { screen: ScreenNode };
+
+const STAGE_TEXT: Record<string, string> = {
+  queued: "Przygotowuję projekt",
+  context: "Czytam backlog i personę",
+  thinking: "Model projektuje ekrany",
+  layout: "Układam przepływ",
+  audit: "Liczę metryki audytu",
+  saving: "Zapisuję",
+  done: "Gotowe",
+};
+
+const panelStyle = (left: number, width: number) => ({
+  left: u(left),
+  top: u(PANEL_TOP),
+  width: u(width),
+  height: u(PANEL_HEIGHT),
+  borderRadius: u(9),
+  background: "rgba(253, 252, 254, 0.92)",
+  boxShadow: SHADOW,
+});
+
+const newId = (prefix: string) => `${prefix}${Math.random().toString(16).slice(2, 8)}`;
+
+function plural(count: number, one: string, few: string, many: string): string {
+  if (count === 1) return one;
+  const last = count % 10;
+  const lastTwo = count % 100;
+  return last >= 2 && last <= 4 && (lastTwo < 12 || lastTwo > 14) ? few : many;
+}
+
+function ZoomControl() {
+  const { zoomIn, zoomOut } = useReactFlow();
+  const { zoom } = useViewport();
+  return (
+    <div className="flex items-center rounded-full bg-white text-mauve" style={{ gap: u(5), padding: `${u(2)} ${u(6)}`, fontSize: u(5.4), boxShadow: SHADOW }}>
+      <button type="button" onClick={() => zoomOut({ duration: 200 })} aria-label="Pomniejsz">
+        <Minus style={{ width: u(5.5), height: u(5.5) }} />
+      </button>
+      <span style={{ minWidth: u(17), textAlign: "center" }}>{Math.round(zoom * 100)}%</span>
+      <button type="button" onClick={() => zoomIn({ duration: 200 })} aria-label="Powiększ">
+        <Plus style={{ width: u(5.5), height: u(5.5) }} />
+      </button>
+    </div>
+  );
+}
+
+interface CanvasProps {
+  flow: Flow;
+  state: DeliverState;
+  audit: FlowAudit;
+  selectedId: string | null;
+  focusRequest: { id: string; at: number } | null;
+  onSelect: (id: string | null) => void;
+  onChange: (updater: (flow: Flow) => Flow) => void;
+  actions: ScreenActions;
+}
+
+function Canvas({ flow, state, audit, selectedId, focusRequest, onSelect, onChange, actions }: CanvasProps) {
+  const { fitView, setCenter, getZoom } = useReactFlow();
+  const fitted = useRef(false);
+
+  const flagged = useMemo(() => {
+    const ids = new Set<string>(audit.fitts.map((f) => f.element_id));
+    for (const t of audit.targets.below_aaa) if (t.primary) ids.add(t.element_id);
+    return ids;
+  }, [audit]);
+
+  const nodes: ScreenFlowNode[] = useMemo(() => {
+    const dead = new Set(audit.dead_ends.map((d) => d.screen_id));
+    const lost = new Set(audit.unreachable.map((d) => d.screen_id));
+    return flow.screens.map((screen, index) => ({
+      id: screen.id,
+      type: "screen",
+      position: { x: screen.x, y: screen.y },
+      selected: screen.id === selectedId,
+      dragHandle: undefined,
+      data: {
+        screen,
+        index,
+        features: state.features,
+        deadEnd: dead.has(screen.id),
+        unreachable: lost.has(screen.id),
+        flagged,
+        actions,
+      },
+    }));
+  }, [flow, audit, selectedId, state.features, flagged, actions]);
+
+  const edges: Edge[] = useMemo(() => {
+    const ids = new Set(flow.screens.map((s) => s.id));
+    return flow.screens.flatMap((screen) =>
+      screen.elements
+        .filter((e) => e.target && ids.has(e.target) && e.target !== screen.id)
+        .map((element) => ({
+          id: `${screen.id}:${element.id}`,
+          source: screen.id,
+          sourceHandle: element.id,
+          target: element.target as string,
+          label: element.label,
+          type: "smoothstep",
+          style: { stroke: "#f2a2e8", strokeWidth: 1.2 },
+          markerEnd: { type: MarkerType.ArrowClosed, color: "#f2a2e8", width: 14, height: 14 },
+          labelStyle: { fontSize: 7.5, fill: "#7c6d88", fontFamily: "Montserrat" },
+          labelBgStyle: { fill: "#fdfcfe" },
+          labelBgPadding: [4, 2] as [number, number],
+        })),
+    );
+  }, [flow]);
+
+  useEffect(() => {
+    if (!fitted.current && flow.screens.length) {
+      fitted.current = true;
+      window.setTimeout(() => fitView({ padding: 0.12, maxZoom: 1, duration: 0 }), 30);
+    }
+  }, [flow.screens.length, fitView]);
+
+  useEffect(() => {
+    if (!focusRequest) return;
+    const screen = flow.screens.find((s) => s.id === focusRequest.id);
+    if (screen) setCenter(screen.x + 100, screen.y + 80, { zoom: Math.max(getZoom(), 0.8), duration: 400 });
+  }, [focusRequest]);
+
+  const onNodesChange: OnNodesChange<ScreenFlowNode> = useCallback(
+    (changeset) => {
+      const changes = changeset.toArray();
+      for (const change of changes) {
+        if (change.type === "select" && change.selected) onSelect(change.id);
+        if (change.type === "remove") actions.remove(change.id);
+      }
+      const moves = changes.filter((c) => c.type === "position" && c.position);
+      if (moves.length) {
+        onChange((current) => ({
+          screens: current.screens.map((screen) => {
+            const move = moves.find((m) => m.type === "position" && m.id === screen.id);
+            return move && move.type === "position" && move.position ? { ...screen, x: move.position.x, y: move.position.y } : screen;
+          }),
+        }));
+      }
+    },
+    [onChange, onSelect, actions],
+  );
+
+  const onEdgesChange: OnEdgesChange = useCallback(
+    (changeset) => {
+      const removed = changeset.toArray().filter((c) => c.type === "remove").map((c) => c.id);
+      if (!removed.length) return;
+      onChange((current) => ({
+        screens: current.screens.map((screen) => ({
+          ...screen,
+          elements: screen.elements.map((e) => (removed.includes(`${screen.id}:${e.id}`) ? { ...e, target: null } : e)),
+        })),
+      }));
+    },
+    [onChange],
+  );
+
+  const onConnect = useCallback(
+    (connection: Connection) => {
+      if (!connection.sourceHandle || connection.source === connection.target) return;
+      actions.updateElement(connection.source, connection.sourceHandle, { target: connection.target });
+    },
+    [actions],
+  );
+
+  return (
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      nodeTypes={nodeTypes}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+      onPaneClick={() => onSelect(null)}
+      minZoom={0.3}
+      maxZoom={1.6}
+      proOptions={{ hideAttribution: true }}
+      forceColorMode="light"
+      style={{ background: "transparent" }}
+      deleteKeyCode={["Delete"]}
+      connectionLineStyle={{ stroke: "#f783e9", strokeWidth: 1.2 }}
+    >
+      <Background variant={BackgroundVariant.Dots} gap={18} size={1} color="#e8dcf2" />
+    </ReactFlow>
+  );
+}
+
+interface Props {
+  projectId: number;
+  notify: (message: string) => void;
+}
+
+function Studio({ projectId, notify }: Props) {
+  const [state, setState] = useState<DeliverState | null>(null);
+  const [flow, setFlow] = useState<Flow>({ screens: [] });
+  const [audit, setAudit] = useState<FlowAudit | null>(null);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [job, setJob] = useState<{ kind: "flow" | "optimize"; stage: string } | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [focusRequest, setFocusRequest] = useState<{ id: string; at: number } | null>(null);
+  const [handoff, setHandoff] = useState<Handoff | null>(null);
+  const [handoffBusy, setHandoffBusy] = useState(false);
+  const saveTimer = useRef<number | undefined>(undefined);
+  const dirty = useRef(false);
+  const started = useRef(false);
+  const flowRef = useRef(flow);
+  flowRef.current = flow;
+
+  const apply = useCallback((next: DeliverState) => {
+    setState(next);
+    setFlow(next.flow);
+    setAudit(next.audit);
+    setSuggestions(next.suggestions);
+  }, []);
+
+  const runJob = useCallback(
+    async (kind: "flow" | "optimize") => {
+      setJob({ kind, stage: "queued" });
+      try {
+        const startedJob = kind === "flow" ? await api.generateFlow(projectId) : await api.optimizeFlow(projectId);
+        const finished = await waitForJob(startedJob.id, (j) => setJob({ kind, stage: j.stage }));
+        if (finished.warnings.some((w) => w.startsWith("llm:"))) {
+          notify("Lokalny model nie odpowiedział — pokazuję sugestie wyliczone z audytu.");
+        }
+        if (finished.status === "error" || !finished.result) {
+          notify(`${kind === "flow" ? "Nie udało się zaprojektować przepływu" : "Optymalizacja nie powiodła się"}: ${finished.error ?? "nieznany błąd"}`);
+          return;
+        }
+        apply(finished.result as DeliverState);
+      } catch (error) {
+        notify((error as Error).message);
+      } finally {
+        setJob(null);
+      }
+    },
+    [projectId, notify, apply],
+  );
+
+  useEffect(() => {
+    api
+      .getDeliver(projectId)
+      .then((data) => {
+        apply(data);
+        if (!data.flow.screens.length && data.features.length && !started.current) {
+          started.current = true;
+          runJob("flow");
+        }
+      })
+      .catch((error: Error) => notify(`Nie udało się wczytać fazy Deliver: ${error.message}`));
+  }, [projectId, apply, runJob, notify]);
+
+  const flush = useCallback(async () => {
+    window.clearTimeout(saveTimer.current);
+    if (!dirty.current) return;
+    dirty.current = false;
+    try {
+      const saved = await api.saveFlow(projectId, flowRef.current);
+      setAudit(saved.audit);
+    } catch (error) {
+      notify((error as Error).message);
+    }
+  }, [projectId, notify]);
+
+  useEffect(() => () => void flush(), [flush]);
+
+  const change = useCallback(
+    (updater: (flow: Flow) => Flow) => {
+      setFlow((current) => updater(current));
+      dirty.current = true;
+      window.clearTimeout(saveTimer.current);
+      saveTimer.current = window.setTimeout(flush, 350);
+    },
+    [flush],
+  );
+
+  const mapScreen = useCallback(
+    (screenId: string, fn: (screen: FlowScreen) => FlowScreen) =>
+      change((current) => ({ screens: current.screens.map((s) => (s.id === screenId ? fn(s) : s)) })),
+    [change],
+  );
+
+  const actions: ScreenActions = useMemo(
+    () => ({
+      rename: (id, name) => mapScreen(id, (s) => ({ ...s, name })),
+      cycleKind: (id, kind: ScreenKind) =>
+        change((current) => ({
+          screens: current.screens.map((s) => {
+            if (s.id === id) return { ...s, kind };
+            if ((kind === "start" || kind === "goal") && s.kind === kind) return { ...s, kind: "step" };
+            return s;
+          }),
+        })),
+      remove: (id) =>
+        change((current) => ({
+          screens: current.screens
+            .filter((s) => s.id !== id)
+            .map((s) => ({ ...s, elements: s.elements.map((e) => (e.target === id ? { ...e, target: null } : e)) })),
+        })),
+      addElement: (id) =>
+        mapScreen(id, (s) => ({
+          ...s,
+          elements: [...s.elements, { id: newId("e"), label: "Nowy przycisk", type: "button", size: "L", zone: "bottom", options: 1, target: null }],
+        })),
+      updateElement: (screenId, elementId, patch: Partial<FlowElement>) =>
+        mapScreen(screenId, (s) => ({ ...s, elements: s.elements.map((e) => (e.id === elementId ? { ...e, ...patch } : e)) })),
+      removeElement: (screenId, elementId) => mapScreen(screenId, (s) => ({ ...s, elements: s.elements.filter((e) => e.id !== elementId) })),
+      dropFeature: (screenId, featureId) =>
+        change((current) => ({
+          screens: current.screens.map((s) =>
+            s.id === screenId
+              ? { ...s, feature_ids: s.feature_ids.includes(featureId) ? s.feature_ids : [...s.feature_ids, featureId] }
+              : { ...s, feature_ids: s.feature_ids.filter((f) => f !== featureId) },
+          ),
+        })),
+      removeFeature: (screenId, featureId) => mapScreen(screenId, (s) => ({ ...s, feature_ids: s.feature_ids.filter((f) => f !== featureId) })),
+    }),
+    [change, mapScreen],
+  );
+
+  const addScreen = () => {
+    const last = flow.screens.reduce((max, s) => Math.max(max, s.x), -250);
+    const screen: FlowScreen = {
+      id: newId("s"),
+      name: `Ekran ${flow.screens.length + 1}`,
+      kind: flow.screens.length ? "step" : "start",
+      x: last + 250,
+      y: 260,
+      feature_ids: [],
+      elements: [{ id: newId("e"), label: "Dalej", type: "button", size: "L", zone: "bottom", options: 1, target: null }],
+    };
+    change((current) => ({ screens: [...current.screens, screen] }));
+    setSelectedId(screen.id);
+    setFocusRequest({ id: screen.id, at: Date.now() });
+  };
+
+  const focusScreen = (id: string) => {
+    setSelectedId(id);
+    setFocusRequest({ id, at: Date.now() });
+  };
+
+  const accept = async (s: Suggestion) => {
+    await flush();
+    try {
+      apply(await api.acceptSuggestion(projectId, s.id));
+      focusScreen(s.screen_id);
+    } catch (error) {
+      notify((error as Error).message);
+    }
+  };
+
+  const dismiss = async (s: Suggestion) => {
+    setSuggestions((list) => list.filter((x) => x.id !== s.id));
+    try {
+      await api.dismissSuggestion(projectId, s.id);
+    } catch (error) {
+      notify((error as Error).message);
+    }
+  };
+
+  const optimize = async () => {
+    await flush();
+    runJob("optimize");
+  };
+
+  const generateHandoff = async () => {
+    await flush();
+    setHandoffBusy(true);
+    try {
+      setHandoff(await api.handoff(projectId));
+    } catch (error) {
+      notify((error as Error).message);
+    } finally {
+      setHandoffBusy(false);
+    }
+  };
+
+  const persona = state?.persona;
+  const subtitle = `${persona ? `${persona.name} · ${persona.focus} · ` : ""}Połącz ekrany i dopracuj doświadczenie`;
+  const transitions = audit?.transitions ?? 0;
+
+  return (
+    <>
+      <PageTitle title="Studio User Flow" subtitle={subtitle} top={99.5} size={14.2} gap={19} />
+
+      <div className="pf-fade-up absolute" style={panelStyle(8.3, 113)}>
+        {state && (
+          <Toolbox
+            features={state.features}
+            screens={flow.screens}
+            selectedId={selectedId}
+            onFocusScreen={focusScreen}
+            onAddScreen={addScreen}
+          />
+        )}
+      </div>
+
+      <div className="pf-fade-up absolute overflow-hidden" style={{ ...panelStyle(129.3, 362.2), animationDelay: "60ms" }}>
+        <div className="absolute z-10 flex items-start justify-between" style={{ left: u(9), right: u(9), top: u(9) }}>
+          <div>
+            <div className="font-serif text-ink" style={{ fontSize: u(9), lineHeight: 1 }}>
+              Przepływ aplikacji
+            </div>
+            <div className="text-haze" style={{ fontSize: u(4.8), marginTop: u(3) }}>
+              {flow.screens.length} {plural(flow.screens.length, "ekran", "ekrany", "ekranów")} · {transitions}{" "}
+              {plural(transitions, "połączenie", "połączenia", "połączeń")}
+            </div>
+          </div>
+          <ZoomControl />
+        </div>
+        <div className="absolute inset-0" style={{ top: u(26) }}>
+          {state && (
+            <Canvas
+              flow={flow}
+              state={state}
+              audit={audit ?? state.audit}
+              selectedId={selectedId}
+              focusRequest={focusRequest}
+              onSelect={setSelectedId}
+              onChange={change}
+              actions={actions}
+            />
+          )}
+        </div>
+        {job?.kind === "flow" && (
+          <div
+            className="pf-fade-up absolute left-1/2 z-20 -translate-x-1/2"
+            style={{ top: u(120), width: u(300), height: u(42), borderRadius: u(10), background: "#fdfcfe", boxShadow: SHADOW }}
+          >
+            <ProgressContent title="Projektuję przepływ..." text={STAGE_TEXT[job.stage] ?? STAGE_TEXT.thinking} stage={job.stage} />
+          </div>
+        )}
+        {!job && state && !flow.screens.length && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center" style={{ gap: u(6) }}>
+            <span className="text-mauve" style={{ fontSize: u(7) }}>
+              {state.features.length ? "Przepływ jest pusty." : "Najpierw dodaj funkcje w fazie Develop."}
+            </span>
+            {state.features.length > 0 && (
+              <button
+                type="button"
+                onClick={() => runJob("flow")}
+                className="rounded text-white"
+                style={{ fontSize: u(6.4), padding: `${u(4)} ${u(10)}`, background: "#f783e9" }}
+              >
+                Zaprojektuj przepływ z AI
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="pf-fade-up absolute" style={{ ...panelStyle(498.6, 143.3), animationDelay: "120ms" }}>
+        {audit && (
+          <AuditPanel
+            audit={audit}
+            suggestions={suggestions}
+            optimizing={job?.kind === "optimize"}
+            handoffBusy={handoffBusy}
+            onOptimize={optimize}
+            onAccept={accept}
+            onDismiss={dismiss}
+            onHandoff={generateHandoff}
+            onFocusScreen={focusScreen}
+          />
+        )}
+      </div>
+
+      <p className="pf-fade pointer-events-none absolute inset-x-0 text-center text-haze" style={{ top: u(441), fontSize: u(4.6) }}>
+        Audyt: Hick RT = a + b·log₂(n+1) · Fitts ID = log₂(2D/W) · KLM · WCAG 2.2 · sugestie i projekt z lokalnego modelu do weryfikacji
+      </p>
+
+      {handoff && <HandoffModal handoff={handoff} onClose={() => setHandoff(null)} />}
+    </>
+  );
+}
+
+export function DeliverView(props: Props) {
+  return (
+    <ReactFlowProvider>
+      <Studio {...props} />
+    </ReactFlowProvider>
+  );
+}

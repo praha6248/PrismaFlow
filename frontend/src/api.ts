@@ -1,4 +1,4 @@
-import type { DefineState, DevelopState, Evidence, Feature, Priority, Graph, Health, Job, MapNode, Phase, Project, Stage } from "./types";
+import type { DefineState, DeliverState, DevelopState, Flow, FlowAudit, Handoff, Evidence, Feature, Priority, Graph, Health, Job, MapNode, Phase, Project, Stage } from "./types";
 
 export class ApiError extends Error {
   constructor(
@@ -71,6 +71,18 @@ export const api = {
   orderFeatures: (projectId: number, items: { id: number; priority: Priority; position: number }[]) =>
     request<Feature[]>(`/projects/${projectId}/features/order`, { method: "PUT", body: json({ items }) }),
   deleteFeature: (id: number) => request<void>(`/features/${id}`, { method: "DELETE" }),
+  getDeliver: (projectId: number) => request<DeliverState>(`/projects/${projectId}/deliver`),
+  saveFlow: (projectId: number, flow: Flow) =>
+    request<{ flow: Flow; audit: FlowAudit }>(`/projects/${projectId}/flow`, { method: "PUT", body: json({ flow }) }),
+  generateFlow: (projectId: number) =>
+    request<Job>("/deliver/flow", { method: "POST", body: json({ project_id: projectId }) }),
+  optimizeFlow: (projectId: number) =>
+    request<Job>("/deliver/optimize", { method: "POST", body: json({ project_id: projectId }) }),
+  acceptSuggestion: (projectId: number, id: string) =>
+    request<DeliverState>(`/projects/${projectId}/suggestions/${id}/accept`, { method: "POST" }),
+  dismissSuggestion: (projectId: number, id: string) =>
+    request<DeliverState>(`/projects/${projectId}/suggestions/${id}`, { method: "DELETE" }),
+  handoff: (projectId: number) => request<Handoff>(`/projects/${projectId}/handoff`, { method: "POST" }),
   choosePersona: (personaId: number, option: number) =>
     request<DefineState>(`/personas/${personaId}/choose`, { method: "POST", body: json({ option }) }),
 };

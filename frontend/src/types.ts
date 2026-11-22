@@ -161,3 +161,78 @@ export interface DevelopState {
   persona: ChosenPersona | null;
   features: Feature[];
 }
+
+export type ElementType = "button" | "link" | "select" | "input" | "toggle" | "list";
+export type ElementSize = "S" | "M" | "L";
+export type ElementZone = "top" | "center" | "bottom";
+export type ScreenKind = "start" | "step" | "goal";
+
+export interface FlowElement {
+  id: string;
+  label: string;
+  type: ElementType;
+  size: ElementSize;
+  zone: ElementZone;
+  options: number;
+  target: string | null;
+}
+
+export interface FlowScreen {
+  id: string;
+  name: string;
+  kind: ScreenKind;
+  x: number;
+  y: number;
+  feature_ids: number[];
+  elements: FlowElement[];
+}
+
+export interface Flow {
+  screens: FlowScreen[];
+}
+
+export interface FlowAudit {
+  screens: number;
+  transitions: number;
+  steps: { value: number | null; path: string[]; status: "ok" | "no_path" | "missing" };
+  klm: { seconds: number; steps: { screen: string; element: string; seconds: number }[] } | null;
+  targets: {
+    total: number;
+    aa: number;
+    aaa: number;
+    below_aaa: { screen_id: string; screen: string; element_id: string; element: string; size: ElementSize; pixels: number; primary: boolean }[];
+  };
+  hick: { screen_id: string; screen: string; options: number; seconds: number; warning: boolean; hide: number }[];
+  fitts: { screen_id: string; screen: string; element_id: string; element: string; size: ElementSize; zone: ElementZone; index: number }[];
+  dead_ends: { screen_id: string; screen: string }[];
+  unreachable: { screen_id: string; screen: string }[];
+  constants: Record<string, number>;
+  issues: number;
+}
+
+export interface Suggestion {
+  id: string;
+  title: string;
+  reason: string;
+  op: string;
+  screen_id: string;
+  element_id: string | null;
+  value: string;
+  label: string | null;
+}
+
+export interface DeliverState {
+  project: Project;
+  problem: Problem | null;
+  persona: ChosenPersona | null;
+  features: Feature[];
+  flow: Flow;
+  audit: FlowAudit;
+  suggestions: Suggestion[];
+}
+
+export interface Handoff {
+  figma_prompt: string;
+  claude_md: string;
+  directory: string;
+}

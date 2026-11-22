@@ -3,9 +3,9 @@ import { api } from "./api";
 import { Header } from "./components/Header";
 import { Toast } from "./components/Toast";
 import { DefineView } from "./define/DefineView";
+import { DeliverView } from "./deliver/DeliverView";
 import { DevelopView } from "./develop/DevelopView";
 import { DiscoverView } from "./discover/DiscoverView";
-import { PhasePlaceholder } from "./components/PhasePlaceholder";
 import { PHASES, type Phase } from "./types";
 
 interface Route {
@@ -111,7 +111,7 @@ export function App() {
         {route.phase === "develop" && projectId !== null && (
           <DevelopView key={projectId} projectId={projectId} onDone={() => advance("deliver")} notify={notify} />
         )}
-        {route.phase === "deliver" && projectId !== null && <PhasePlaceholder phase={route.phase} />}
+        {route.phase === "deliver" && projectId !== null && <DeliverView key={projectId} projectId={projectId} notify={notify} />}
         {toast && <Toast message={toast} onClose={() => setToast(null)} />}
       </main>
     </div>
