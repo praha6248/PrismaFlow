@@ -1,0 +1,410 @@
+"""SQLite workspace: schema, connection handling and typed data access."""
+
+from __future__ import annotations
+
+import json
+import sqlite3
+import threading
+import time
+from contextlib import contextmanager
+from pathlib import Path
+from typing import Any, Iterator
+
+SCHEMA_VERSION = 1
+
+SCHEMA = """
+CREATE TABLE IF NOT EXISTS meta (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS projects (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    seed TEXT NOT NULL,
+    language TEXT NOT NULL DEFAULT 'en',
+    geo TEXT NOT NULL DEFAULT '',
+    phase TEXT NOT NULL DEFAULT 'discover',
+    stage TEXT NOT NULL DEFAULT 'compose',
+    created_at REAL NOT NULL,
+    updated_at REAL NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS nodes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    label TEXT NOT NULL,
+    kind TEXT CHECK (kind IN ('niche', 'idea', 'target_group', 'pain_point', 'competitor')),
+    is_root INTEGER NOT NULL DEFAULT 0,
+    starred INTEGER NOT NULL DEFAULT 0,
+    origin TEXT NOT NULL DEFAULT 'user' CHECK (origin IN ('user', 'ai')),
+    search_query TEXT,
+    score REAL NOT NULL DEFAULT 0,
+    trend_growth REAL,
+    trend_series TEXT,
+    enriched_at REAL,
+    x REAL,
+    y REAL,
+    created_at REAL NOT NULL
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS nodes_project_label ON nodes(project_id, label COLLATE NOCASE);
+CREATE INDEX IF NOT EXISTS nodes_project ON nodes(project_id);
+
+CREATE TABLE IF NOT EXISTS edges (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    source_id INTEGER NOT NULL REFERENCES nodes(id) ON DELETE CASCADE,
+    target_id INTEGER NOT NULL REFERENCES nodes(id) ON DELETE CASCADE,
+    origin TEXT NOT NULL DEFAULT 'user',
+    created_at REAL NOT NULL,
+    CHECK (source_id <> target_id)
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS edges_unique ON edges(project_id, MIN(source_id, target_id), MAX(source_id, target_id));
+CREATE INDEX IF NOT EXISTS edges_project ON edges(project_id);
+
+CREATE TABLE IF NOT EXISTS api_cache (
+    key TEXT PRIMARY KEY,
+    source TEXT NOT NULL,
+    query TEXT NOT NULL,
+    status TEXT NOT NULL CHECK (status IN ('ok', 'error')),
+    payload TEXT NOT NULL,
+    fetched_at REAL NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS api_cache_source ON api_cache(source);
+
+CREATE TABLE IF NOT EXISTS evidence (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    node_id INTEGER REFERENCES nodes(id) ON DELETE CASCADE,
+    source TEXT NOT NULL CHECK (source IN ('autocomplete', 'reddit', 'trends', 'llm')),
+    title TEXT NOT NULL,
+    body TEXT NOT NULL DEFAULT '',
+    url TEXT,
+    weight REAL NOT NULL DEFAULT 0,
+    meta TEXT NOT NULL DEFAULT '{}',
+    created_at REAL NOT NULL
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS evidence_unique ON evidence(node_id, source, title);
+CREATE INDEX IF NOT EXISTS evidence_node ON evidence(node_id);
+
+CREATE VIRTUAL TABLE IF NOT EXISTS evidence_fts USING fts5(
+    title,
+    body,
+    source UNINDEXED,
+    content='evidence',
+    content_rowid='id',
+    tokenize='unicode61 remove_diacritics 2'
+);
+
+CREATE TRIGGER IF NOT EXISTS evidence_ai AFTER INSERT ON evidence BEGIN
+    INSERT INTO evidence_fts(rowid, title, body, source) VALUES (new.id, new.title, new.body, new.source);
+END;
+
+CREATE TRIGGER IF NOT EXISTS evidence_ad AFTER DELETE ON evidence BEGIN
+    INSERT INTO evidence_fts(evidence_fts, rowid, title, body, source) VALUES ('delete', old.id, old.title, old.body, old.source);
+END;
+
+CREATE TRIGGER IF NOT EXISTS evidence_au AFTER UPDATE ON evidence BEGIN
+    INSERT INTO evidence_fts(evidence_fts, rowid, title, body, source) VALUES ('delete', old.id, old.title, old.body, old.source);
+    INSERT INTO evidence_fts(rowid, title, body, source) VALUES (new.id, new.title, new.body, new.source);
+END;
+"""
+
+NODE_COLUMNS = (
+    "id, project_id, label, kind, is_root, starred, origin, search_query, score, "
+    "trend_growth, trend_series, enriched_at, x, y, created_at"
+)
+
+
+def _row_to_node(row: sqlite3.Row) -> dict[str, Any]:
+    node = dict(row)
+    node["is_root"] = bool(node["is_root"])
+    node["starred"] = bool(node["starred"])
+    series = node.pop("trend_series")
+    node["trend_series"] = json.loads(series) if series else None
+    return node
+
+
+class Database:
+    """Thin thread-safe wrapper around a SQLite workspace file."""
+
+    def __init__(self, path: Path | str) -> None:
+        self.path = Path(path) if str(path) != ":memory:" else path
+        self._lock = threading.RLock()
+        self._memory: sqlite3.Connection | None = None
+        if self.path == ":memory:":
+            self._memory = self._open()
+        else:
+            Path(self.path).parent.mkdir(parents=True, exist_ok=True)
+        self.migrate()
+
+    def _open(self) -> sqlite3.Connection:
+        conn = sqlite3.connect(str(self.path), timeout=30, check_same_thread=False)
+        conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA foreign_keys = ON")
+        if self.path != ":memory:":
+            conn.execute("PRAGMA journal_mode = WAL")
+            conn.execute("PRAGMA synchronous = NORMAL")
+        return conn
+
+    @contextmanager
+    def connect(self) -> Iterator[sqlite3.Connection]:
+        """Yield a connection inside a transaction that commits on success."""
+        with self._lock:
+            conn = self._memory or self._open()
+            try:
+                yield conn
+                conn.commit()
+            except Exception:
+                conn.rollback()
+                raise
+            finally:
+                if conn is not self._memory:
+                    conn.close()
+
+    def migrate(self) -> None:
+        """Create or upgrade the schema."""
+        with self.connect() as conn:
+            conn.executescript(SCHEMA)
+            conn.execute(
+                "INSERT INTO meta(key, value) VALUES ('schema_version', ?) "
+                "ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+                (str(SCHEMA_VERSION),),
+            )
+
+    def create_project(self, seed: str, language: str, geo: str) -> dict[str, Any]:
+        """Create a project together with its root niche node."""
+        now = time.time()
+        with self.connect() as conn:
+            cur = conn.execute(
+                "INSERT INTO projects(name, seed, language, geo, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
+                (seed, seed, language, geo, now, now),
+            )
+            project_id = cur.lastrowid
+            conn.execute(
+                "INSERT INTO nodes(project_id, label, kind, is_root, origin, search_query, score, x, y, created_at) "
+                "VALUES (?, ?, 'niche', 1, 'user', ?, 1, 0, 0, ?)",
+                (project_id, seed, seed, now),
+            )
+        return self.get_project(project_id)
+
+    def get_project(self, project_id: int) -> dict[str, Any] | None:
+        """Return a project row or None."""
+        with self.connect() as conn:
+            row = conn.execute("SELECT * FROM projects WHERE id = ?", (project_id,)).fetchone()
+        return dict(row) if row else None
+
+    def list_projects(self, limit: int = 50) -> list[dict[str, Any]]:
+        """Return recent projects, newest first."""
+        with self.connect() as conn:
+            rows = conn.execute(
+                "SELECT p.*, (SELECT COUNT(*) FROM nodes n WHERE n.project_id = p.id) AS node_count "
+                "FROM projects p ORDER BY updated_at DESC LIMIT ?",
+                (limit,),
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+    def update_project(self, project_id: int, **fields: Any) -> dict[str, Any] | None:
+        """Update selected project columns."""
+        allowed = {k: v for k, v in fields.items() if k in {"name", "stage", "phase", "language", "geo"} and v is not None}
+        with self.connect() as conn:
+            if allowed:
+                assignments = ", ".join(f"{k} = ?" for k in allowed)
+                conn.execute(
+                    f"UPDATE projects SET {assignments}, updated_at = ? WHERE id = ?",
+                    (*allowed.values(), time.time(), project_id),
+                )
+        return self.get_project(project_id)
+
+    def touch_project(self, conn: sqlite3.Connection, project_id: int) -> None:
+        """Bump a project's modification time inside an open transaction."""
+        conn.execute("UPDATE projects SET updated_at = ? WHERE id = ?", (time.time(), project_id))
+
+    def delete_project(self, project_id: int) -> None:
+        """Delete a project and everything attached to it."""
+        with self.connect() as conn:
+            conn.execute("DELETE FROM projects WHERE id = ?", (project_id,))
+
+    def list_nodes(self, project_id: int) -> list[dict[str, Any]]:
+        """Return every node of a project."""
+        with self.connect() as conn:
+            rows = conn.execute(
+                f"SELECT {NODE_COLUMNS} FROM nodes WHERE project_id = ? ORDER BY id", (project_id,)
+            ).fetchall()
+        return [_row_to_node(r) for r in rows]
+
+    def get_node(self, node_id: int) -> dict[str, Any] | None:
+        """Return a single node or None."""
+        with self.connect() as conn:
+            row = conn.execute(f"SELECT {NODE_COLUMNS} FROM nodes WHERE id = ?", (node_id,)).fetchone()
+        return _row_to_node(row) if row else None
+
+    def find_node(self, project_id: int, label: str) -> dict[str, Any] | None:
+        """Find a node by case-insensitive label."""
+        with self.connect() as conn:
+            row = conn.execute(
+                f"SELECT {NODE_COLUMNS} FROM nodes WHERE project_id = ? AND label = ? COLLATE NOCASE",
+                (project_id, label),
+            ).fetchone()
+        return _row_to_node(row) if row else None
+
+    def root_node(self, project_id: int) -> dict[str, Any]:
+        """Return the project's root niche node."""
+        with self.connect() as conn:
+            row = conn.execute(
+                f"SELECT {NODE_COLUMNS} FROM nodes WHERE project_id = ? AND is_root = 1", (project_id,)
+            ).fetchone()
+        if row is None:
+            raise LookupError(f"project {project_id} has no root node")
+        return _row_to_node(row)
+
+    def insert_node(
+        self,
+        project_id: int,
+        label: str,
+        *,
+        kind: str | None = None,
+        origin: str = "user",
+        search_query: str | None = None,
+        x: float | None = None,
+        y: float | None = None,
+    ) -> dict[str, Any]:
+        """Insert a node, returning the existing one when the label is already taken."""
+        existing = self.find_node(project_id, label)
+        if existing:
+            return existing
+        with self.connect() as conn:
+            cur = conn.execute(
+                "INSERT INTO nodes(project_id, label, kind, origin, search_query, x, y, created_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (project_id, label, kind, origin, search_query or label, x, y, time.time()),
+            )
+            self.touch_project(conn, project_id)
+            node_id = cur.lastrowid
+        return self.get_node(node_id)
+
+    def update_node(self, node_id: int, **fields: Any) -> dict[str, Any] | None:
+        """Update selected node columns."""
+        allowed_keys = {"label", "kind", "starred", "x", "y", "score", "trend_growth", "search_query", "enriched_at"}
+        values: dict[str, Any] = {}
+        for key, value in fields.items():
+            if key not in allowed_keys or value is None:
+                continue
+            values[key] = int(value) if key == "starred" else value
+        if "trend_series" in fields and fields["trend_series"] is not None:
+            values["trend_series"] = json.dumps(fields["trend_series"])
+        if values:
+            with self.connect() as conn:
+                assignments = ", ".join(f"{k} = ?" for k in values)
+                conn.execute(f"UPDATE nodes SET {assignments} WHERE id = ?", (*values.values(), node_id))
+        return self.get_node(node_id)
+
+    def update_positions(self, positions: list[tuple[int, float, float]]) -> None:
+        """Persist layout coordinates for many nodes at once."""
+        with self.connect() as conn:
+            conn.executemany("UPDATE nodes SET x = ?, y = ? WHERE id = ?", [(x, y, i) for i, x, y in positions])
+
+    def delete_node(self, node_id: int) -> None:
+        """Delete a non-root node with its edges and evidence."""
+        with self.connect() as conn:
+            conn.execute("DELETE FROM nodes WHERE id = ? AND is_root = 0", (node_id,))
+
+    def list_edges(self, project_id: int) -> list[dict[str, Any]]:
+        """Return every edge of a project."""
+        with self.connect() as conn:
+            rows = conn.execute(
+                "SELECT id, project_id, source_id, target_id, origin FROM edges WHERE project_id = ? ORDER BY id",
+                (project_id,),
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+    def insert_edge(self, project_id: int, source_id: int, target_id: int, origin: str = "user") -> dict[str, Any] | None:
+        """Insert an undirected edge unless it already exists."""
+        if source_id == target_id:
+            return None
+        with self.connect() as conn:
+            conn.execute(
+                "INSERT OR IGNORE INTO edges(project_id, source_id, target_id, origin, created_at) VALUES (?, ?, ?, ?, ?)",
+                (project_id, source_id, target_id, origin, time.time()),
+            )
+            row = conn.execute(
+                "SELECT id, project_id, source_id, target_id, origin FROM edges WHERE project_id = ? "
+                "AND MIN(source_id, target_id) = MIN(?, ?) AND MAX(source_id, target_id) = MAX(?, ?)",
+                (project_id, source_id, target_id, source_id, target_id),
+            ).fetchone()
+        return dict(row) if row else None
+
+    def add_evidence(
+        self,
+        project_id: int,
+        node_id: int,
+        source: str,
+        title: str,
+        body: str = "",
+        url: str | None = None,
+        weight: float = 0.0,
+        meta: dict[str, Any] | None = None,
+    ) -> None:
+        """Store one evidence item, ignoring duplicates for the same node."""
+        with self.connect() as conn:
+            conn.execute(
+                "INSERT OR IGNORE INTO evidence(project_id, node_id, source, title, body, url, weight, meta, created_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (project_id, node_id, source, title, body, url, weight, json.dumps(meta or {}), time.time()),
+            )
+
+    def list_evidence(self, node_id: int) -> list[dict[str, Any]]:
+        """Return evidence attached to a node, strongest first."""
+        with self.connect() as conn:
+            rows = conn.execute(
+                "SELECT id, source, title, body, url, weight, meta FROM evidence WHERE node_id = ? "
+                "ORDER BY weight DESC, id",
+                (node_id,),
+            ).fetchall()
+        items = []
+        for row in rows:
+            item = dict(row)
+            item["meta"] = json.loads(item["meta"])
+            items.append(item)
+        return items
+
+    def search_evidence(self, project_id: int, query: str, limit: int = 20) -> list[dict[str, Any]]:
+        """Full-text search over a project's evidence."""
+        terms = [t for t in "".join(c if c.isalnum() else " " for c in query).split() if t]
+        if not terms:
+            return []
+        match = " OR ".join(f'"{t}"' for t in terms)
+        with self.connect() as conn:
+            rows = conn.execute(
+                "SELECT e.id, e.node_id, e.source, e.title, e.body, e.url, e.weight, bm25(evidence_fts) AS rank "
+                "FROM evidence_fts JOIN evidence e ON e.id = evidence_fts.rowid "
+                "WHERE evidence_fts MATCH ? AND e.project_id = ? ORDER BY rank LIMIT ?",
+                (match, project_id, limit),
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+    def cache_get(self, key: str, max_age: float, error_max_age: float) -> tuple[str, Any] | None:
+        """Return a fresh cached (status, payload) pair or None."""
+        with self.connect() as conn:
+            row = conn.execute("SELECT status, payload, fetched_at FROM api_cache WHERE key = ?", (key,)).fetchone()
+        if not row:
+            return None
+        age = time.time() - row["fetched_at"]
+        limit = max_age if row["status"] == "ok" else error_max_age
+        if age > limit:
+            return None
+        return row["status"], json.loads(row["payload"])
+
+    def cache_put(self, key: str, source: str, query: str, status: str, payload: Any) -> None:
+        """Store a collector response."""
+        with self.connect() as conn:
+            conn.execute(
+                "INSERT INTO api_cache(key, source, query, status, payload, fetched_at) VALUES (?, ?, ?, ?, ?, ?) "
+                "ON CONFLICT(key) DO UPDATE SET status = excluded.status, payload = excluded.payload, "
+                "fetched_at = excluded.fetched_at",
+                (key, source, query, status, json.dumps(payload, ensure_ascii=False), time.time()),
+            )
