@@ -11,7 +11,7 @@ from typing import Any, Protocol
 
 import httpx
 
-from ..collectors import CollectorUnavailable, autocomplete, reddit, trends
+from ..collectors import CollectorUnavailable, autocomplete, community, trends
 from ..config import COUNTRY_FOR_LANGUAGE, settings
 from ..database import Database
 from ..models import ExpansionPlan, NodeKind, ProposedNode
@@ -57,7 +57,7 @@ class Collectors:
 
     suggestions: Any = autocomplete.expanded_suggestions
     simple_suggestions: Any = autocomplete.suggestions
-    reddit_search: Any = reddit.search
+    community_search: Any = community.search
     trend_growth: Any = trends.calibrated_growth
 
 
@@ -108,7 +108,7 @@ def node_evidence(db: Database, node_id: int) -> dict[str, Any]:
     return {
         "node": node,
         "suggestions": [i for i in items if i["source"] == "autocomplete"],
-        "quotes": [i for i in items if i["source"] == "reddit"],
+        "quotes": [i for i in items if i["source"] in ("community", "reddit")],
         "trend": {
             "growth": node["trend_growth"],
             "series": (node["trend_series"] or {}).get("series", []),
@@ -340,9 +340,9 @@ class DiscoverService:
             except CollectorUnavailable as exc:
                 warn(f"autocomplete: {exc}")
             try:
-                posts = await self.collectors.reddit_search(self.db, http, query)
+                posts = await self.collectors.community_search(self.db, http, query, hl)
             except CollectorUnavailable as exc:
-                warn(f"reddit: {exc}")
+                warn(f"community: {exc}")
             return suggestions, posts
 
         async def collect(index: int, node: dict[str, Any]) -> None:
@@ -401,13 +401,17 @@ class DiscoverService:
             local_posts = [(post, None) for post in (entry["posts"] or [])[:8]]
             foreign_posts = [(post, "en") for post in entry.get("en_posts", [])]
             for post, lang in [*local_posts, *foreign_posts]:
-                meta = {"subreddit": post.get("subreddit"), "comments": post.get("comments", 0)}
+                meta = {
+                    "platform": post.get("platform", "reddit"),
+                    "place": post.get("place") or post.get("subreddit"),
+                    "comments": post.get("comments", 0),
+                }
                 if lang:
                     meta.update({"lang": lang, "original": post["title"]})
                 self.db.add_evidence(
                     project["id"],
                     node["id"],
-                    "reddit",
+                    "community",
                     translated.get(post["title"], post["title"]) if lang else post["title"],
                     body=post.get("body", ""),
                     url=post.get("url"),

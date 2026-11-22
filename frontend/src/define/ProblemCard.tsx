@@ -101,7 +101,7 @@ export function ProblemCard({ problem, index, selected, scaleMax, onSelect }: Pr
         <p
           className="absolute line-clamp-2 font-serif italic text-mauve"
           style={{ left: u(12), right: u(12), top: u(176), fontSize: u(7.2), lineHeight: u(9) }}
-          title={problem.quote_source === "reddit" ? "Wątek z Reddita" : "Podpowiedź Google"}
+          title={problem.quote_source === "autocomplete" ? "Podpowiedź Google" : "Dyskusja społeczności (Stack Exchange, Lemmy)"}
         >
           „{problem.quote}”
         </p>

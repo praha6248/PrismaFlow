@@ -40,9 +40,17 @@ def offline_collectors(posts: list[dict] | None = None, trend: dict | None = Non
     async def simple(db, http, query, language, geo=""):
         return [f"{query} opinie", f"{query} cena"]
 
-    async def reddit_search(db, http, query, limit=8):
+    async def community_search(db, http, query, language="en", limit=8):
         return posts if posts is not None else [
-            {"title": f"I struggle with {query}", "body": "help", "score": 40, "comments": 12, "url": "https://r/x"}
+            {
+                "title": f"I struggle with {query}",
+                "body": "help",
+                "score": 40,
+                "comments": 12,
+                "url": "https://fitness.stackexchange.com/q/1",
+                "platform": "stackexchange",
+                "place": "fitness",
+            }
         ]
 
     async def trend_growth(db, keywords, geo="", language="en"):
@@ -52,7 +60,7 @@ def offline_collectors(posts: list[dict] | None = None, trend: dict | None = Non
     return Collectors(
         suggestions=suggestions,
         simple_suggestions=simple,
-        reddit_search=reddit_search,
+        community_search=community_search,
         trend_growth=trend_growth,
     )
 

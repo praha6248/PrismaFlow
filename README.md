@@ -42,21 +42,23 @@ Environment variables, or `KEY=value` lines in `~/.config/PrismFlow/prismflow.en
 | `PRISMFLOW_MODEL` | Force a specific Ollama model |
 | `PRISMFLOW_LOCALE` | Default content locale, e.g. `pl_PL` or `en_US` |
 | `PRISMFLOW_TREND_ANCHOR` | Google Trends calibration keyword |
-| `PRISMFLOW_REDDIT_CLIENT_ID` / `PRISMFLOW_REDDIT_CLIENT_SECRET` | Reddit OAuth app credentials |
+| `PRISMFLOW_REDDIT_CLIENT_ID` / `PRISMFLOW_REDDIT_CLIENT_SECRET` | Optional Reddit OAuth app credentials |
 | `PRISMFLOW_DATA_DIR` | Workspace location (default `~/.local/share/PrismFlow`) |
 
-Reddit threads come from the PullPush public archive by default (no key needed, throttled to
-about one request per second). With an approved Reddit API app set `PRISMFLOW_REDDIT_CLIENT_ID`
-to use the official OAuth API instead, or force a provider with `PRISMFLOW_REDDIT_PROVIDER`.
+Community evidence comes from two documented, keyless public APIs: Stack Exchange questions
+(sites such as fitness, parenting or cooking are picked from the query's topic; about 300 requests
+per day per IP, cached for three days) and Lemmy, a federated Reddit-like forum, searched through
+lemmy.world. With an approved Reddit API app set `PRISMFLOW_REDDIT_CLIENT_ID` to add Reddit threads
+from the official OAuth API.
 
 ## Phases
 
-- **Discover** — mind map grown by the local model from Google Autocomplete, with Google Trends and Reddit
+- **Discover** — mind map grown by the local model from Google Autocomplete, with Google Trends and community
   evidence attached to every node.
 - **Define** — three problem statements grounded in the starred topics, compared on one Google Trends scale,
   and proto-personas for the chosen problem.
 - **Develop** — a MoSCoW backlog for the chosen persona; demand is the share of collected evidence
-  (Google suggestions, Reddit threads) that supports a feature.
+  (Google suggestions, Stack Exchange and Lemmy discussions) that supports a feature.
 - **Deliver** — user flow studio with a live UX audit computed with NetworkX:
   steps to goal (shortest path), KLM time to goal (M = 1.35 s plus Hick and Fitts per step),
   Hick decision time `RT = a + b·log2(n+1)` (a = 0.25 s, b = 0.15 s), Fitts difficulty `ID = log2(2D/W)`
@@ -82,7 +84,7 @@ cd packaging && ../.venv/bin/pyinstaller --noconfirm --distpath ../dist --workpa
 main.py                  desktop entry point (pywebview + background Uvicorn)
 backend/config.py        settings, paths, locale
 backend/database.py      SQLite schema and data access
-backend/collectors/      Google Autocomplete, Google Trends, Reddit
+backend/collectors/      Google Autocomplete, Google Trends, Stack Exchange + Lemmy, optional Reddit
 backend/ollama_client.py structured outputs validated by Pydantic
 backend/services/        Discover, Define, Develop and Deliver services, translation, background jobs
 backend/api.py           HTTP API and static frontend

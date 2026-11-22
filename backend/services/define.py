@@ -120,7 +120,7 @@ class DefineService:
             evidence.setdefault(item["id"], item)
         query = " ".join(n["label"] for n in focus)
         for item in self.db.search_evidence(project_id, query, limit=12):
-            if item["source"] in ("reddit", "autocomplete"):
+            if item["source"] in ("community", "reddit", "autocomplete"):
                 evidence.setdefault(item["id"], item)
         trimmed = dict(list(evidence.items())[:40])
         return focus, "\n".join(lines), trimmed

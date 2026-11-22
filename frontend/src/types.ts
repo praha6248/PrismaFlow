@@ -63,7 +63,7 @@ export interface Job {
 
 export interface EvidenceItem {
   id: number;
-  source: "autocomplete" | "reddit" | "trends" | "llm";
+  source: "autocomplete" | "community" | "reddit" | "trends" | "llm";
   title: string;
   body: string;
   url: string | null;

@@ -11,7 +11,7 @@ import { StartScreen } from "./StartScreen";
 
 const WARNINGS: [string, string][] = [
   ["llm:", "Lokalny model jest niedostępny — mapę rozbudowano na podstawie podpowiedzi Google."],
-  ["reddit:", "Reddit odrzucił zapytania — pomijam wątki z Reddita."],
+  ["community:", "Stack Exchange i Lemmy chwilowo nie odpowiadają — pomijam dyskusje."],
   ["trends:", "Google Trends chwilowo nie odpowiada — trendy uzupełnię przy kolejnej rozbudowie."],
   ["autocomplete:", "Google Autocomplete nie odpowiada — pomijam podpowiedzi."],
 ];

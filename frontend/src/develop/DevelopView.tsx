@@ -461,7 +461,7 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
         />
       )}
       <FooterNote top={436}>
-        Popyt = odsetek dowodów z mapy (Google, Reddit) wspierających funkcję × 100 · propozycje lokalnego modelu do weryfikacji
+        Popyt = odsetek dowodów z mapy (Google, Stack Exchange, Lemmy) wspierających funkcję × 100 · propozycje lokalnego modelu do weryfikacji
       </FooterNote>
     </>
   );

@@ -174,7 +174,7 @@ export function EvidenceDrawer({ node, busy, onClose, onToggleStar, onExpand, on
             </section>
 
             <section style={{ marginTop: "calc(var(--u) * 11)" }}>
-              <SectionTitle>Reddit</SectionTitle>
+              <SectionTitle>Dyskusje</SectionTitle>
               {evidence.quotes.length ? (
                 <ul className="flex flex-col" style={{ gap: "calc(var(--u) * 6)" }}>
                   {evidence.quotes.slice(0, 5).map((quote) => (
@@ -193,7 +193,8 @@ export function EvidenceDrawer({ node, busy, onClose, onToggleStar, onExpand, on
                         className="mt-0.5 inline-flex items-center text-haze hover:text-mauve"
                         style={{ gap: "calc(var(--u) * 2)", fontSize: "calc(var(--u) * 5.4)" }}
                       >
-                        r/{String(quote.meta.subreddit ?? "")} · {String(quote.meta.comments ?? 0)} komentarzy
+                        {sourceLabel(quote.meta)} · {String(quote.meta.comments ?? 0)}{" "}
+                        {quote.meta.platform === "stackexchange" ? "odpowiedzi" : "komentarzy"}
                         <ExternalLink style={{ width: "calc(var(--u) * 5)" }} />
                       </a>
                     </li>
@@ -201,7 +202,7 @@ export function EvidenceDrawer({ node, busy, onClose, onToggleStar, onExpand, on
                 </ul>
               ) : (
                 <p className="text-haze" style={{ lineHeight: 1.5 }}>
-                  Brak pasujących wątków w archiwum Reddita (PullPush) dla tego hasła.
+                  Brak pasujących dyskusji na Stack Exchange i Lemmy dla tego hasła.
                 </p>
               )}
             </section>
@@ -248,4 +249,11 @@ function EnTag() {
       EN
     </span>
   );
+}
+
+function sourceLabel(meta: Record<string, unknown>): string {
+  const place = String(meta.place ?? meta.subreddit ?? "");
+  if (meta.platform === "stackexchange") return `Stack Exchange · ${place}`;
+  if (meta.platform === "lemmy") return `Lemmy · !${place}`;
+  return `Reddit · r/${place}`;
 }

@@ -690,7 +690,7 @@ def handoff_documents(state: dict[str, Any]) -> tuple[str, str]:
             "- Zacznij od ścieżki krytycznej start → cel; funkcje Must muszą działać end-to-end.",
             "- Komponenty: przycisk główny (L, dół ekranu), przycisk drugorzędny (M), link (S).",
             "- Dostępność: kontrast WCAG AA, cele dotykowe ≥ 44×44 px, etykiety dla czytników ekranu.",
-            "- Popyt oznacza odsetek dowodów z Google i Reddita wspierających funkcję; to hipotezy do zweryfikowania w testach z użytkownikami.",
+            "- Popyt oznacza odsetek dowodów (podpowiedzi Google, dyskusje ze Stack Exchange i Lemmy) wspierających funkcję; to hipotezy do zweryfikowania w testach z użytkownikami.",
             "",
         ]
     )

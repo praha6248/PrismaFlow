@@ -110,7 +110,7 @@ class DevelopService:
             queries.append(persona["focus"])
         for query in queries:
             for item in self.db.search_evidence(project_id, query, limit=15):
-                if item["source"] in ("reddit", "autocomplete"):
+                if item["source"] in ("community", "reddit", "autocomplete"):
                     items.setdefault(item["id"], item)
         for item in self.db.evidence_for_nodes(node_ids, per_node=10):
             items.setdefault(item["id"], item)

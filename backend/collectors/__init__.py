@@ -1,4 +1,4 @@
-"""Market-data collectors: Google Autocomplete, Google Trends and Reddit."""
+"""Market-data collectors: Google Autocomplete, Google Trends and community discussions."""
 
 from .base import CollectorUnavailable
 

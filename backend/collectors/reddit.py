@@ -1,14 +1,8 @@
-"""Reddit search collector.
+"""Reddit search through the official OAuth API.
 
-Two providers are supported:
-
-- the official Reddit OAuth API, used when PRISMFLOW_REDDIT_CLIENT_ID is set (an approved
-  "installed app" needs only the client id, a "script" or "web app" also needs
-  PRISMFLOW_REDDIT_CLIENT_SECRET);
-- PullPush (api.pullpush.io), a public Reddit archive with full-text search that needs no key,
-  used by default.
-
-PRISMFLOW_REDDIT_PROVIDER can force "oauth" or "pullpush".
+Used only when PRISMFLOW_REDDIT_CLIENT_ID is set: an approved "installed app" needs only the
+client id, a "script" or "web app" also needs PRISMFLOW_REDDIT_CLIENT_SECRET. Without
+credentials, community evidence comes from Stack Exchange and Lemmy instead.
 """
 
 from __future__ import annotations
@@ -29,7 +23,6 @@ from .base import CollectorUnavailable, cached
 
 OAUTH_ENDPOINT = "https://oauth.reddit.com/search"
 TOKEN_URL = "https://www.reddit.com/api/v1/access_token"
-PULLPUSH_ENDPOINT = "https://api.pullpush.io/reddit/search/submission/"
 WHITESPACE = re.compile(r"\s+")
 _blocked_until: dict[str, float] = {}
 _token: tuple[str, float] | None = None
@@ -66,14 +59,6 @@ async def _throttled(call):
 def credentials_configured() -> bool:
     """Tell whether the user supplied Reddit API credentials."""
     return bool(os.environ.get("PRISMFLOW_REDDIT_CLIENT_ID"))
-
-
-def provider() -> str:
-    """Return the active provider name."""
-    forced = os.environ.get("PRISMFLOW_REDDIT_PROVIDER", "").strip().lower()
-    if forced in ("oauth", "pullpush"):
-        return forced
-    return "oauth" if credentials_configured() else "pullpush"
 
 
 def _clean(text: str, limit: int) -> str:
@@ -167,47 +152,19 @@ async def _fetch_oauth(client: httpx.AsyncClient, query: str, limit: int) -> lis
     return _rank([p for c in children if (p := _post(c.get("data", {})))], limit)
 
 
-def _terms(query: str) -> list[str]:
-    words = re.findall(r"\w+", query.casefold())
-    return [w[:5] for w in words if len(w) >= 4] or [w for w in words if w]
-
-
-BLOCKED_SUBREDDITS = re.compile(r"nsfw|gonewild|gw$|sells|onlyfans|porn|r4r|hentai", re.IGNORECASE)
-
-
-def _relevant(post: dict[str, Any], terms: list[str]) -> bool:
-    if BLOCKED_SUBREDDITS.search(post["subreddit"] or ""):
-        return False
-    title = post["title"].casefold()
-    return all(term in title for term in terms)
-
-
-async def _fetch_pullpush(client: httpx.AsyncClient, query: str, limit: int) -> list[dict[str, Any]]:
-    params = {"title": query, "size": 100, "sort": "desc", "sort_type": "score"}
-    data = await _get_json(client, PULLPUSH_ENDPOINT, params, {"User-Agent": settings.user_agent})
-    items = data.get("data") if isinstance(data, dict) else None
-    if not isinstance(items, list):
-        raise CollectorUnavailable("pullpush returned an unexpected payload")
-    terms = _terms(query)
-    return _rank([p for item in items if (p := _post(item)) and _relevant(p, terms)], limit)
-
-
-FETCHERS = {"oauth": _fetch_oauth, "pullpush": _fetch_pullpush}
-
-
 async def search(db: Database, client: httpx.AsyncClient, query: str, limit: int = 8) -> list[dict[str, Any]]:
     """Return popular Reddit threads matching a query, cached in api_cache.
 
     After a provider fails the collector stays closed for the negative-cache window
     instead of hammering it with every remaining query.
     """
-    name = provider()
+    name = "oauth"
 
     async def fetch() -> list[dict[str, Any]]:
         if time.time() < _blocked_until.get(name, 0.0):
-            raise CollectorUnavailable(f"reddit ({name}) temporarily unavailable")
+            raise CollectorUnavailable("reddit temporarily unavailable")
         try:
-            return await _throttled(lambda: FETCHERS[name](client, query, limit))
+            return await _throttled(lambda: _fetch_oauth(client, query, limit))
         except RateLimited:
             _blocked_until[name] = time.time() + RATE_LIMIT_PAUSE
             raise

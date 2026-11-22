@@ -10,7 +10,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Iterator
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS meta (
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS evidence (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     node_id INTEGER REFERENCES nodes(id) ON DELETE CASCADE,
-    source TEXT NOT NULL CHECK (source IN ('autocomplete', 'reddit', 'trends', 'llm')),
+    source TEXT NOT NULL CHECK (source IN ('autocomplete', 'community', 'reddit', 'trends', 'llm')),
     title TEXT NOT NULL,
     body TEXT NOT NULL DEFAULT '',
     url TEXT,
@@ -228,7 +228,18 @@ class Database:
     def migrate(self) -> None:
         """Create or upgrade the schema."""
         with self.connect() as conn:
+            row = conn.execute("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'evidence'").fetchone()
+            rebuild = bool(row) and "'community'" not in row["sql"]
+            if rebuild:
+                conn.execute("PRAGMA foreign_keys = OFF")
+                conn.execute("ALTER TABLE evidence RENAME TO evidence_old")
             conn.executescript(SCHEMA)
+            if rebuild:
+                conn.execute("INSERT INTO evidence SELECT * FROM evidence_old")
+                conn.execute("DROP TABLE evidence_old")
+                conn.executescript(SCHEMA)
+                conn.execute("INSERT INTO evidence_fts(evidence_fts) VALUES ('rebuild')")
+                conn.execute("PRAGMA foreign_keys = ON")
             conn.execute(
                 "INSERT INTO meta(key, value) VALUES ('schema_version', ?) "
                 "ON CONFLICT(key) DO UPDATE SET value = excluded.value",
@@ -585,7 +596,7 @@ class Database:
             for node_id in node_ids:
                 rows = conn.execute(
                     "SELECT id, node_id, source, title, body, url, weight FROM evidence WHERE node_id = ? "
-                    "AND source IN ('reddit', 'autocomplete') ORDER BY source = 'reddit' DESC, weight DESC LIMIT ?",
+                    "AND source IN ('community', 'reddit', 'autocomplete') ORDER BY source != 'autocomplete' DESC, weight DESC LIMIT ?",
                     (node_id, per_node),
                 ).fetchall()
                 items.extend(dict(r) for r in rows)
