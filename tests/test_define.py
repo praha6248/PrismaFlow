@@ -51,6 +51,8 @@ class SchemaLLM(FakeLLM):
     """Answers with the canned payload matching the requested schema."""
 
     async def structured(self, schema: Any, system: str, prompt: str, **_: Any) -> Any:
+        if schema.__name__ == "Translations":
+            return await super().structured(schema, system, prompt)
         self.prompts.append(prompt)
         payload = PROBLEMS if schema.__name__ == "ProblemSet" else PERSONAS
         return schema.model_validate(payload)

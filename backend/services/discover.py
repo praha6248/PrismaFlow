@@ -17,6 +17,7 @@ from ..database import Database
 from ..models import ExpansionPlan, NodeKind, ProposedNode
 from ..ollama_client import OllamaError
 from .jobs import ProgressFn, WarnFn
+from .translate import translate
 
 LANGUAGE_NAMES = {
     "pl": "Polish",
@@ -321,29 +322,56 @@ class DiscoverService:
         if not nodes:
             return
         language, geo = project["language"], project["geo"]
+        bilingual = language != "en"
+        queries = [n["search_query"] or n["label"] for n in nodes]
+        english: list[str] = []
+        if bilingual:
+            progress(0.56, "translating")
+            english = await translate(self.llm, queries, "English")
         limiter = asyncio.Semaphore(4)
         gathered: dict[int, dict[str, Any]] = {}
         done = 0
 
-        async def collect(node: dict[str, Any]) -> None:
+        async def lookup(query: str, hl: str, gl: str) -> tuple[list[str], list[dict] | None]:
+            suggestions: list[str] = []
+            posts: list[dict] | None = None
+            try:
+                suggestions = await self.collectors.simple_suggestions(self.db, http, query, hl, gl)
+            except CollectorUnavailable as exc:
+                warn(f"autocomplete: {exc}")
+            try:
+                posts = await self.collectors.reddit_search(self.db, http, query)
+            except CollectorUnavailable as exc:
+                warn(f"reddit: {exc}")
+            return suggestions, posts
+
+        async def collect(index: int, node: dict[str, Any]) -> None:
             nonlocal done
-            query = node["search_query"] or node["label"]
-            entry: dict[str, Any] = {"suggestions": [], "posts": None}
             async with limiter:
-                try:
-                    entry["suggestions"] = await self.collectors.simple_suggestions(self.db, http, query, language, geo)
-                except CollectorUnavailable as exc:
-                    warn(f"autocomplete: {exc}")
-                try:
-                    entry["posts"] = await self.collectors.reddit_search(self.db, http, query)
-                except CollectorUnavailable as exc:
-                    if reddit.credentials_configured():
-                        warn(f"reddit: {exc}")
+                suggestions, posts = await lookup(queries[index], language, geo)
+                entry: dict[str, Any] = {"suggestions": suggestions, "posts": posts, "en_suggestions": [], "en_posts": []}
+                foreign = english[index] if bilingual and index < len(english) else ""
+                if foreign and normalize_label(foreign) != normalize_label(queries[index]):
+                    en_suggestions, en_posts = await lookup(foreign, "en", "")
+                    entry["en_suggestions"] = en_suggestions[:6]
+                    entry["en_posts"] = (en_posts or [])[:6]
             gathered[node["id"]] = entry
             done += 1
-            progress(0.55 + 0.25 * done / len(nodes), "evidence")
+            progress(0.58 + 0.2 * done / len(nodes), "evidence")
 
-        await asyncio.gather(*(collect(n) for n in nodes))
+        await asyncio.gather(*(collect(i, n) for i, n in enumerate(nodes)))
+
+        if bilingual:
+            progress(0.79, "translating")
+            originals = [
+                text
+                for entry in gathered.values()
+                for text in [*entry["en_suggestions"], *(p["title"] for p in entry["en_posts"])]
+            ]
+            unique = list(dict.fromkeys(originals))
+            translated = dict(zip(unique, await translate(self.llm, unique, LANGUAGE_NAMES.get(language, language))))
+        else:
+            translated = {}
 
         progress(0.82, "trends")
         labels = [n["label"] for n in nodes]
@@ -357,23 +385,41 @@ class DiscoverService:
         anchor = trends.anchor_for(language)
         now = time.time()
         for node in nodes:
-            entry = gathered.get(node["id"], {"suggestions": [], "posts": None})
+            entry = gathered.get(node["id"], {"suggestions": [], "posts": None, "en_suggestions": [], "en_posts": []})
             trend = trend_data.get(node["label"])
             for rank, text in enumerate(entry["suggestions"][:10]):
                 self.db.add_evidence(project["id"], node["id"], "autocomplete", text, weight=1 - rank / 10)
-            for post in (entry["posts"] or [])[:8]:
+            for rank, text in enumerate(entry.get("en_suggestions", [])):
+                self.db.add_evidence(
+                    project["id"],
+                    node["id"],
+                    "autocomplete",
+                    translated.get(text, text),
+                    weight=0.5 - rank / 20,
+                    meta={"lang": "en", "original": text},
+                )
+            local_posts = [(post, None) for post in (entry["posts"] or [])[:8]]
+            foreign_posts = [(post, "en") for post in entry.get("en_posts", [])]
+            for post, lang in [*local_posts, *foreign_posts]:
+                meta = {"subreddit": post.get("subreddit"), "comments": post.get("comments", 0)}
+                if lang:
+                    meta.update({"lang": lang, "original": post["title"]})
                 self.db.add_evidence(
                     project["id"],
                     node["id"],
                     "reddit",
-                    post["title"],
+                    translated.get(post["title"], post["title"]) if lang else post["title"],
                     body=post.get("body", ""),
                     url=post.get("url"),
                     weight=float(post.get("score", 0) + post.get("comments", 0)),
-                    meta={"subreddit": post.get("subreddit"), "comments": post.get("comments", 0)},
+                    meta=meta,
                 )
+            all_posts = None if entry["posts"] is None and not entry.get("en_posts") else [
+                *(entry["posts"] or []),
+                *entry.get("en_posts", []),
+            ]
             fields: dict[str, Any] = {
-                "score": score_node(len(entry["suggestions"]), entry["posts"], trend),
+                "score": score_node(len(entry["suggestions"]), all_posts, trend),
                 "enriched_at": now,
             }
             if trend and trend.get("series"):

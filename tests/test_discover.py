@@ -57,6 +57,9 @@ async def test_expand_classifies_creates_links_and_scores(db: Database) -> None:
     evidence = discover.node_evidence(db, nodes["młode kobiety"]["id"])
     assert evidence["quotes"] and evidence["suggestions"]
     assert evidence["trend"]["growth"] == 1.0
+    english = [q for q in evidence["quotes"] if q["meta"].get("lang") == "en"]
+    assert english and english[0]["title"].startswith("[pl] I struggle with [en] ")
+    assert english[0]["meta"]["original"].startswith("I struggle with [en] ")
 
 
 async def test_expand_respects_count_limit(db: Database) -> None:
@@ -83,7 +86,7 @@ async def test_prompt_lists_map_and_suggestions(db: Database) -> None:
     service = DiscoverService(db, llm, offline_collectors())
     taniec = db.find_node(project_id, "taniec")
     await service.expand(project_id, taniec["id"], 2, _noop, _noop)
-    prompt = llm.prompts[0]
+    prompt = next(p for p in llm.prompts if "Focus node" in p)
     assert 'Focus node to expand: "taniec"' in prompt
     assert "taniec dla kobiet" in prompt
     assert "Classify each of these nodes: plan, taniec" in prompt

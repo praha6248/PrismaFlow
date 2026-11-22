@@ -45,8 +45,13 @@ Environment variables, or `KEY=value` lines in `~/.config/PrismFlow/prismflow.en
 | `PRISMFLOW_REDDIT_CLIENT_ID` / `PRISMFLOW_REDDIT_CLIENT_SECRET` | Reddit OAuth app credentials |
 | `PRISMFLOW_DATA_DIR` | Workspace location (default `~/.local/share/PrismFlow`) |
 
-Reddit refuses anonymous API calls, so Reddit evidence needs an approved Reddit API app.
-Without it the collector is skipped and the rest of the pipeline keeps working.
+Reddit threads come from the PullPush public archive by default (no key needed, throttled to
+about one request per second). With an approved Reddit API app set `PRISMFLOW_REDDIT_CLIENT_ID`
+to use the official OAuth API instead, or force a provider with `PRISMFLOW_REDDIT_PROVIDER`.
+
+Evidence is collected bilingually: queries are translated to English by the local model, English
+suggestions and threads are fetched alongside local ones and translated back into the project
+language, keeping the original text in the evidence metadata.
 
 ## Packaging
 

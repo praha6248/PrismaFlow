@@ -24,6 +24,10 @@ class FakeLLM:
         self.prompts.append(prompt)
         if self.fail:
             raise OllamaError("offline")
+        if schema.__name__ == "Translations":
+            lines = [line.split(". ", 1)[1] for line in prompt.splitlines()]
+            target = "en" if "into English" in system else "pl"
+            return schema(items=[f"[{target}] {line}" for line in lines])
         return ExpansionPlan.model_validate(self.plan)
 
 
