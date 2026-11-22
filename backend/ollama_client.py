@@ -8,7 +8,7 @@ from typing import Any, TypeVar
 import httpx
 from pydantic import BaseModel, ValidationError
 
-from .config import PREFERRED_MODELS, settings
+from .config import PREFERRED_MODELS, TASK_MODELS, settings
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -43,6 +43,7 @@ class OllamaClient:
         self.base_url = (base_url or settings.ollama_url).rstrip("/")
         self.requested_model = model or settings.model
         self._resolved: str | None = None
+        self._task_models: dict[str, str] = {}
 
     def _client(self, timeout: float | None = None) -> httpx.AsyncClient:
         return httpx.AsyncClient(base_url=self.base_url, timeout=timeout or settings.llm_timeout)
@@ -79,6 +80,20 @@ class OllamaClient:
         self._resolved = available[0]
         return self._resolved
 
+    async def model_for(self, task: str | None) -> str:
+        """Pick a task-specific model when one is installed, otherwise the general model.
+
+        An explicitly requested model (PRISMFLOW_MODEL) always wins.
+        """
+        if not task or self.requested_model or task not in TASK_MODELS:
+            return await self.resolve_model()
+        if task not in self._task_models:
+            available = await self.list_models()
+            names = {name.removesuffix(":latest"): name for name in available}
+            match = next((names[c] for c in TASK_MODELS[task] if c in names), None)
+            self._task_models[task] = match or await self.resolve_model()
+        return self._task_models[task]
+
     async def health(self) -> dict[str, Any]:
         """Report reachability and the model that would be used."""
         try:
@@ -96,9 +111,10 @@ class OllamaClient:
         *,
         temperature: float = 0.4,
         retries: int = 1,
+        task: str | None = None,
     ) -> T:
         """Ask the model for a JSON answer constrained to the given Pydantic schema."""
-        model = await self.resolve_model()
+        model = await self.model_for(task)
         messages = [{"role": "system", "content": system}, {"role": "user", "content": prompt}]
         payload = {
             "model": model,
