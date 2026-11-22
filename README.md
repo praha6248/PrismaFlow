@@ -49,6 +49,21 @@ Reddit threads come from the PullPush public archive by default (no key needed, 
 about one request per second). With an approved Reddit API app set `PRISMFLOW_REDDIT_CLIENT_ID`
 to use the official OAuth API instead, or force a provider with `PRISMFLOW_REDDIT_PROVIDER`.
 
+## Phases
+
+- **Discover** — mind map grown by the local model from Google Autocomplete, with Google Trends and Reddit
+  evidence attached to every node.
+- **Define** — three problem statements grounded in the starred topics, compared on one Google Trends scale,
+  and proto-personas for the chosen problem.
+- **Develop** — a MoSCoW backlog for the chosen persona; demand is the share of collected evidence
+  (Google suggestions, Reddit threads) that supports a feature.
+- **Deliver** — user flow studio with a live UX audit computed with NetworkX:
+  steps to goal (shortest path), KLM time to goal (M = 1.35 s plus Hick and Fitts per step),
+  Hick decision time `RT = a + b·log2(n+1)` (a = 0.25 s, b = 0.15 s), Fitts difficulty `ID = log2(2D/W)`
+  from target size and thumb zone, WCAG 2.2 touch target sizes (24 px AA, 44 px AAA), dead ends and
+  unreachable screens. The local model proposes fixes that can be accepted in one click, and
+  "Generuj Handoff" writes `figma-prompt.md` and `CLAUDE.md` to `~/Documents/PrismFlow/<project>/`.
+
 Evidence is collected bilingually: queries are translated to English by the local model, English
 suggestions and threads are fetched alongside local ones and translated back into the project
 language, keeping the original text in the evidence metadata.
@@ -69,7 +84,7 @@ backend/config.py        settings, paths, locale
 backend/database.py      SQLite schema and data access
 backend/collectors/      Google Autocomplete, Google Trends, Reddit
 backend/ollama_client.py structured outputs validated by Pydantic
-backend/services/        Discover expansion pipeline and background jobs
+backend/services/        Discover, Define, Develop and Deliver services, translation, background jobs
 backend/api.py           HTTP API and static frontend
 frontend/                React + React Flow UI
 docs/mockups/            reference designs

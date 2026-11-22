@@ -163,7 +163,8 @@ export function EvidenceDrawer({ node, busy, onClose, onToggleStar, onExpand, on
                       style={{ background: "#f8f4fc", padding: "calc(var(--u) * 1.5) calc(var(--u) * 5)", gap: "calc(var(--u) * 2.5)", fontSize: "calc(var(--u) * 5.8)" }}
                     >
                       <Search style={{ width: "calc(var(--u) * 5.5)" }} color="#aa9fb2" />
-                      {item.title}
+                      <span title={item.meta.original ? `Oryginał: ${String(item.meta.original)}` : undefined}>{item.title}</span>
+                      {item.meta.lang === "en" && <EnTag />}
                     </li>
                   ))}
                 </ul>
@@ -178,7 +179,13 @@ export function EvidenceDrawer({ node, busy, onClose, onToggleStar, onExpand, on
                 <ul className="flex flex-col" style={{ gap: "calc(var(--u) * 6)" }}>
                   {evidence.quotes.slice(0, 5).map((quote) => (
                     <li key={quote.id} className="border-l-2 border-[#f3c4ee]" style={{ paddingLeft: "calc(var(--u) * 5)" }}>
-                      <p className="text-mauve" style={{ lineHeight: 1.4 }}>„{quote.title}”</p>
+                      <p
+                        className="text-mauve"
+                        style={{ lineHeight: 1.4 }}
+                        title={quote.meta.original ? `Oryginał: ${String(quote.meta.original)}` : undefined}
+                      >
+                        „{quote.title}”{quote.meta.lang === "en" && <EnTag />}
+                      </p>
                       <a
                         href={quote.url ?? undefined}
                         target="_blank"
@@ -194,7 +201,7 @@ export function EvidenceDrawer({ node, busy, onClose, onToggleStar, onExpand, on
                 </ul>
               ) : (
                 <p className="text-haze" style={{ lineHeight: 1.5 }}>
-                  Brak wątków. Reddit wymaga zatwierdzonego klienta API (PRISMFLOW_REDDIT_CLIENT_ID).
+                  Brak pasujących wątków w archiwum Reddita (PullPush) dla tego hasła.
                 </p>
               )}
             </section>
@@ -228,5 +235,17 @@ export function EvidenceDrawer({ node, busy, onClose, onToggleStar, onExpand, on
         )}
       </footer>
     </aside>
+  );
+}
+
+function EnTag() {
+  return (
+    <span
+      className="ml-1 inline-block rounded align-middle text-haze"
+      style={{ fontSize: "calc(var(--u) * 4.2)", padding: "0 calc(var(--u) * 2)", border: "1px solid #e4d6ec", lineHeight: 1.5 }}
+      title="Przetłumaczono z angielskiego"
+    >
+      EN
+    </span>
   );
 }
