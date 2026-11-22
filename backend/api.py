@@ -10,9 +10,20 @@ from fastapi.staticfiles import StaticFiles
 
 from .config import settings
 from .database import Database
-from .models import ExpandRequest, Job, NodeCreate, NodeUpdate, PositionsUpdate, ProjectCreate, ProjectUpdate
+from .models import (
+    DefineRequest,
+    ExpandRequest,
+    Job,
+    NodeCreate,
+    NodeUpdate,
+    PersonaChoice,
+    PositionsUpdate,
+    ProjectCreate,
+    ProjectUpdate,
+)
 from .ollama_client import OllamaClient
 from .services import discover
+from .services.define import DefineService, define_state
 from .services.discover import DiscoverService
 from .services.jobs import JobRegistry
 
@@ -22,11 +33,13 @@ def create_app(
     llm: OllamaClient | None = None,
     service: DiscoverService | None = None,
     frontend_dist: Path | None = None,
+    define_service: DefineService | None = None,
 ) -> FastAPI:
     """Build the FastAPI app with its dependencies wired in."""
     database = db or Database(settings.database_path)
     ollama = llm or OllamaClient()
     discover_service = service or DiscoverService(database, ollama)
+    define = define_service or DefineService(database, ollama)
     jobs = JobRegistry()
 
     app = FastAPI(title="PrismFlow", version="0.1.0", docs_url="/api/docs", openapi_url="/api/openapi.json")
@@ -126,6 +139,47 @@ def create_app(
                 raise
 
         return jobs.start("discover.expand", run)
+
+    @api.get("/projects/{project_id}/define")
+    def get_define(project_id: int) -> dict:
+        """Return problem statements, the chosen problem and its personas."""
+        return define_state(database, project_id)
+
+    @api.post("/define/problems", status_code=202)
+    async def define_problems(body: DefineRequest) -> Job:
+        """Start generating three problem statements from the selected topics."""
+        if database.get_project(body.project_id) is None:
+            raise HTTPException(404, "project not found")
+        database.update_project(body.project_id, phase="define")
+        return jobs.start(
+            "define.problems", lambda progress, warn: define.generate_problems(body.project_id, progress, warn)
+        )
+
+    @api.post("/problems/{problem_id}/choose")
+    def choose_problem(problem_id: int) -> dict:
+        """Pick the main problem."""
+        problem = database.choose_problem(problem_id)
+        if problem is None:
+            raise HTTPException(404, "problem not found")
+        return define_state(database, problem["project_id"])
+
+    @api.post("/define/personas", status_code=202)
+    async def define_personas(body: DefineRequest) -> Job:
+        """Start generating personas for the chosen problem."""
+        state = define_state(database, body.project_id)
+        if state["chosen_problem_id"] is None:
+            raise HTTPException(400, "choose a problem first")
+        return jobs.start(
+            "define.personas", lambda progress, warn: define.generate_personas(body.project_id, progress, warn)
+        )
+
+    @api.post("/personas/{persona_id}/choose")
+    def choose_persona(persona_id: int, body: PersonaChoice) -> dict:
+        """Pick a persona and its main sub-problem."""
+        persona = database.choose_persona(persona_id, body.option)
+        if persona is None:
+            raise HTTPException(404, "persona or option not found")
+        return define_state(database, persona["project_id"])
 
     @api.get("/jobs/{job_id}")
     def job_status(job_id: str) -> Job:

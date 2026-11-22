@@ -28,7 +28,7 @@ def inline_schema(model: type[BaseModel]) -> dict[str, Any]:
                 name = node["$ref"].rsplit("/", 1)[-1]
                 merged = {**resolve(defs[name]), **{k: v for k, v in node.items() if k != "$ref"}}
                 return merged
-            return {k: resolve(v) for k, v in node.items() if k not in ("title",)}
+            return {k: resolve(v) for k, v in node.items() if not (k == "title" and isinstance(v, str))}
         if isinstance(node, list):
             return [resolve(v) for v in node]
         return node

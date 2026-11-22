@@ -10,7 +10,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Iterator
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS meta (
@@ -99,6 +99,40 @@ CREATE VIRTUAL TABLE IF NOT EXISTS evidence_fts USING fts5(
     content_rowid='id',
     tokenize='unicode61 remove_diacritics 2'
 );
+
+CREATE TABLE IF NOT EXISTS problems (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    position INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    keyword TEXT NOT NULL,
+    quote TEXT,
+    quote_source TEXT,
+    node_ids TEXT NOT NULL DEFAULT '[]',
+    evidence_ids TEXT NOT NULL DEFAULT '[]',
+    trend TEXT,
+    chosen INTEGER NOT NULL DEFAULT 0,
+    created_at REAL NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS problems_project ON problems(project_id);
+
+CREATE TABLE IF NOT EXISTS personas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    problem_id INTEGER NOT NULL REFERENCES problems(id) ON DELETE CASCADE,
+    position INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    age INTEGER,
+    role TEXT NOT NULL DEFAULT '',
+    quote TEXT NOT NULL DEFAULT '',
+    options TEXT NOT NULL DEFAULT '[]',
+    chosen_option INTEGER,
+    created_at REAL NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS personas_problem ON personas(problem_id);
 
 CREATE TRIGGER IF NOT EXISTS evidence_ai AFTER INSERT ON evidence BEGIN
     INSERT INTO evidence_fts(rowid, title, body, source) VALUES (new.id, new.title, new.body, new.source);
@@ -408,3 +442,126 @@ class Database:
                 "fetched_at = excluded.fetched_at",
                 (key, source, query, status, json.dumps(payload, ensure_ascii=False), time.time()),
             )
+
+    def replace_problems(self, project_id: int, problems: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Replace a project's problem statements and their personas."""
+        now = time.time()
+        with self.connect() as conn:
+            conn.execute("DELETE FROM problems WHERE project_id = ?", (project_id,))
+            for position, item in enumerate(problems):
+                conn.execute(
+                    "INSERT INTO problems(project_id, position, title, description, keyword, quote, quote_source, "
+                    "node_ids, evidence_ids, trend, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        project_id,
+                        position,
+                        item["title"],
+                        item.get("description", ""),
+                        item["keyword"],
+                        item.get("quote"),
+                        item.get("quote_source"),
+                        json.dumps(item.get("node_ids", [])),
+                        json.dumps(item.get("evidence_ids", [])),
+                        json.dumps(item["trend"]) if item.get("trend") is not None else None,
+                        now,
+                    ),
+                )
+            self.touch_project(conn, project_id)
+        return self.list_problems(project_id)
+
+    def list_problems(self, project_id: int) -> list[dict[str, Any]]:
+        """Return a project's problem statements in display order."""
+        with self.connect() as conn:
+            rows = conn.execute(
+                "SELECT * FROM problems WHERE project_id = ? ORDER BY position", (project_id,)
+            ).fetchall()
+        return [self._problem(r) for r in rows]
+
+    def get_problem(self, problem_id: int) -> dict[str, Any] | None:
+        """Return one problem statement or None."""
+        with self.connect() as conn:
+            row = conn.execute("SELECT * FROM problems WHERE id = ?", (problem_id,)).fetchone()
+        return self._problem(row) if row else None
+
+    @staticmethod
+    def _problem(row: sqlite3.Row) -> dict[str, Any]:
+        item = dict(row)
+        item["chosen"] = bool(item["chosen"])
+        item["node_ids"] = json.loads(item["node_ids"])
+        item["evidence_ids"] = json.loads(item["evidence_ids"])
+        item["trend"] = json.loads(item["trend"]) if item["trend"] else None
+        return item
+
+    def update_problem_trend(self, problem_id: int, trend: dict[str, Any]) -> None:
+        """Store refreshed trend data for a problem."""
+        with self.connect() as conn:
+            conn.execute("UPDATE problems SET trend = ? WHERE id = ?", (json.dumps(trend), problem_id))
+
+    def choose_problem(self, problem_id: int) -> dict[str, Any] | None:
+        """Mark one problem as the project's chosen problem."""
+        problem = self.get_problem(problem_id)
+        if problem is None:
+            return None
+        with self.connect() as conn:
+            conn.execute("UPDATE problems SET chosen = (id = ?) WHERE project_id = ?", (problem_id, problem["project_id"]))
+            self.touch_project(conn, problem["project_id"])
+        return self.get_problem(problem_id)
+
+    def replace_personas(self, project_id: int, problem_id: int, personas: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Replace the personas generated for a problem."""
+        now = time.time()
+        with self.connect() as conn:
+            conn.execute("DELETE FROM personas WHERE problem_id = ?", (problem_id,))
+            for position, item in enumerate(personas):
+                conn.execute(
+                    "INSERT INTO personas(project_id, problem_id, position, name, age, role, quote, options, created_at) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        project_id,
+                        problem_id,
+                        position,
+                        item["name"],
+                        item.get("age"),
+                        item.get("role", ""),
+                        item.get("quote", ""),
+                        json.dumps(item.get("options", []), ensure_ascii=False),
+                        now,
+                    ),
+                )
+        return self.list_personas(problem_id)
+
+    def list_personas(self, problem_id: int) -> list[dict[str, Any]]:
+        """Return the personas of a problem in display order."""
+        with self.connect() as conn:
+            rows = conn.execute(
+                "SELECT * FROM personas WHERE problem_id = ? ORDER BY position", (problem_id,)
+            ).fetchall()
+        items = []
+        for row in rows:
+            item = dict(row)
+            item["options"] = json.loads(item["options"])
+            items.append(item)
+        return items
+
+    def choose_persona(self, persona_id: int, option: int) -> dict[str, Any] | None:
+        """Select one persona and one of its problems, clearing other selections for the same problem."""
+        with self.connect() as conn:
+            row = conn.execute("SELECT problem_id, options FROM personas WHERE id = ?", (persona_id,)).fetchone()
+            if row is None or not 0 <= option < len(json.loads(row["options"])):
+                return None
+            conn.execute("UPDATE personas SET chosen_option = NULL WHERE problem_id = ?", (row["problem_id"],))
+            conn.execute("UPDATE personas SET chosen_option = ? WHERE id = ?", (option, persona_id))
+        return next(p for p in self.list_personas(row["problem_id"]) if p["id"] == persona_id)
+
+    def evidence_for_nodes(self, node_ids: list[int], per_node: int = 6) -> list[dict[str, Any]]:
+        """Return the strongest evidence items attached to the given nodes."""
+        items: list[dict[str, Any]] = []
+        with self.connect() as conn:
+            for node_id in node_ids:
+                rows = conn.execute(
+                    "SELECT id, node_id, source, title, body, url, weight FROM evidence WHERE node_id = ? "
+                    "AND source IN ('reddit', 'autocomplete') ORDER BY source = 'reddit' DESC, weight DESC LIMIT ?",
+                    (node_id, per_node),
+                ).fetchall()
+                items.extend(dict(r) for r in rows)
+        return items

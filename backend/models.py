@@ -79,7 +79,8 @@ class ProjectUpdate(BaseModel):
     """Request body for updating project metadata."""
 
     name: str | None = None
-    stage: Literal["compose", "expanding", "select"] | None = None
+    stage: Literal["compose", "expanding", "select", "problems", "personas", "done"] | None = None
+    phase: Literal["discover", "define", "develop"] | None = None
 
 
 class NodeCreate(BaseModel):
@@ -141,3 +142,93 @@ class Job(BaseModel):
     result: dict[str, Any] | None = None
     error: str | None = None
     warnings: list[str] = Field(default_factory=list)
+
+
+def _sentence(value: str, limit: int) -> str:
+    text = " ".join(value.replace("_", " ").split()).strip().strip('"\u201e\u201d')
+    return text if len(text) <= limit else text[: limit - 1].rstrip(" ,.;") + "…"
+
+
+class ProblemDraft(BaseModel):
+    """One problem statement synthesised from Discover evidence."""
+
+    title: str = Field(description="Problem stated from the user's perspective, 4-7 words, sentence case")
+    description: str = Field(description="One short sentence (max 12 words) explaining why it happens")
+    trend_keyword: str = Field(description="1-3 word everyday Google query people type when they have this problem")
+    quote_id: int = Field(description="Id of the evidence line that best illustrates the problem, 0 if none fits")
+    node_labels: list[str] = Field(description="Exact labels of the map nodes this problem is grounded in")
+
+    @field_validator("title")
+    @classmethod
+    def _title(cls, value: str) -> str:
+        text = _sentence(value, 70).rstrip(".")
+        return text[:1].upper() + text[1:]
+
+    @field_validator("description")
+    @classmethod
+    def _description(cls, value: str) -> str:
+        return _sentence(value, 140)
+
+    @field_validator("trend_keyword")
+    @classmethod
+    def _keyword(cls, value: str) -> str:
+        return " ".join(value.lower().replace("_", " ").split()[:4])[:60]
+
+
+class ProblemSet(BaseModel):
+    """Structured answer with exactly three competing problem statements."""
+
+    problems: list[ProblemDraft] = Field(json_schema_extra={"minItems": 3, "maxItems": 3})
+
+
+class PersonaDraft(BaseModel):
+    """A conceptual persona affected by the chosen problem."""
+
+    name: str = Field(description="Typical first name in the project's language")
+    age: int = Field(description="Age in years between 16 and 75")
+    role: str = Field(description="Life situation or job in 2-4 words, sentence case, no names or parentheses")
+    quote: str = Field(description="What the persona would say about the problem, first person, 1-2 short sentences")
+    problems: list[str] = Field(
+        description="Two concrete sub-problems this persona faces, each 3-7 words",
+        json_schema_extra={"minItems": 2, "maxItems": 2},
+    )
+
+    @field_validator("name", "role")
+    @classmethod
+    def _short(cls, value: str) -> str:
+        text = _sentence(value, 48)
+        return text[:1].upper() + text[1:]
+
+    @field_validator("quote")
+    @classmethod
+    def _quote(cls, value: str) -> str:
+        return _sentence(value, 160)
+
+    @field_validator("age")
+    @classmethod
+    def _age(cls, value: int) -> int:
+        return max(16, min(75, value))
+
+    @field_validator("problems")
+    @classmethod
+    def _problems(cls, value: list[str]) -> list[str]:
+        items = [_sentence(v, 60).rstrip(".") for v in value if v.strip()]
+        return [i[:1].upper() + i[1:] for i in items][:2]
+
+
+class PersonaSet(BaseModel):
+    """Structured answer with exactly three personas."""
+
+    personas: list[PersonaDraft] = Field(json_schema_extra={"minItems": 3, "maxItems": 3})
+
+
+class DefineRequest(BaseModel):
+    """Request body for generating problem statements or personas."""
+
+    project_id: int
+
+
+class PersonaChoice(BaseModel):
+    """Request body for picking a persona's main problem."""
+
+    option: int = Field(ge=0, le=1)
