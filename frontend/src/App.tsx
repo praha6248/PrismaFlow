@@ -3,6 +3,7 @@ import { api } from "./api";
 import { Header } from "./components/Header";
 import { Toast } from "./components/Toast";
 import { DefineView } from "./define/DefineView";
+import { DevelopView } from "./develop/DevelopView";
 import { DiscoverView } from "./discover/DiscoverView";
 import { PhasePlaceholder } from "./components/PhasePlaceholder";
 import { PHASES, type Phase } from "./types";
@@ -107,9 +108,10 @@ export function App() {
             notify={notify}
           />
         )}
-        {(route.phase === "develop" || route.phase === "deliver") && projectId !== null && (
-          <PhasePlaceholder phase={route.phase} />
+        {route.phase === "develop" && projectId !== null && (
+          <DevelopView key={projectId} projectId={projectId} onDone={() => advance("deliver")} notify={notify} />
         )}
+        {route.phase === "deliver" && projectId !== null && <PhasePlaceholder phase={route.phase} />}
         {toast && <Toast message={toast} onClose={() => setToast(null)} />}
       </main>
     </div>

@@ -174,7 +174,7 @@ export function ChoiceBar({
   button = { left: 424.7, top: 8.2, width: 121.7, height: 25.6 },
   tone = "pink",
 }: ChoiceBarProps) {
-  const active = tone === "pink" ? { background: "#fed3f9", color: "#853c77" } : { background: "#e6d8f7", color: "#573476" };
+  const active = tone === "pink" ? { background: "#f783e9", color: "#ffffff" } : { background: "#e6d8f7", color: "#573476" };
   return (
     <div className="pf-fade-up absolute" style={barStyle(frame)}>
       <div className="absolute flex flex-col justify-center" style={{ left: u(14), top: 0, bottom: 0, width: u(400) }}>
@@ -203,7 +203,7 @@ export function ChoiceBar({
           fontSize: u(8),
           background: disabled ? "#ece8f1" : active.background,
           color: disabled ? "#b3a9bd" : active.color,
-          boxShadow: disabled ? "none" : `0 ${u(1)} ${u(4)} rgba(237, 150, 225, 0.25)`,
+          boxShadow: disabled ? "none" : `0 ${u(1.5)} ${u(6)} rgba(240, 110, 220, 0.35)`,
         }}
       >
         {busy ? "Chwileczkę..." : action}

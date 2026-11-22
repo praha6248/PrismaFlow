@@ -160,3 +160,11 @@ button {
   transform: translateY(calc(var(--u) * -8)) scale(0.98);
   pointer-events: none;
 }
+
+.pf-scroll {
+  scrollbar-width: none;
+}
+
+.pf-scroll::-webkit-scrollbar {
+  display: none;
+}
