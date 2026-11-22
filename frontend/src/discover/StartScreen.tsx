@@ -36,7 +36,7 @@ export function StartScreen({ leaving, busy, onSubmit }: Props) {
         className="absolute inset-x-0 text-center font-serif font-normal text-ink"
         style={{ top: `calc(${offset} + var(--u) * 248.5)`, fontSize: "calc(var(--u) * 18.6)", lineHeight: 1 }}
       >
-        What do you want to <span style={{ color: "#ed34d8" }}>create?</span>
+        Co chcesz <span style={{ color: "#ed34d8" }}>stworzyć?</span>
       </h1>
       <form
         onSubmit={submit}

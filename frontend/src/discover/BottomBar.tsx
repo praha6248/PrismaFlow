@@ -129,7 +129,7 @@ export function ProgressContent({ title, text, stage }: ProgressContentProps) {
           style={{
             width: "calc(var(--u) * 4.6)",
             height: "calc(var(--u) * 4.6)",
-            background: "#aa55c3",
+            background: "#f783e9",
             animation: "pf-pulse 1.4s ease-in-out infinite",
           }}
         />
@@ -148,7 +148,7 @@ export function ProgressContent({ title, text, stage }: ProgressContentProps) {
           top: "calc(var(--u) * 32)",
           height: "calc(var(--u) * 2.6)",
           borderRadius: "calc(var(--u) * 2)",
-          background: "#eee5f5",
+          background: "#fbe3f8",
         }}
       >
         <div
@@ -156,7 +156,7 @@ export function ProgressContent({ title, text, stage }: ProgressContentProps) {
           style={{
             width: "33%",
             borderRadius: "calc(var(--u) * 2)",
-            background: "linear-gradient(90deg, #b799e5 0%, #d49ce1 60%, #e9a0df 100%)",
+            background: "linear-gradient(90deg, #fbb3f2 0%, #f783e9 100%)",
             animation: "pf-slide 1.9s cubic-bezier(0.45, 0, 0.35, 1) infinite",
           }}
         />

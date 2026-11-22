@@ -1,4 +1,4 @@
-import type { DefineState, Evidence, Graph, Health, Job, MapNode, Phase, Project, Stage } from "./types";
+import type { DefineState, DevelopState, Evidence, Feature, Priority, Graph, Health, Job, MapNode, Phase, Project, Stage } from "./types";
 
 export class ApiError extends Error {
   constructor(
@@ -61,6 +61,16 @@ export const api = {
   chooseProblem: (problemId: number) => request<DefineState>(`/problems/${problemId}/choose`, { method: "POST" }),
   generatePersonas: (projectId: number) =>
     request<Job>("/define/personas", { method: "POST", body: json({ project_id: projectId }) }),
+  getDevelop: (projectId: number) => request<DevelopState>(`/projects/${projectId}/develop`),
+  generateFeatures: (projectId: number) =>
+    request<Job>("/develop/features", { method: "POST", body: json({ project_id: projectId }) }),
+  addFeature: (projectId: number, title: string, description: string, priority: Priority) =>
+    request<Feature>(`/projects/${projectId}/features`, { method: "POST", body: json({ title, description, priority }) }),
+  updateFeature: (id: number, patch: Partial<Pick<Feature, "title" | "description" | "priority">>) =>
+    request<Feature>(`/features/${id}`, { method: "PATCH", body: json(patch) }),
+  orderFeatures: (projectId: number, items: { id: number; priority: Priority; position: number }[]) =>
+    request<Feature[]>(`/projects/${projectId}/features/order`, { method: "PUT", body: json({ items }) }),
+  deleteFeature: (id: number) => request<void>(`/features/${id}`, { method: "DELETE" }),
   choosePersona: (personaId: number, option: number) =>
     request<DefineState>(`/personas/${personaId}/choose`, { method: "POST", body: json({ option }) }),
 };

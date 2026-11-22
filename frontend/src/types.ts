@@ -133,3 +133,31 @@ export interface DefineState {
   personas: Persona[];
   chosen_problem_id: number | null;
 }
+
+export type Priority = "must" | "should" | "could" | "wont";
+
+export interface Feature {
+  id: number;
+  project_id: number;
+  priority: Priority;
+  position: number;
+  title: string;
+  description: string;
+  keywords: string[];
+  evidence_ids: number[];
+  support: number;
+  pool: number;
+  demand: number;
+  origin: "user" | "ai";
+}
+
+export interface ChosenPersona extends Persona {
+  focus: string;
+}
+
+export interface DevelopState {
+  project: Project;
+  problem: Problem | null;
+  persona: ChosenPersona | null;
+  features: Feature[];
+}

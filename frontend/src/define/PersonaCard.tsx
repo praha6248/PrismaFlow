@@ -70,8 +70,8 @@ export function PersonaCard({ persona, index, selectedOption, onSelect }: Props)
               gap: u(6),
               padding: `0 ${u(7)}`,
               borderRadius: u(7),
-              background: checked ? "#f8effc" : "#f7f3fb",
-              boxShadow: checked ? `inset 0 0 0 ${u(0.8)} #dcb2ea` : "none",
+              background: checked ? "#fef0fc" : "#f7f3fb",
+              boxShadow: checked ? `inset 0 0 0 ${u(0.8)} #f783e9` : "none",
             }}
           >
             <Radio checked={checked} size={8.5} />

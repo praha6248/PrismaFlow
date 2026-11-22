@@ -5,19 +5,31 @@ export const u = (value: number) => `calc(var(--u) * ${value})`;
 
 export const SHADOW = `0 ${u(2)} ${u(10)} rgba(196, 160, 232, 0.28)`;
 
-export function PageTitle({ title, subtitle, top = 114 }: { title: string; subtitle?: ReactNode; top?: number }) {
+export function PageTitle({
+  title,
+  subtitle,
+  top = 114,
+  size = 18.8,
+  gap = 20,
+}: {
+  title: string;
+  subtitle?: ReactNode;
+  top?: number;
+  size?: number;
+  gap?: number;
+}) {
   return (
     <>
       <h2
         className="pf-fade pointer-events-none absolute inset-x-0 text-center font-serif font-normal text-plum"
-        style={{ top: u(top), fontSize: u(18.8), lineHeight: 1 }}
+        style={{ top: u(top), fontSize: u(size), lineHeight: 1 }}
       >
         {title}
       </h2>
       {subtitle && (
         <p
           className="pf-fade pointer-events-none absolute left-1/2 -translate-x-1/2 truncate text-center"
-          style={{ top: u(top + 20), width: u(480), fontSize: u(7.5), lineHeight: 1.2, color: "#7c6d88" }}
+          style={{ top: u(top + gap), width: u(480), fontSize: u(7.5), lineHeight: 1.2, color: "#7c6d88" }}
         >
           {subtitle}
         </p>
@@ -33,11 +45,11 @@ export function Radio({ checked, size = 10 }: { checked: boolean; size?: number 
       style={{
         width: u(size),
         height: u(size),
-        border: `${u(0.9)} solid ${checked ? "#cfa0e4" : "#d9cfe2"}`,
+        border: `${u(0.9)} solid ${checked ? "#f783e9" : "#e4d6ec"}`,
         background: "#ffffff",
       }}
     >
-      {checked && <span className="pf-pop rounded-full" style={{ width: u(size * 0.52), height: u(size * 0.52), background: "linear-gradient(135deg, #c8a5e8 0%, #dca0e2 100%)" }} />}
+      {checked && <span className="pf-pop rounded-full" style={{ width: u(size * 0.52), height: u(size * 0.52), background: "#f783e9" }} />}
     </span>
   );
 }
@@ -80,7 +92,7 @@ export function Card({
           onSelect();
         }
       }}
-      className="pf-fade-up absolute overflow-hidden text-left outline-none transition-[box-shadow,transform] duration-200 focus-visible:ring-2 focus-visible:ring-[#f6a6ec]"
+      className="pf-fade-up absolute overflow-hidden text-left outline-none transition-[box-shadow,transform] duration-200 focus-visible:ring-2 focus-visible:ring-[#f783e9]"
       style={{
         left: u(left + index * (width + gap)),
         top: u(top),
@@ -88,7 +100,7 @@ export function Card({
         height: u(height),
         borderRadius: u(11),
         background: "#fdfcfe",
-        boxShadow: selected ? `0 0 0 ${u(1.2)} #dcb2ea, ${SHADOW}` : SHADOW,
+        boxShadow: selected ? `0 0 0 ${u(1.2)} #f783e9, ${SHADOW}` : SHADOW,
         cursor: onSelect && !disabled ? "pointer" : "default",
         animationDelay: `${index * 70}ms`,
         ...style,
@@ -118,15 +130,24 @@ export function SkeletonCards({ count = 3 }: { count?: number }) {
   );
 }
 
-const BAR_STYLE: CSSProperties = {
-  left: u(41),
-  top: u(379),
-  width: u(557),
-  height: u(42),
+export interface Frame {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+const DEFINE_BAR: Frame = { left: 41, top: 379, width: 557, height: 42 };
+
+const barStyle = (frame: Frame): CSSProperties => ({
+  left: u(frame.left),
+  top: u(frame.top),
+  width: u(frame.width),
+  height: u(frame.height),
   borderRadius: u(10),
   background: "#fdfcfe",
   boxShadow: SHADOW,
-};
+});
 
 interface ChoiceBarProps {
   label?: string;
@@ -136,11 +157,26 @@ interface ChoiceBarProps {
   disabled: boolean;
   busy?: boolean;
   onConfirm: () => void;
+  frame?: Frame;
+  button?: Frame;
+  tone?: "pink" | "lavender";
 }
 
-export function ChoiceBar({ label = "TWÓJ WYBÓR", value, placeholder, action = "Zatwierdź wybór", disabled, busy, onConfirm }: ChoiceBarProps) {
+export function ChoiceBar({
+  label = "TWÓJ WYBÓR",
+  value,
+  placeholder,
+  action = "Zatwierdź wybór",
+  disabled,
+  busy,
+  onConfirm,
+  frame = DEFINE_BAR,
+  button = { left: 424.7, top: 8.2, width: 121.7, height: 25.6 },
+  tone = "pink",
+}: ChoiceBarProps) {
+  const active = tone === "pink" ? { background: "#fed3f9", color: "#853c77" } : { background: "#e6d8f7", color: "#573476" };
   return (
-    <div className="pf-fade-up absolute" style={BAR_STYLE}>
+    <div className="pf-fade-up absolute" style={barStyle(frame)}>
       <div className="absolute flex flex-col justify-center" style={{ left: u(14), top: 0, bottom: 0, width: u(400) }}>
         <span className="tracking-[0.12em] text-haze" style={{ fontSize: u(5.4), lineHeight: 1 }}>
           {label}
@@ -159,14 +195,14 @@ export function ChoiceBar({ label = "TWÓJ WYBÓR", value, placeholder, action =
         disabled={disabled || busy}
         className="absolute transition-[background,color,transform] duration-200 enabled:hover:brightness-[0.98] enabled:active:scale-[0.98]"
         style={{
-          left: u(424.7),
-          top: u(8.2),
-          width: u(121.7),
-          height: u(25.6),
+          left: u(button.left),
+          top: u(button.top),
+          width: u(button.width),
+          height: u(button.height),
           borderRadius: u(8),
           fontSize: u(8),
-          background: disabled ? "#ece8f1" : "#fed3f9",
-          color: disabled ? "#b3a9bd" : "#853c77",
+          background: disabled ? "#ece8f1" : active.background,
+          color: disabled ? "#b3a9bd" : active.color,
           boxShadow: disabled ? "none" : `0 ${u(1)} ${u(4)} rgba(237, 150, 225, 0.25)`,
         }}
       >
@@ -176,9 +212,9 @@ export function ChoiceBar({ label = "TWÓJ WYBÓR", value, placeholder, action =
   );
 }
 
-export function BarProgress({ title, text, stage }: { title: string; text: string; stage: string }) {
+export function BarProgress({ title, text, stage, frame = DEFINE_BAR }: { title: string; text: string; stage: string; frame?: Frame }) {
   return (
-    <div className="pf-fade-up absolute" style={BAR_STYLE}>
+    <div className="pf-fade-up absolute" style={barStyle(frame)}>
       <ProgressContent title={title} text={text} stage={stage} />
     </div>
   );

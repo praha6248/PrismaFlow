@@ -43,7 +43,7 @@ export function Header({ active, reached, onHome, onNavigate }: Props) {
             width: `calc(var(--u) * ${STEP_X[3] - STEP_X[0]})`,
             top: "calc(var(--u) * 80.4)",
             height: "calc(var(--u) * 1.2)",
-            background: "#efe3f5",
+            background: "#fbd0f5",
           }}
         />
         {reached > 0 && (
@@ -54,7 +54,7 @@ export function Header({ active, reached, onHome, onNavigate }: Props) {
               width: `calc(var(--u) * ${STEP_X[reached] - STEP_X[0]})`,
               top: "calc(var(--u) * 80.4)",
               height: "calc(var(--u) * 1.2)",
-              background: "linear-gradient(90deg, #c8a5e8 0%, #dca0e2 100%)",
+              background: "#f783e9",
             }}
           />
         )}
@@ -85,14 +85,14 @@ export function Header({ active, reached, onHome, onNavigate }: Props) {
                   marginTop: "calc(var(--u) * 10.2)",
                   width: "calc(var(--u) * 14)",
                   height: "calc(var(--u) * 14)",
-                  border: `calc(var(--u) * 1) solid ${isActive ? "#e2b3e8" : done ? "#d6a0e3" : "#ecdcf3"}`,
-                  background: isActive ? "#fcf5fd" : done ? "linear-gradient(135deg, #c8a5e8 0%, #dca0e2 100%)" : "#faf7fd",
+                  border: `calc(var(--u) * 1) solid ${isActive ? "#f783e9" : done ? "#f783e9" : "#f9c4f1"}`,
+                  background: isActive ? "#ffffff" : done ? "#f783e9" : "#fff7fd",
                 }}
               >
                 {isActive && (
                   <span
                     className="rounded-full"
-                    style={{ width: "calc(var(--u) * 7.6)", height: "calc(var(--u) * 7.6)", background: "linear-gradient(135deg, #c8a5e8 0%, #dca0e2 100%)" }}
+                    style={{ width: "calc(var(--u) * 7.6)", height: "calc(var(--u) * 7.6)", background: "#f783e9" }}
                   />
                 )}
                 {done && <Check color="#ffffff" strokeWidth={3} style={{ width: "calc(var(--u) * 8)", height: "calc(var(--u) * 8)" }} />}
