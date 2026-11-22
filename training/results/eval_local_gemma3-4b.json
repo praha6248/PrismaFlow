@@ -1,0 +1,5112 @@
+{
+ "model": "local/gemma3-4b",
+ "summary": {
+  "optimize": {
+   "n": 60,
+   "schema_valid": 1.0,
+   "valid_reference": 0.791,
+   "suggestions_per_answer": 3.9,
+   "issues_before": 6.98,
+   "issues_after": 4.58,
+   "issue_reduction": 0.344,
+   "gold_issue_reduction": 0.714,
+   "improved_share": 0.833,
+   "dead_end_fix": 0.278,
+   "fitts_wcag_fix": 0.363,
+   "latency_s": 2.93
+  },
+  "flow": {
+   "n": 18,
+   "schema_valid": 1.0,
+   "structure_ok": 0.222,
+   "goal_reachable": 0.944,
+   "must_coverage": 0.523,
+   "issues": 4.61,
+   "dead_ends": 0.06,
+   "latency_s": 5.78
+  },
+  "quiz": {
+   "n": 26,
+   "accuracy": 0.577
+  }
+ },
+ "optimize": [
+  {
+   "valid": true,
+   "latency": 6.187902204001148,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 12,
+   "issues_after": 7,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 7,
+   "fw_after": 4,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa dostępności przy potwierdzaniu",
+      "reason": "Zwiększenie rozmiaru przycisku 'Potwierdź' dla łatwiejszego naciśnięcia",
+      "op": "resize",
+      "screen": "Potwierdzenie",
+      "element": "Potwierdź",
+      "value": "L"
+     },
+     {
+      "title": "Uproszczenie opcji języka na 'Salon'",
+      "reason": "Zmniejszenie liczby opcji języka na ekranie 'Salon'",
+      "op": "group_options",
+      "screen": "Salon",
+      "element": "Język",
+      "value": "more"
+     },
+     {
+      "title": "Zmiana lokalizacji 'Na skróty' na 'Start'",
+      "reason": "Ułatwienie dostępu do linku 'Na skróty' na ekranie 'Start'",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Na skróty",
+      "value": "center"
+     },
+     {
+      "title": "Zwiększenie rozmiaru 'Udostępnij' na 'Salon'",
+      "reason": "Poprawa dostępności przycisku 'Udostępnij' na ekranie 'Salon'",
+      "op": "resize",
+      "screen": "Salon",
+      "element": "Udostępnij",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.078239375998237,
+   "raw": 4,
+   "resolved": 3,
+   "issues_before": 5,
+   "issues_after": 3,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 2,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa 'Szukaj' na ekranie Start",
+      "reason": "Zwiększenie rozmiaru dla łatwiejszego dotknięcia",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj",
+      "value": "M"
+     },
+     {
+      "title": "Rozwiązanie Hick na ekranie Potwierdzenie",
+      "reason": "Zmniejszenie liczby opcji na ekranie",
+      "op": "remove_element",
+      "screen": "Potwierdzenie",
+      "element": "Historia",
+      "value": "remove"
+     },
+     {
+      "title": "Poprawa 'Pokaż więcej' na Potwierdzeniu",
+      "reason": "Zwiększenie rozmiaru dla łatwiejszego dotknięcia",
+      "op": "resize",
+      "screen": "Potwierdzenie",
+      "element": "Pokaż więcej",
+      "value": "L"
+     },
+     {
+      "title": "Przeniesienie 'Wybierz termin' na ekranie Termin",
+      "reason": "Ułatwienie dostępu do głównej akcji",
+      "op": "move_zone",
+      "screen": "Termin",
+      "element": "Wybierz termin",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.9856131820015435,
+   "raw": 4,
+   "resolved": 3,
+   "issues_before": 9,
+   "issues_after": 7,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 3,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa ścieżki do celu z 'Start'",
+      "reason": "Usuń martwy punkt 'Start' i dodaj 'Salon'",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Dalej",
+      "value": "Salon"
+     },
+     {
+      "title": "Zwiększenie rozmiaru 'Wybierz termin'",
+      "reason": "Poprawa dostępności i redukcja problemu Fitts",
+      "op": "resize",
+      "screen": "Termin",
+      "element": "Wybierz termin",
+      "value": "M"
+     },
+     {
+      "title": "Zmiana pozycji 'Szukaj'",
+      "reason": "Zmniejszenie Hick i poprawa dostępności",
+      "op": "move_zone",
+      "screen": "Potwierdzenie",
+      "element": "Szukaj",
+      "value": "center"
+     },
+     {
+      "title": "Zwiększenie rozmiaru 'Potwierdź'",
+      "reason": "Poprawa dostępności i redukcja problemu Fitts",
+      "op": "resize",
+      "screen": "Potwierdzenie",
+      "element": "Potwierdź",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.2496079550001014,
+   "raw": 4,
+   "resolved": 2,
+   "issues_before": 4,
+   "issues_after": 2,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa Fitts 'Profil' na ekranie Start",
+      "reason": "Zwiększenie rozmiaru linku 'Profil' dla łatwiejszego dotyku",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Profil",
+      "value": "M"
+     },
+     {
+      "title": "Poprawa Fitts 'Język' na ekranie Potwierdzenie",
+      "reason": "Zwiększenie rozmiaru select 'Język' dla łatwiejszego dotyku",
+      "op": "resize",
+      "screen": "Potwierdzenie",
+      "element": "Język",
+      "value": "M"
+     },
+     {
+      "title": "Poprawa Fitts 'Zaproś znajomych' na Potwierdzenie",
+      "reason": "Zmiana lokalizacji przycisku 'Zaproś znajomych' dla lepszego dostępu",
+      "op": "move_zone",
+      "screen": "Potwierdzenie",
+      "element": "Zaproś znajomych",
+      "value": "bottom"
+     },
+     {
+      "title": "Redukcja opcji na ekranie Potwierdzenie",
+      "reason": "Ukrycie dodatkowych opcji za przyciskiem 'Pokaż więcej'",
+      "op": "group_options",
+      "screen": "Potwierdzenie",
+      "element": "Pokaż więcej",
+      "value": "Salon"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.013617135999084,
+   "raw": 4,
+   "resolved": 3,
+   "issues_before": 6,
+   "issues_after": 4,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 5,
+   "fw_after": 4,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar przycisku 'Szukaj'",
+      "reason": "Poprawa dostępności, spełnienie wymogu 44px",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj",
+      "value": "M"
+     },
+     {
+      "title": "Przesuń link 'Na skróty' w dół",
+      "reason": "Ułatwienie dostępu, redukcja Hick overload",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Na skróty",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmień rozmiar przełącznika 'Tryb ciemny'",
+      "reason": "Poprawa dostępności, ułatwienie interakcji",
+      "op": "resize",
+      "screen": "Salon",
+      "element": "Tryb ciemny",
+      "value": "L"
+     },
+     {
+      "title": "Zmień rozmiar przycisku 'Wybierz usługę'",
+      "reason": "Poprawa dostępności, spełnienie wymogu 44px",
+      "op": "resize",
+      "screen": "Salon",
+      "element": "Wybierz usługę",
+      "value": "M"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.9421317310007,
+   "raw": 4,
+   "resolved": 3,
+   "issues_before": 6,
+   "issues_after": 5,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 4,
+   "fw_after": 4,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar przycisku 'Szukaj'",
+      "reason": "Poprawa dostępności i łatwości interakcji",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj",
+      "value": "M"
+     },
+     {
+      "title": "Przesuń link 'Na skróty' w dół",
+      "reason": "Ułatwienie dostępu do popularnej opcji",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Na skróty",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmień rozmiar 'Tagi' na Termin",
+      "reason": "Poprawa widoczności i łatwości dotknięcia",
+      "op": "resize",
+      "screen": "Termin",
+      "element": "Tagi",
+      "value": "M"
+     },
+     {
+      "title": "Zmień rozmiar 'Tryb ciemny' na Potwierdzenie",
+      "reason": "Poprawa widoczności i łatwości dotknięcia",
+      "op": "resize",
+      "screen": "Potwierdzenie",
+      "element": "Tryb ciemny",
+      "value": "M"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.9380659709968313,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 5,
+   "issues_after": 0,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar przycisku 'Szukaj'",
+      "reason": "Poprawa dostępności i łatwości interakcji",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj",
+      "value": "L"
+     },
+     {
+      "title": "Przesuń 'Wybierz usługę' w dół",
+      "reason": "Zmniejszenie obciążenia poznawczego i poprawa dostępności",
+      "op": "move_zone",
+      "screen": "Salon",
+      "element": "Wybierz usługę",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmień rozmiar przycisku 'Potwierdź'",
+      "reason": "Zwiększenie rozmiaru poprawia użyteczność",
+      "op": "resize",
+      "screen": "Potwierdzenie",
+      "element": "Potwierdź",
+      "value": "L"
+     },
+     {
+      "title": "Usuń listę 'Polecane'",
+      "reason": "Zmniejszenie złożoności i poprawa wydajności",
+      "op": "remove_element",
+      "screen": "Potwierdzenie",
+      "element": "Polecane",
+      "value": ""
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.2903241429994523,
+   "raw": 3,
+   "resolved": 2,
+   "issues_before": 2,
+   "issues_after": 2,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 2,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar przycisku 'Potwierdź'",
+      "reason": "Poprawa dostępności, redukcja problemu Fitts",
+      "op": "resize",
+      "screen": "Potwierdzenie",
+      "element": "Potwierdź",
+      "value": "S"
+     },
+     {
+      "title": "Przesuń 'Pokaż więcej' w dół",
+      "reason": "Zmniejszenie Fitts, redukcja Hick overload",
+      "op": "move_zone",
+      "screen": "Potwierdzenie",
+      "element": "Pokaż więcej",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmień rozmiar przycisku 'Szukaj'",
+      "reason": "Poprawa dostępności, redukcja Hick overload",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj",
+      "value": "M"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.307212542000343,
+   "raw": 3,
+   "resolved": 3,
+   "issues_before": 3,
+   "issues_after": 2,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar przycisku 'Potwierdź'",
+      "reason": "Poprawa dostępności, redukcja problemu Fitts",
+      "op": "resize",
+      "screen": "Potwierdzenie",
+      "element": "Potwierdź",
+      "value": "L"
+     },
+     {
+      "title": "Zwiększ rozmiar przycisku 'Szukaj'",
+      "reason": "Zgodność z WCAG, poprawa użyteczności",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj",
+      "value": "L"
+     },
+     {
+      "title": "Przesuń 'Wybierz termin' w górę",
+      "reason": "Redukcja kolizji, poprawa dostępności",
+      "op": "move_zone",
+      "screen": "Termin",
+      "element": "Wybierz termin",
+      "value": "top"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.0573278390002088,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 5,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 3,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zmniejsz opcje 'Tagi' na ekranie 'Start'",
+      "reason": "Zmniejszenie liczby opcji redukuje Hick overload",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Tagi",
+      "value": "S"
+     },
+     {
+      "title": "Zmodyfikuj rozmiar 'Szukaj' na 'Start'",
+      "reason": "Zwiększenie rozmiaru poprawia dostępność dotykową",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj",
+      "value": "M"
+     },
+     {
+      "title": "Przenieś 'Profil' na dolną część ekranu 'Termin'",
+      "reason": "Poprawa dostępności i redukcja Hick overload",
+      "op": "move_zone",
+      "screen": "Termin",
+      "element": "Profil",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmodyfikuj rozmiar 'Potwierdź' na ekranie 'Potwierdzenie'",
+      "reason": "Zwiększenie rozmiaru poprawia dostępność dotykową",
+      "op": "resize",
+      "screen": "Potwierdzenie",
+      "element": "Potwierdź",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.0300472130002163,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 6,
+   "issues_after": 2,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa dostępności przy 'Zacznij'",
+      "reason": "Zmniejszenie rozmiaru przycisku 'Zacznij' dla dostępności",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "M"
+     },
+     {
+      "title": "Uproszczenie ekranu 'Start'",
+      "reason": "Redukcja opcji dla zmniejszenia Hick overload",
+      "op": "remove_element",
+      "screen": "Start",
+      "element": "Filtry",
+      "value": "remove"
+     },
+     {
+      "title": "Poprawa lokalizacji przycisku 'Udostępnij'",
+      "reason": "Zwiększenie widoczności przycisku 'Udostępnij' dla łatwiejszego dotknięcia",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Udostępnij",
+      "value": "bottom"
+     },
+     {
+      "title": "Dodanie przejścia z ekranu 'Pomiar'",
+      "reason": "Ułatwienie nawigacji po nieuchwytnym raporcie",
+      "op": "add_transition",
+      "screen": "Pomiar",
+      "element": "Oceń aplikację",
+      "value": "Raport"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.043240645998594,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 6,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 3,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa 'Zacznij' i 'Zaproś znajomych'",
+      "reason": "Zmniejszenie Hicka i dead-end 'Pomiar'",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "center"
+     },
+     {
+      "title": "Zwiększenie 'Zaproś znajomych' i 'Zacznij'",
+      "reason": "Poprawa Fitts problemu i dostępności 'Zacznij'",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zaproś znajomych",
+      "value": "M"
+     },
+     {
+      "title": "Uproszczenie 'Tagi' na 'Start'",
+      "reason": "Zmniejszenie Hicka i poprawa przejrzystości",
+      "op": "remove_element",
+      "screen": "Start",
+      "element": "Tagi",
+      "value": ""
+     },
+     {
+      "title": "Zwiększenie 'Język' na 'Pomiar'",
+      "reason": "Poprawa Fitts problemu i dostępności 'Język'",
+      "op": "resize",
+      "screen": "Pomiar",
+      "element": "Język",
+      "value": "M"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.081790505999379,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 8,
+   "issues_after": 4,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar 'Pomiń'",
+      "reason": "Poprawa dostępności, przestrzeń dotykowa powyżej 44px",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Pomiń",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmniejsz opcje w 'Dziennik'",
+      "reason": "Zmniejszenie Hicka, poprawa szybkości interakcji",
+      "op": "remove_element",
+      "screen": "Dziennik",
+      "element": "Tagi",
+      "value": "remove"
+     },
+     {
+      "title": "Zmodyfikuj rozmiar 'Zacznij'",
+      "reason": "Poprawa Fitts, łatwiejsze naciśnięcie przycisku",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "L"
+     },
+     {
+      "title": "Przenieś 'Ustawienia' w dół",
+      "reason": "Poprawa Fitts, łatwiejszy dostęp do opcji",
+      "op": "move_zone",
+      "screen": "Pomiar",
+      "element": "Ustawienia",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.9616873740014853,
+   "raw": 4,
+   "resolved": 3,
+   "issues_before": 6,
+   "issues_after": 3,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar 'Dodaj pomiar'",
+      "reason": "Poprawa dostępności i redukcja Fitts problemu",
+      "op": "resize",
+      "screen": "Pomiar",
+      "element": "Dodaj pomiar",
+      "value": "M"
+     },
+     {
+      "title": "Przesuń 'Wyślij raport' w dół",
+      "reason": "Ułatwienie dotyku i poprawa ergonomii",
+      "op": "move_zone",
+      "screen": "Raport",
+      "element": "Wyślij raport",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmień rozmiar 'Tryb ciemny'",
+      "reason": "Poprawa dostępności i redukcja Fitts problemu",
+      "op": "resize",
+      "screen": "Pomiar",
+      "element": "Tryb ciemny",
+      "value": "L"
+     },
+     {
+      "title": "Zmień rozmiar 'Zaproś znajomych'",
+      "reason": "Poprawa dostępności i redukcja Fitts problemu",
+      "op": "resize",
+      "screen": "Pomiar",
+      "element": "Zaproś znajomych",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.96716183999888,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 8,
+   "issues_after": 6,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 6,
+   "fw_after": 5,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar 'Pomiń'",
+      "reason": "Poprawa dostępności, spełnienie wymogu 44px",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Pomiń",
+      "value": "L"
+     },
+     {
+      "title": "Przemieszcz rozmiar 'Zacznij'",
+      "reason": "Ułatwienie dotyku, poprawa ergonomii",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "center"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Dodaj pomiar'",
+      "reason": "Poprawa dostępności, łatwiejsze dotknięcie",
+      "op": "resize",
+      "screen": "Pomiar",
+      "element": "Dodaj pomiar",
+      "value": "M"
+     },
+     {
+      "title": "Przemieszcz rozmiar 'Pokaż dziennik'",
+      "reason": "Poprawa dostępności, łatwiejsze dotknięcie",
+      "op": "move_zone",
+      "screen": "Dziennik",
+      "element": "Pokaż dziennik",
+      "value": "center"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.098562375998881,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 8,
+   "issues_after": 6,
+   "dead_before": 2,
+   "dead_after": 2,
+   "fw_before": 3,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa dead-endu na ekranie 'Start'",
+      "reason": "Użytkownik utknął bez możliwości kontynuacji",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Pomoc",
+      "value": "center"
+     },
+     {
+      "title": "Zwiększenie rozmiaru przycisku 'Wyślij raport'",
+      "reason": "Mały rozmiar utrudnia łatwe naciśnięcie",
+      "op": "resize",
+      "screen": "Raport",
+      "element": "Wyślij raport",
+      "value": "M"
+     },
+     {
+      "title": "Zwiększenie rozmiaru przycisku 'Pokaż dziennik'",
+      "reason": "Mały rozmiar utrudnia łatwe naciśnięcie",
+      "op": "resize",
+      "screen": "Dziennik",
+      "element": "Pokaż dziennik",
+      "value": "L"
+     },
+     {
+      "title": "Zmiana lokalizacji linku 'Oceń aplikację'",
+      "reason": "Zbyt nisko, utrudnia łatwe znalezienie",
+      "op": "move_zone",
+      "screen": "Dziennik",
+      "element": "Oceń aplikację",
+      "value": "center"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.153265148997889,
+   "raw": 4,
+   "resolved": 1,
+   "issues_before": 11,
+   "issues_after": 9,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 6,
+   "fw_after": 5,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar przycisku 'Zacznij'",
+      "reason": "Poprawa dostępności, spełnienie wymogu WCAG",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "L"
+     },
+     {
+      "title": "Przesuń 'Język' do górnej części ekranu",
+      "reason": "Zmniejszenie odległości dotyku, poprawa użyteczności",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Język",
+      "value": "top"
+     },
+     {
+      "title": "Przesuń 'Szukaj' do górnej części ekranu",
+      "reason": "Zmniejszenie odległości dotyku, poprawa użyteczności",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Szukaj",
+      "value": "top"
+     },
+     {
+      "title": "Przesuń 'Ulubione' do górnej części ekranu",
+      "reason": "Zmniejszenie odległości dotyku, poprawa użyteczności",
+      "op": "move_zone",
+      "screen": "Dziennik",
+      "element": "Ulubione",
+      "value": "top"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.907716296002036,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 3,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 4,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zmiana rozmiaru 'Zacznij'",
+      "reason": "Zwiększenie rozmiaru 'Zacznij' poprawi dostępność",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "L"
+     },
+     {
+      "title": "Zmiana lokalizacji 'Regulamin'",
+      "reason": "Przesunięcie 'Regulamin' poprawi łatwość znalezienia",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Regulamin",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmiana rozmiaru 'Pokaż więcej'",
+      "reason": "Zwiększenie rozmiaru 'Pokaż więcej' poprawi użyteczność",
+      "op": "resize",
+      "screen": "Dziennik",
+      "element": "Pokaż więcej",
+      "value": "M"
+     },
+     {
+      "title": "Zmiana rozmiaru 'Pomoc'",
+      "reason": "Zwiększenie rozmiaru 'Pomoc' poprawi dostępność",
+      "op": "resize",
+      "screen": "Raport",
+      "element": "Pomoc",
+      "value": "M"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.9159560189982585,
+   "raw": 4,
+   "resolved": 2,
+   "issues_before": 4,
+   "issues_after": 2,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zmiana rozmiaru przycisku 'Pokaż dziennik'",
+      "reason": "Poprawa Fitts problemu i dostępności interfejsu",
+      "op": "resize",
+      "screen": "Dziennik",
+      "element": "Pokaż dziennik",
+      "value": "M"
+     },
+     {
+      "title": "Zmiana położenia przycisku 'Ustawienia'",
+      "reason": "Poprawa Fitts problemu i dostępności interfejsu",
+      "op": "move_zone",
+      "screen": "Pomiar",
+      "element": "Ustawienia",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmiana rozmiaru przycisku 'Udostępnij'",
+      "reason": "Poprawa Fitts problemu i dostępności interfejsu",
+      "op": "resize",
+      "screen": "Pomiar",
+      "element": "Udostępnij",
+      "value": "M"
+     },
+     {
+      "title": "Zmiana rozmiaru przycisku 'Zacznij'",
+      "reason": "Poprawa dostępności interfejsu i redukcja Hick overload",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.098006260999682,
+   "raw": 4,
+   "resolved": 3,
+   "issues_before": 15,
+   "issues_after": 11,
+   "dead_before": 2,
+   "dead_after": 1,
+   "fw_before": 6,
+   "fw_after": 4,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa nawigacji po 'Start'",
+      "reason": "Usuń martwy punkt, dodaj 'Dalej' na ekranie 'Pomiar'",
+      "op": "add_transition",
+      "screen": "Start",
+      "element": "Dalej",
+      "value": "Pomiar"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Tagi' na 'Pomiar'",
+      "reason": "Poprawa Fitts problem, zwiększ rozmiar elementu",
+      "op": "resize",
+      "screen": "Pomiar",
+      "element": "Tagi",
+      "value": "L"
+     },
+     {
+      "title": "Przenieś 'Powiadomienia' na ekran 'Raport'",
+      "reason": "Poprawa Fitts problem, zmiana lokalizacji elementu",
+      "op": "move_zone",
+      "screen": "Raport",
+      "element": "Powiadomienia",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmniejsz opcje na ekranie 'Pomiar'",
+      "reason": "Zmniejszenie Hick overload, redukcja liczby opcji",
+      "op": "remove_element",
+      "screen": "Pomiar",
+      "element": "Pomoc",
+      "value": ""
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.994450558002427,
+   "raw": 4,
+   "resolved": 2,
+   "issues_before": 6,
+   "issues_after": 3,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zmiana rozmiaru przycisku 'Zacznij'",
+      "reason": "Zwiększenie rozmiaru poprawi dostępność dotykową",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "L"
+     },
+     {
+      "title": "Przesunięcie 'Język' w górę",
+      "reason": "Zmniejszy odległość dotykową i poprawi użyteczność",
+      "op": "move_zone",
+      "screen": "Akcja",
+      "element": "Język",
+      "value": "top"
+     },
+     {
+      "title": "Zmiana rozmiaru 'Potwierdź udział'",
+      "reason": "Zwiększenie rozmiaru poprawi dostępność dotykową",
+      "op": "resize",
+      "screen": "Zgłoszenie",
+      "element": "Potwierdź udział",
+      "value": "L"
+     },
+     {
+      "title": "Dodanie przejścia z 'Akcja'",
+      "reason": "Usuwa martwy punkt i zapewnia płynność",
+      "op": "add_transition",
+      "screen": "Akcja",
+      "element": "Usuń",
+      "value": "Zgłoszenie"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.102996126999642,
+   "raw": 4,
+   "resolved": 3,
+   "issues_before": 9,
+   "issues_after": 7,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 5,
+   "fw_after": 4,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar przycisku 'Zacznij'",
+      "reason": "Poprawa dostępności, spełnienie wymogu 44px",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "L"
+     },
+     {
+      "title": "Przenieś 'Przeglądaj' do środka ekranu",
+      "reason": "Zmniejszenie obciążenia poznawczego i poprawa użyteczności",
+      "op": "move_zone",
+      "screen": "Akcje",
+      "element": "Przeglądaj",
+      "value": "center"
+     },
+     {
+      "title": "Zredukuj opcje w 'Zgłoszeniu'",
+      "reason": "Zmniejszenie Hick overload i poprawa szybkości",
+      "op": "group_options",
+      "screen": "Zgłoszenie",
+      "element": "Filtry",
+      "value": "more"
+     },
+     {
+      "title": "Zmień rozmiar 'Filtry' na Akcja",
+      "reason": "Poprawa dostępności i łatwości interakcji",
+      "op": "resize",
+      "screen": "Akcja",
+      "element": "Filtry",
+      "value": "M"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.9647533650022524,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 9,
+   "issues_after": 1,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa nawigacji po 'Akcjach'",
+      "reason": "Usuń martwy punkt, zapewnij dostęp do celu",
+      "op": "add_transition",
+      "screen": "Akcje",
+      "element": "Pokaż więcej",
+      "value": "Akcja"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Zacznij'",
+      "reason": "Poprawa dostępności, łatwiejsze dotknięcie przycisku",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "L"
+     },
+     {
+      "title": "Zmiana lokalizacji 'Udostępnij'",
+      "reason": "Zmniejszenie obciążenia poznawczego, poprawa nawigacji",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Udostępnij",
+      "value": "bottom"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Zgłoś się'",
+      "reason": "Poprawa dostępności, łatwiejsze dotknięcie przycisku",
+      "op": "resize",
+      "screen": "Akcja",
+      "element": "Zgłoś się",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.9396023439985584,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 4,
+   "issues_after": 3,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar 'Zacznij'",
+      "reason": "Poprawa dostępności, spełnienie wymogu 44px",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "M"
+     },
+     {
+      "title": "Przenieś 'Zaproś znajomych'",
+      "reason": "Poprawa Fitts, redukcja obciążenia Hicka",
+      "op": "move_zone",
+      "screen": "Akcje",
+      "element": "Zaproś znajomych",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmień rozmiar 'Zgłoś się'",
+      "reason": "Poprawa dostępności, spełnienie wymogu 44px",
+      "op": "resize",
+      "screen": "Akcja",
+      "element": "Zgłoś się",
+      "value": "M"
+     },
+     {
+      "title": "Dodaj transition do 'Ulubione'",
+      "reason": "Eliminacja martwego ekranu, poprawa nawigacji",
+      "op": "add_transition",
+      "screen": "Akcja",
+      "element": "Ulubione",
+      "value": "Zgłoszenie"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.2075917439979094,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 5,
+   "issues_after": 2,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar 'Zacznij' na ekranie 'Start'",
+      "reason": "Poprawa dostępności, redukcja Hick overload",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "L"
+     },
+     {
+      "title": "Przesuń 'Kategorie' w dół na ekranie 'Start'",
+      "reason": "Ułatwienie dotyku, poprawa Fitts problem",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Kategorie",
+      "value": "bottom"
+     },
+     {
+      "title": "Dodaj transition z ekranu 'Akcje' do 'Zgłoszenie'",
+      "reason": "Zmniejszenie długości ścieżki, poprawa nawigacji",
+      "op": "add_transition",
+      "screen": "Akcje",
+      "element": "Zgłoś się",
+      "value": "Zgłoszenie"
+     },
+     {
+      "title": "Zmień rozmiar 'Potwierdź udział' na ekranie 'Zgłoszenie'",
+      "reason": "Poprawa dostępności, redukcja Fitts problem",
+      "op": "resize",
+      "screen": "Zgłoszenie",
+      "element": "Potwierdź udział",
+      "value": "M"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.9853080680004496,
+   "raw": 4,
+   "resolved": 3,
+   "issues_before": 6,
+   "issues_after": 3,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zmiana rozmiaru przycisku 'Zacznij'",
+      "reason": "Zwiększenie rozmiaru poprawi dostępność dotykową",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "M"
+     },
+     {
+      "title": "Przeniesienie listy 'Kategorie'",
+      "reason": "Ułatwienie dotyku, poprawa ergonomii ekranu",
+      "op": "move_zone",
+      "screen": "Akcje",
+      "element": "Kategorie",
+      "value": "center"
+     },
+     {
+      "title": "Dodanie przejścia z 'Akcje'",
+      "reason": "Unikanie martwego punktu, poprawa nawigacji",
+      "op": "add_transition",
+      "screen": "Akcje",
+      "element": "Zgłoszenie",
+      "value": "Zgłoszenie"
+     },
+     {
+      "title": "Zmiana rozmiaru przycisku 'Potwierdź udział'",
+      "reason": "Zwiększenie rozmiaru poprawi dostępność dotykową",
+      "op": "resize",
+      "screen": "Zgłoszenie",
+      "element": "Potwierdź udział",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.9267352979986754,
+   "raw": 4,
+   "resolved": 2,
+   "issues_before": 5,
+   "issues_after": 4,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 4,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar przycisku 'Zacznij'",
+      "reason": "Poprawa dostępności i łatwości interakcji",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "M"
+     },
+     {
+      "title": "Przesuń link 'Ulubione' w dół",
+      "reason": "Ułatwienie dostępu do popularnej funkcji",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Ulubione",
+      "value": "bottom"
+     },
+     {
+      "title": "Zwiększ rozmiar przycisku 'Przeglądaj'",
+      "reason": "Poprawa widoczności i łatwości interakcji",
+      "op": "resize",
+      "screen": "Akcje",
+      "element": "Przeglądaj",
+      "value": "L"
+     },
+     {
+      "title": "Zmień rozmiar linku 'Na skróty'",
+      "reason": "Zwiększenie dostępności i poprawa interakcji",
+      "op": "resize",
+      "screen": "Akcje",
+      "element": "Na skróty",
+      "value": "S"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.930455014000472,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 9,
+   "issues_after": 3,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa nawigacji w 'Akcje'",
+      "reason": "Eliminacja martwego punktu, redukcja Hicka",
+      "op": "move_zone",
+      "screen": "Akcje",
+      "element": "Tryb ciemny",
+      "value": "center"
+     },
+     {
+      "title": "Zwiększenie rozmiaru 'Zgłoś się'",
+      "reason": "Poprawa dostępności, zwiększenie dokładności dotyku",
+      "op": "resize",
+      "screen": "Akcja",
+      "element": "Zgłoś się",
+      "value": "L"
+     },
+     {
+      "title": "Rozwiązanie deadendu 'Akcje'",
+      "reason": "Umożliwienie przejścia do kolejnego kroku",
+      "op": "add_transition",
+      "screen": "Akcje",
+      "element": "Polecane",
+      "value": "Akcja"
+     },
+     {
+      "title": "Poprawa lokalizacji 'Historia'",
+      "reason": "Zwiększenie widoczności, poprawa Fitta",
+      "op": "move_zone",
+      "screen": "Zgłoszenie",
+      "element": "Historia",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.2635607679985696,
+   "raw": 3,
+   "resolved": 3,
+   "issues_before": 3,
+   "issues_after": 0,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zmiana rozmiaru przycisku 'Zacznij'",
+      "reason": "Poprawa dostępności i łatwości interakcji",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "L"
+     },
+     {
+      "title": "Zmiana pozycji przycisku 'Zaproś znajomych'",
+      "reason": "Ułatwienie dotyku i poprawa ergonomii",
+      "op": "move_zone",
+      "screen": "Akcje",
+      "element": "Zaproś znajomych",
+      "value": "center"
+     },
+     {
+      "title": "Zmiana rozmiaru linku 'Regulamin'",
+      "reason": "Poprawa widoczności i dostępności elementu",
+      "op": "resize",
+      "screen": "Zgłoszenie",
+      "element": "Regulamin",
+      "value": "M"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.185251052997046,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 10,
+   "issues_after": 5,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 6,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa 'Zacznij' na ekranie Start",
+      "reason": "Zmniejszenie rozmiaru przycisku 'Zacznij' dla łatwiejszego naciśnięcia",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "L"
+     },
+     {
+      "title": "Rozwiązanie deadendu na ekranie Akcje",
+      "reason": "Dodanie przejścia z ekranu Akcje do 'Zgłoszenia'",
+      "op": "add_transition",
+      "screen": "Akcje",
+      "element": "Zacznij",
+      "value": "Zgłoszenie"
+     },
+     {
+      "title": "Zmiana lokalizacji 'Notatki' na ekranie Akcje",
+      "reason": "Zwiększenie widoczności poprzez zmianę lokalizacji",
+      "op": "move_zone",
+      "screen": "Akcje",
+      "element": "Notatki",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmiana rozmiaru 'Pomiń' na ekranie Start",
+      "reason": "Zwiększenie rozmiaru linku 'Pomiń' dla łatwiejszego dotknięcia",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Pomiń",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.917569913002808,
+   "raw": 4,
+   "resolved": 3,
+   "issues_before": 9,
+   "issues_after": 8,
+   "dead_before": 2,
+   "dead_after": 2,
+   "fw_before": 4,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar przycisku 'Ustaw cel'",
+      "reason": "Poprawa dostępności, redukcja Hick overload",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Ustaw cel",
+      "value": "L"
+     },
+     {
+      "title": "Przenieś 'Ulubione' link do góry",
+      "reason": "Zmniejszenie obciążenia poznawczego, poprawa nawigacji",
+      "op": "move_zone",
+      "screen": "Plan",
+      "element": "Ulubione",
+      "value": "top"
+     },
+     {
+      "title": "Zmień tekst przycisku 'Zobacz analizę'",
+      "reason": "Zmniejszenie Hick overload, jasne wskazanie celu",
+      "op": "add_transition",
+      "screen": "Analiza",
+      "element": "Zobacz analizę",
+      "value": "Analiza"
+     },
+     {
+      "title": "Zmień rozmiar 'Historia' listy",
+      "reason": "Poprawa Fitts problem, łatwiejsze dotykanie",
+      "op": "resize",
+      "screen": "Bieg",
+      "element": "Historia",
+      "value": "M"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.016512900001544,
+   "raw": 4,
+   "resolved": 3,
+   "issues_before": 9,
+   "issues_after": 5,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 5,
+   "fw_after": 4,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa dostępności 'Pomiń' i 'Ustaw cel'",
+      "reason": "Zwiększenie rozmiaru touch targetów dla łatwiejszego naciśnięcia",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Pomiń",
+      "value": "M"
+     },
+     {
+      "title": "Redukcja opcji na ekranie 'Start'",
+      "reason": "Zmniejszenie Hick overload dla szybszego wyboru",
+      "op": "remove_element",
+      "screen": "Start",
+      "element": "Profil",
+      "value": ""
+     },
+     {
+      "title": "Przeniesienie 'Ustaw cel' do środka ekranu",
+      "reason": "Poprawa dostępności i redukcja Fitts problemu",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Ustaw cel",
+      "value": "center"
+     },
+     {
+      "title": "Dodanie transition do 'Plan'",
+      "reason": "Eliminacja martwego ekranu i poprawa nawigacji",
+      "op": "add_transition",
+      "screen": "Plan",
+      "element": "Ustawienia",
+      "value": "Plan"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.9405649690015707,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 8,
+   "issues_after": 6,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 5,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar 'Ustaw cel'",
+      "reason": "Poprawa dostępności, redukcja problemu Fitts",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Ustaw cel",
+      "value": "M"
+     },
+     {
+      "title": "Przesuń 'Tryb ciemny' w dół",
+      "reason": "Zmniejszenie obciążenia Hicka, poprawa dostępności",
+      "op": "move_zone",
+      "screen": "Plan",
+      "element": "Tryb ciemny",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń 'Kategorie' w dół",
+      "reason": "Zmniejszenie obciążenia Hicka, poprawa dostępności",
+      "op": "move_zone",
+      "screen": "Plan",
+      "element": "Kategorie",
+      "value": "bottom"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Notatki'",
+      "reason": "Poprawa dostępności, redukcja problemu Fitts",
+      "op": "resize",
+      "screen": "Bieg",
+      "element": "Notatki",
+      "value": "M"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.9872171210008673,
+   "raw": 4,
+   "resolved": 2,
+   "issues_before": 6,
+   "issues_after": 5,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 3,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar 'Ulubione' na ekranie Start",
+      "reason": "Poprawa dostępności, redukcja problemu Fitts",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Ulubione",
+      "value": "M"
+     },
+     {
+      "title": "Przesuń 'Start biegu' w dół na ekranie Bieg",
+      "reason": "Poprawa dostępności, redukcja problemu Fitts",
+      "op": "move_zone",
+      "screen": "Bieg",
+      "element": "Start biegu",
+      "value": "bottom"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Zobacz analizę' na ekranie Analiza",
+      "reason": "Poprawa dostępności, redukcja problemu Fitts",
+      "op": "resize",
+      "screen": "Analiza",
+      "element": "Zobacz analizę",
+      "value": "M"
+     },
+     {
+      "title": "Dodaj przejście z ekranu 'Analiza' do 'Start'",
+      "reason": "Eliminacja martwego punktu, poprawa nawigacji",
+      "op": "add_transition",
+      "screen": "Analiza",
+      "element": "Zobacz analizę",
+      "value": "Start"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.9589898660015024,
+   "raw": 4,
+   "resolved": 3,
+   "issues_before": 7,
+   "issues_after": 3,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar przycisku 'Pomiń'",
+      "reason": "Poprawa dostępności, redukcja Hick overload",
+      "op": "remove_element",
+      "screen": "Start",
+      "element": "Pomiń",
+      "value": "Pomiń"
+     },
+     {
+      "title": "Zmiana rozmieszczenia przycisku 'Ustaw cel'",
+      "reason": "Poprawa Fitts problem, łatwiejszy dostęp",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Ustaw cel",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmniejsz liczbę opcji na ekranie 'Plan'",
+      "reason": "Redukcja Hick overload, poprawa szybkości",
+      "op": "group_options",
+      "screen": "Plan",
+      "element": "Historia",
+      "value": "more"
+     },
+     {
+      "title": "Zmiana rozmiaru przycisku 'Zobacz analizę'",
+      "reason": "Poprawa Fitts problem, łatwiejszy dostęp",
+      "op": "resize",
+      "screen": "Analiza",
+      "element": "Zobacz analizę",
+      "value": "M"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.3154376540005615,
+   "raw": 3,
+   "resolved": 2,
+   "issues_before": 1,
+   "issues_after": 1,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 1,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar przycisku 'Pokaż plan'",
+      "reason": "Poprawa dostępności i redukcja problemu dotykowego",
+      "op": "resize",
+      "screen": "Plan",
+      "element": "Pokaż plan",
+      "value": "M"
+     },
+     {
+      "title": "Przesuń przycisk 'Ustaw cel' w górę",
+      "reason": "Zmniejszenie zakłóceń i poprawa widoczności",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Ustaw cel",
+      "value": "top"
+     },
+     {
+      "title": "Dodaj przejście z ekranu 'Ustaw cel'",
+      "reason": "Unikanie martwego punktu i poprawa nawigacji",
+      "op": "add_transition",
+      "screen": "Start",
+      "element": "Ustaw cel",
+      "value": "Plan"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.051557030998083,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 10,
+   "issues_after": 5,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 6,
+   "fw_after": 4,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa ścieżki do celu - Start",
+      "reason": "Usuń martwy punkt i kieruj użytkownika",
+      "op": "add_transition",
+      "screen": "Start",
+      "element": "Kategorie",
+      "value": "Plan"
+     },
+     {
+      "title": "Rozmiar 'Pokaż plan' - Plan",
+      "reason": "Zwiększ rozmiar przycisku dla łatwiejszego dotyku",
+      "op": "resize",
+      "screen": "Plan",
+      "element": "Pokaż plan",
+      "value": "L"
+     },
+     {
+      "title": "Przeniesienie 'Ulubione' - Plan",
+      "reason": "Zwiększ widoczność linku 'Ulubione' dla użytkownika",
+      "op": "move_zone",
+      "screen": "Plan",
+      "element": "Ulubione",
+      "value": "bottom"
+     },
+     {
+      "title": "Rozmiar 'Zaproś znajomych' - Analiza",
+      "reason": "Zwiększ rozmiar przycisku dla łatwiejszego dotyku",
+      "op": "resize",
+      "screen": "Analiza",
+      "element": "Zaproś znajomych",
+      "value": "M"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.1198131580022164,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 3,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 5,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zmniejsz rozmiar przycisku 'Start biegu'",
+      "reason": "Zapewnia wystarczający rozmiar dotyku dla użytkownika",
+      "op": "resize",
+      "screen": "Bieg",
+      "element": "Start biegu",
+      "value": "L"
+     },
+     {
+      "title": "Przesuń 'Filtry' w dół na ekranie Start",
+      "reason": "Poprawia dostępność i zmniejsza problem Fitts",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Filtry",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmień rozmiar 'Tryb ciemny' na ekranie Analiza",
+      "reason": "Zwiększa rozmiar, poprawiając dostępność i redukując Hick",
+      "op": "resize",
+      "screen": "Analiza",
+      "element": "Tryb ciemny",
+      "value": "L"
+     },
+     {
+      "title": "Zmień rozmiar 'Szukaj' na ekranie Analiza",
+      "reason": "Zwiększa rozmiar, poprawiając dostępność i redukując Hick",
+      "op": "resize",
+      "screen": "Analiza",
+      "element": "Szukaj",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.8528567439971084,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 6,
+   "issues_after": 6,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 2,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zmniejsz opcje 'Tryb ciemny'",
+      "reason": "Zmniejszenie Hick overload na ekranie 'Start'",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Tryb ciemny",
+      "value": "S"
+     },
+     {
+      "title": "Przenieś 'Ustaw cel' w górę",
+      "reason": "Poprawa dostępności i redukcja Hick overload",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Ustaw cel",
+      "value": "top"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Zobacz analizę'",
+      "reason": "Poprawa Fitts problem i łatwości interakcji",
+      "op": "resize",
+      "screen": "Analiza",
+      "element": "Zobacz analizę",
+      "value": "M"
+     },
+     {
+      "title": "Dodaj przejście z 'Bieg'",
+      "reason": "Eliminacja martwego punktu i poprawa nawigacji",
+      "op": "add_transition",
+      "screen": "Bieg",
+      "element": "Start biegu",
+      "value": "Analiza"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.2654164619998483,
+   "raw": 3,
+   "resolved": 2,
+   "issues_before": 2,
+   "issues_after": 2,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 2,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar 'Pokaż plan'",
+      "reason": "Poprawa dostępności, spełnienie WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Plan",
+      "element": "Pokaż plan",
+      "value": "M"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Start biegu'",
+      "reason": "Poprawa dostępności, spełnienie WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Bieg",
+      "element": "Start biegu",
+      "value": "L"
+     },
+     {
+      "title": "Przenieś 'Szukaj' do góry ekranu",
+      "reason": "Zmniejszenie obciążenia poznawczego, poprawa nawigacji",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Szukaj",
+      "value": "top"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.9463798530014174,
+   "raw": 4,
+   "resolved": 2,
+   "issues_before": 6,
+   "issues_after": 5,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 5,
+   "fw_after": 4,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ rozmiar 'Szukaj szkół'",
+      "reason": "Poprawa dostępności, redukcja problemu Fitts",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj szkół",
+      "value": "M"
+     },
+     {
+      "title": "Przesuń 'Wybierz szkołę' w dół",
+      "reason": "Zmniejszenie Hicka i poprawa Fitts",
+      "op": "move_zone",
+      "screen": "Porównanie",
+      "element": "Wybierz szkołę",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmień tekst przy 'Pokaż więcej'",
+      "reason": "Redukcja Hicka, poprawa nawigacji",
+      "op": "add_transition",
+      "screen": "Zapis",
+      "element": "Pokaż więcej",
+      "value": "Więcej rekomendacji"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Zapisz się'",
+      "reason": "Poprawa dostępności, redukcja problemu Fitts",
+      "op": "resize",
+      "screen": "Zapis",
+      "element": "Zapisz się",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.0765714010012744,
+   "raw": 4,
+   "resolved": 3,
+   "issues_before": 11,
+   "issues_after": 7,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 7,
+   "fw_after": 4,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zmniejsz rozmiar przycisku 'Tryb ciemny'",
+      "reason": "Zmniejszenie rozmiaru poprawi dostępność i precyzję",
+      "op": "resize",
+      "screen": "Zapis",
+      "element": "Tryb ciemny",
+      "value": "S"
+     },
+     {
+      "title": "Przenieś 'Historia' na dół",
+      "reason": "Zmniejszy zagracone menu i poprawi użyteczność",
+      "op": "move_zone",
+      "screen": "Zapis",
+      "element": "Historia",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmień rozmiar przycisku 'Zapisz się'",
+      "reason": "Zwiększy rozmiar, poprawiając łatwość dotyku",
+      "op": "resize",
+      "screen": "Zapis",
+      "element": "Zapisz się",
+      "value": "L"
+     },
+     {
+      "title": "Zmień rozmiar przycisku 'Szukaj szkół'",
+      "reason": "Zwiększy rozmiar, poprawiając łatwość dotyku",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj szkół",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.1915936570003396,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 5,
+   "issues_after": 5,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 1,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa 'Zaproś znajomych' na ekranie 'Start'",
+      "reason": "Zmniejszenie obciążenia poznawczego, poprawa nawigacji",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zaproś znajomych",
+      "value": "S"
+     },
+     {
+      "title": "Przeniesienie 'Porównaj' na ekranie 'Szkoły'",
+      "reason": "Zwiększenie widoczności, poprawa dostępności interfejsu",
+      "op": "move_zone",
+      "screen": "Szkoły",
+      "element": "Porównaj",
+      "value": "center"
+     },
+     {
+      "title": "Dodanie przejścia z ekranu 'Szkoły'",
+      "reason": "Eliminacja martwego punktu, poprawa płynności",
+      "op": "add_transition",
+      "screen": "Szkoły",
+      "element": "Zapis",
+      "value": "Zapis"
+     },
+     {
+      "title": "Zmiana rozmiaru 'Zapisz się' na ekranie 'Zapis'",
+      "reason": "Poprawa użyteczności, zwiększenie precyzji interakcji",
+      "op": "resize",
+      "screen": "Zapis",
+      "element": "Zapisz się",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.9242304819999845,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 8,
+   "issues_after": 7,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 3,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa nawigacji w 'Szkoły'",
+      "reason": "Usuń martwy punkt i zredukuj Hick overload",
+      "op": "move_zone",
+      "screen": "Szkoły",
+      "element": "Kategorie",
+      "value": "center"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Szukaj szkół'",
+      "reason": "Poprawa dostępności i redukcja Fitts problemu",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj szkół",
+      "value": "M"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Polecane'",
+      "reason": "Poprawa dostępności i redukcja Fitts problemu",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Polecane",
+      "value": "M"
+     },
+     {
+      "title": "Usuń 'Oceń aplikację'",
+      "reason": "Redukcja Hick overload i poprawa koncentracji",
+      "op": "remove_element",
+      "screen": "Zapis",
+      "element": "Oceń aplikację",
+      "value": ""
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.0869280349979817,
+   "raw": 4,
+   "resolved": 0,
+   "issues_before": 6,
+   "issues_after": 6,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 5,
+   "fw_after": 5,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa dostępności 'Pomocy' i 'Regulaminu'",
+      "reason": "Zmniejszenie problemów z precyzją dotykową",
+      "op": "move_zone",
+      "screen": "Zapis",
+      "element": "Pomoc link",
+      "value": "bottom"
+     },
+     {
+      "title": "Zmniejszenie obciążenia Hicka na 'Porównanie'",
+      "reason": "Uproszczenie wyboru, skrócenie czasu interakcji",
+      "op": "remove_element",
+      "screen": "Porównanie",
+      "element": "Kategorie list",
+      "value": "remove"
+     },
+     {
+      "title": "Zwiększenie rozmiaru 'Wybierz szkołę'",
+      "reason": "Poprawa precyzji dotyku i użyteczności",
+      "op": "resize",
+      "screen": "Porównanie",
+      "element": "Wybierz szkołę button",
+      "value": "L"
+     },
+     {
+      "title": "Zmiana lokalizacji 'Trybu Ciemnego'",
+      "reason": "Ułatwienie dostępu do funkcji w ekranie start",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Tryb ciemny toggle",
+      "value": "top"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.983996760998707,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 5,
+   "issues_after": 2,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 1,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa dead-endu na 'Porównanie'",
+      "reason": "Ułatwienie przejścia do celu, eliminacja martwego punktu",
+      "op": "add_transition",
+      "screen": "Porównanie",
+      "element": "Szukaj szkół",
+      "value": "Start"
+     },
+     {
+      "title": "Zwiększenie rozmiaru 'Filtry'",
+      "reason": "Ułatwienie interakcji, poprawa dostępności elementu",
+      "op": "resize",
+      "screen": "Porównanie",
+      "element": "Filtry",
+      "value": "M"
+     },
+     {
+      "title": "Zmiana lokalizacji 'Filtry'",
+      "reason": "Poprawa dostępności, redukcja obciążenia poznawczego",
+      "op": "move_zone",
+      "screen": "Porównanie",
+      "element": "Filtry",
+      "value": "bottom"
+     },
+     {
+      "title": "Usunięcie niepotrzebnych opcji z 'Start'",
+      "reason": "Redukcja Hick overload, poprawa czytelności ekranu",
+      "op": "remove_element",
+      "screen": "Start",
+      "element": "Historia",
+      "value": ""
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.882785193000018,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 3,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 4,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zmniejsz opcje na ekranie Start",
+      "reason": "Zredukuj Hick overload, popraw UX",
+      "op": "group_options",
+      "screen": "Start",
+      "element": "Historia",
+      "value": "S"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Szukaj szkół'",
+      "reason": "Popraw dotykową reakcję, popraw użyteczność",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj szkół",
+      "value": "L"
+     },
+     {
+      "title": "Przenieś 'Tagi' na ekran Porównanie",
+      "reason": "Popraw Fitts problem, ułatw dostęp",
+      "op": "move_zone",
+      "screen": "Porównanie",
+      "element": "Tagi",
+      "value": "center"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Zapisz się'",
+      "reason": "Popraw dotykową reakcję, popraw użyteczność",
+      "op": "resize",
+      "screen": "Zapis",
+      "element": "Zapisz się",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.9423870440004976,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 5,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 4,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa nawigacji po 'Porównaniu'",
+      "reason": "Zredukowanie Hicka, poprawa dostępności 'Porównaj'",
+      "op": "group_options",
+      "screen": "Szkoły",
+      "element": "Sortuj",
+      "value": "more"
+     },
+     {
+      "title": "Zmiana rozmiaru 'Zaproś znajomych'",
+      "reason": "Poprawa Fitts problemu, łatwiejszy dostęp",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zaproś znajomych",
+      "value": "M"
+     },
+     {
+      "title": "Zmiana lokalizacji 'Zaproś znajomych'",
+      "reason": "Poprawa Fitts problemu, łatwiejszy dostęp",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Zaproś znajomych",
+      "value": "center"
+     },
+     {
+      "title": "Zmiana rozmiaru 'Język'",
+      "reason": "Poprawa Fitts problemu, łatwiejszy dostęp",
+      "op": "resize",
+      "screen": "Porównanie",
+      "element": "Język",
+      "value": "M"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.8541917689981346,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 9,
+   "issues_after": 8,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 4,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Poprawa nawigacji po 'Porównaniu'",
+      "reason": "Usuń dead end, popraw czas do celu",
+      "op": "add_transition",
+      "screen": "Porównanie",
+      "element": "Język",
+      "value": "Szkoły"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Szukaj szkół'",
+      "reason": "Popraw Fitts problem, zwiększ dostępność",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj szkół",
+      "value": "M"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Porównaj'",
+      "reason": "Popraw Fitts problem, zwiększ dostępność",
+      "op": "resize",
+      "screen": "Szkoły",
+      "element": "Porównaj",
+      "value": "M"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Język'",
+      "reason": "Popraw Fitts problem, zwiększ dostępność",
+      "op": "resize",
+      "screen": "Porównanie",
+      "element": "Język",
+      "value": "M"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.1678995120018953,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 4,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 6,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zmniejsz rozmiar 'Polecane' na Szkoły",
+      "reason": "Poprawa dostępności, redukcja problemów z Fittsem",
+      "op": "resize",
+      "screen": "Szkoły",
+      "element": "Polecane",
+      "value": "M"
+     },
+     {
+      "title": "Przenieś 'Oceń aplikację' na Szkoły",
+      "reason": "Redukcja Hicka, poprawa dostępności i Fittsa",
+      "op": "move_zone",
+      "screen": "Porównanie",
+      "element": "Oceń aplikację",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś 'Ulubione' na Szkoły",
+      "reason": "Redukcja Hicka, poprawa dostępności i Fittsa",
+      "op": "move_zone",
+      "screen": "Porównanie",
+      "element": "Ulubione",
+      "value": "bottom"
+     },
+     {
+      "title": "Zwiększ rozmiar 'Wybierz szkołę' na Porównanie",
+      "reason": "Poprawa dostępności, rozwiązanie problemu Fittsa",
+      "op": "resize",
+      "screen": "Porównanie",
+      "element": "Wybierz szkołę",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.605832567001926,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 3,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 7,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Improve ‘New invoice’ button touch target",
+      "reason": "Increase button size for easier interaction",
+      "op": "resize",
+      "screen": "Home",
+      "element": "New invoice",
+      "value": "L"
+     },
+     {
+      "title": "Move ‘Search’ input for better reach",
+      "reason": "Reduce reach distance for frequent search action",
+      "op": "move_zone",
+      "screen": "Home",
+      "element": "Search",
+      "value": "center"
+     },
+     {
+      "title": "Increase ‘Add item’ button touch target size",
+      "reason": "Improve accessibility of the add item action",
+      "op": "resize",
+      "screen": "Invoice",
+      "element": "Add item",
+      "value": "L"
+     },
+     {
+      "title": "Move ‘Help’ link for improved reach",
+      "reason": "Reduce reach distance for frequent help action",
+      "op": "move_zone",
+      "screen": "Sent",
+      "element": "Help",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.679410275999544,
+   "raw": 4,
+   "resolved": 1,
+   "issues_before": 7,
+   "issues_after": 7,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 3,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Improve 'Preview' Button Touch Target Size",
+      "reason": "Addresses WCAG 2.5.5, improves usability significantly",
+      "op": "resize",
+      "screen": "Preview",
+      "element": "Preview button",
+      "value": "L"
+     },
+     {
+      "title": "Move 'Invite friends' Button for Fitts Problem",
+      "reason": "Reduces reach distance, improves ease of tapping",
+      "op": "move_zone",
+      "screen": "Sent",
+      "element": "Invite friends button",
+      "value": "bottom"
+     },
+     {
+      "title": "Add Transition from 'Preview' to 'Sent'",
+      "reason": "Resolves dead end, guides user to goal",
+      "op": "add_transition",
+      "screen": "Preview",
+      "element": "Send to Sent",
+      "value": "Sent"
+     },
+     {
+      "title": "Resize 'Show more' Link for Clarity",
+      "reason": "Reduces visual clutter, improves discoverability of options",
+      "op": "resize",
+      "screen": "Preview",
+      "element": "Show more link",
+      "value": "M"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.5926483559996996,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 8,
+   "issues_after": 4,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 6,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Improve 'Shortcut' touch target size",
+      "reason": "Increase 'Shortcut' size for easier interaction",
+      "op": "resize",
+      "screen": "Home",
+      "element": "Shortcut",
+      "value": "M"
+     },
+     {
+      "title": "Move 'Show more' link for better reach",
+      "reason": "Move 'Show more' to improve visibility",
+      "op": "move_zone",
+      "screen": "Invoice",
+      "element": "Show more",
+      "value": "bottom"
+     },
+     {
+      "title": "Increase 'Preview' button touch target size",
+      "reason": "Increase 'Preview' size for improved usability",
+      "op": "resize",
+      "screen": "Preview",
+      "element": "Preview",
+      "value": "L"
+     },
+     {
+      "title": "Increase 'Sort' select touch target size",
+      "reason": "Increase 'Sort' size for improved usability",
+      "op": "resize",
+      "screen": "Preview",
+      "element": "Sort",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.580282900999009,
+   "raw": 4,
+   "resolved": 0,
+   "issues_before": 11,
+   "issues_after": 11,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 8,
+   "fw_after": 8,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Improve 'Share' button touch target size",
+      "reason": "Reduce Fitts distance for easier interaction",
+      "op": "resize",
+      "screen": "Invoice",
+      "element": "Share button",
+      "value": "L"
+     },
+     {
+      "title": "Increase 'Sort' button touch target size",
+      "reason": "Reduce Fitts distance for easier interaction",
+      "op": "resize",
+      "screen": "Preview",
+      "element": "Sort select",
+      "value": "L"
+     },
+     {
+      "title": "Increase 'Send invoice' button touch target size",
+      "reason": "Reduce Fitts distance for easier interaction",
+      "op": "resize",
+      "screen": "Sent",
+      "element": "Send invoice button",
+      "value": "L"
+     },
+     {
+      "title": "Improve 'Featured' list touch target size",
+      "reason": "Reduce Fitts distance for easier interaction",
+      "op": "resize",
+      "screen": "Invoice",
+      "element": "Featured list",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.725533548000385,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 10,
+   "issues_after": 6,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 8,
+   "fw_after": 4,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Improve 'Help' accessibility on Home screen",
+      "reason": "Reduce Fitts's problem with the 'Help' link",
+      "op": "move_zone",
+      "screen": "Home",
+      "element": "Help",
+      "value": "center"
+     },
+     {
+      "title": "Increase 'New invoice' button touch target size",
+      "reason": "Address touch target size issue for action",
+      "op": "resize",
+      "screen": "Home",
+      "element": "New invoice",
+      "value": "L"
+     },
+     {
+      "title": "Reduce 'Sort' selection touch target size",
+      "reason": "Address Fitts's problem with the 'Sort' selection",
+      "op": "resize",
+      "screen": "Preview",
+      "element": "Sort",
+      "value": "L"
+     },
+     {
+      "title": "Increase 'Dark mode' toggle touch target size",
+      "reason": "Address Fitts's problem with the 'Dark mode' toggle",
+      "op": "resize",
+      "screen": "Sent",
+      "element": "Dark mode",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.562379171999055,
+   "raw": 4,
+   "resolved": 2,
+   "issues_before": 5,
+   "issues_after": 2,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Improve 'Filters' touch target size",
+      "reason": "Reduce Fitts distance for frequent 'Filters' action",
+      "op": "resize",
+      "screen": "Home",
+      "element": "Filters",
+      "value": "M"
+     },
+     {
+      "title": "Reduce 'Dark mode' touch target size",
+      "reason": "Reduce Fitts distance for frequent 'Dark mode' action",
+      "op": "resize",
+      "screen": "Home",
+      "element": "Dark mode",
+      "value": "M"
+     },
+     {
+      "title": "Increase 'Sort' touch target size",
+      "reason": "Reduce Fitts distance for frequent 'Sort' action",
+      "op": "resize",
+      "screen": "Home",
+      "element": "Sort",
+      "value": "L"
+     },
+     {
+      "title": "Reduce options on Home screen",
+      "reason": "Decrease Hick effect and improve user experience",
+      "op": "group_options",
+      "screen": "Home",
+      "element": "Filters",
+      "value": "more"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.6692652460005775,
+   "raw": 4,
+   "resolved": 2,
+   "issues_before": 12,
+   "issues_after": 12,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 8,
+   "fw_after": 8,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Improve 'New invoice' touch target size",
+      "reason": "Addresses WCAG 2.5.5 touch target size",
+      "op": "resize",
+      "screen": "Home",
+      "element": "New invoice",
+      "value": "M"
+     },
+     {
+      "title": "Reduce 'Add item' target size",
+      "reason": "Addresses WCAG 2.5.5 touch target size",
+      "op": "resize",
+      "screen": "Invoice",
+      "element": "Add item",
+      "value": "M"
+     },
+     {
+      "title": "Move 'Notifications' toggle for better reach",
+      "reason": "Addresses Fitts problem on the toggle",
+      "op": "move_zone",
+      "screen": "Home",
+      "element": "Notifications toggle",
+      "value": "center"
+     },
+     {
+      "title": "Move 'Search' input for better reach",
+      "reason": "Addresses Fitts problem on the input",
+      "op": "move_zone",
+      "screen": "Invoice",
+      "element": "Search input",
+      "value": "center"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.0531214049988193,
+   "raw": 3,
+   "resolved": 2,
+   "issues_before": 2,
+   "issues_after": 2,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 1,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Increase 'Preview' button touch target size",
+      "reason": "Addresses small touch target and Fitts problem",
+      "op": "resize",
+      "screen": "Preview",
+      "element": "Preview",
+      "value": "M"
+     },
+     {
+      "title": "Move 'Send invoice' button for easier reach",
+      "reason": "Reduces path length and improves usability",
+      "op": "move_zone",
+      "screen": "Sent",
+      "element": "Send invoice",
+      "value": "bottom"
+     },
+     {
+      "title": "Add transition to 'Preview' from 'New invoice'",
+      "reason": "Eliminates dead end and streamlines the flow",
+      "op": "add_transition",
+      "screen": "Preview",
+      "element": "New invoice",
+      "value": "Preview"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.592471083997225,
+   "raw": 4,
+   "resolved": 1,
+   "issues_before": 10,
+   "issues_after": 9,
+   "dead_before": 1,
+   "dead_after": 1,
+   "fw_before": 5,
+   "fw_after": 5,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Improve 'Show more' touch target size",
+      "reason": "Reduce Fitts problem on crowded Invoice screen",
+      "op": "resize",
+      "screen": "Invoice",
+      "element": "Show more link",
+      "value": "M"
+     },
+     {
+      "title": "Increase 'Settings' link touch target size",
+      "reason": "Reduce Fitts problem on Preview screen",
+      "op": "resize",
+      "screen": "Preview",
+      "element": "Settings link",
+      "value": "L"
+     },
+     {
+      "title": "Move 'Notifications' toggle for easier access",
+      "reason": "Reduce Fitts problem on the Home screen",
+      "op": "move_zone",
+      "screen": "Home",
+      "element": "Notifications toggle",
+      "value": "center"
+     },
+     {
+      "title": "Reduce options on Home screen",
+      "reason": "Decrease Hick overload on the Home screen",
+      "op": "group_options",
+      "screen": "Home",
+      "element": "Notifications toggle",
+      "value": "more"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.667315979000705,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 6,
+   "issues_after": 3,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Improve 'Shortcut' touch target size",
+      "reason": "Addresses WCAG 2.5.5 touch target size",
+      "op": "resize",
+      "screen": "Invoice",
+      "element": "Shortcut",
+      "value": "M"
+     },
+     {
+      "title": "Reduce 'Add item' button size",
+      "reason": "Addresses WCAG 2.5.5 touch target size",
+      "op": "resize",
+      "screen": "Invoice",
+      "element": "Add item",
+      "value": "L"
+     },
+     {
+      "title": "Simplify 'Preview' options, add 'more'",
+      "reason": "Reduces Hick overload and improves usability",
+      "op": "group_options",
+      "screen": "Preview",
+      "element": "Show more",
+      "value": "History"
+     },
+     {
+      "title": "Move 'Profile' link for better reach",
+      "reason": "Addresses Fitts problem on frequent action",
+      "op": "move_zone",
+      "screen": "Home",
+      "element": "Profile",
+      "value": "center"
+     }
+    ]
+   }
+  }
+ ],
+ "flow": [
+  {
+   "valid": true,
+   "latency": 4.594603065001138,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": false,
+   "must_coverage": 0.0,
+   "issues": 4,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Kalendarz terminów: Wolne godziny na żywo"
+      ],
+      "elements": [
+       {
+        "label": "Wybierz Termin",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Calendar"
+       },
+       {
+        "label": "Znajdź Salon",
+        "type": "link",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "SalonSearch"
+       }
+      ]
+     },
+     {
+      "name": "Calendar",
+      "kind": "step",
+      "features": [
+       "Kalendarz terminów: Wolne godziny na żywo"
+      ],
+      "elements": [
+       {
+        "label": "Wybierz Dzień",
+        "type": "select",
+        "size": "M",
+        "zone": "top",
+        "options": 7,
+        "target": "SelectTime"
+       },
+       {
+        "label": "Wybierz Godzinę",
+        "type": "select",
+        "size": "M",
+        "zone": "top",
+        "options": 4,
+        "target": "SelectTime"
+       },
+       {
+        "label": "Potwierdź Rezerwację",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Confirmation"
+       }
+      ]
+     },
+     {
+      "name": "Confirmation",
+      "kind": "goal",
+      "features": [
+       "Potwierdzenie wizyty: SMS z przypomnieniem"
+      ],
+      "elements": [
+       {
+        "label": "Wysłaj SMS",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "SmsNotification"
+       }
+      ]
+     },
+     {
+      "name": "SmsNotification",
+      "kind": "step",
+      "features": [
+       "Potwierdzenie wizyty: SMS z przypomnieniem"
+      ],
+      "elements": [
+       {
+        "label": "Potwierdź",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Start"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 4.720517711000866,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 1.0,
+   "issues": 4,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Profil salonu",
+       "Wyszukiwarka salonów"
+      ],
+      "elements": [
+       {
+        "label": "Wybierz salon",
+        "type": "select",
+        "size": "L",
+        "zone": "bottom",
+        "options": 3,
+        "target": "SalonSelection"
+       },
+       {
+        "label": "Znajdź salon",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "SalonSelection"
+       }
+      ]
+     },
+     {
+      "name": "SalonSelection",
+      "kind": "step",
+      "features": [
+       "Profil salonu"
+      ],
+      "elements": [
+       {
+        "label": "Powrót",
+        "type": "button",
+        "size": "S",
+        "zone": "top",
+        "options": 1,
+        "target": "Start"
+       },
+       {
+        "label": "Potwierdź wizytę",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Confirmation"
+       }
+      ]
+     },
+     {
+      "name": "Confirmation",
+      "kind": "goal",
+      "features": [
+       "Potwierdzenie wizyty",
+       "SMS z przypomnieniem"
+      ],
+      "elements": [
+       {
+        "label": "Potwierdź",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Ustaw przypomnienie",
+        "type": "toggle",
+        "size": "S",
+        "zone": "top",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 6.832753525999578,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": false,
+   "must_coverage": 0.75,
+   "issues": 7,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Wyszukiwarka salonów"
+      ],
+      "elements": [
+       {
+        "label": "Znajdź salon",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Search"
+       }
+      ]
+     },
+     {
+      "name": "Search",
+      "kind": "step",
+      "features": [
+       "Wyszukiwarka salonów"
+      ],
+      "elements": [
+       {
+        "label": "Wpisz lokalizację",
+        "type": "input",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "SearchResults"
+       },
+       {
+        "label": "Wyszukaj",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "SearchResults"
+       },
+       {
+        "label": "Wyczyść",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Search"
+       }
+      ]
+     },
+     {
+      "name": "SearchResults",
+      "kind": "step",
+      "features": [
+       "Wyszukiwarka salonów"
+      ],
+      "elements": [
+       {
+        "label": "Salon 1",
+        "type": "list",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": "SalonProfile1"
+       },
+       {
+        "label": "Salon 2",
+        "type": "list",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": "SalonProfile2"
+       },
+       {
+        "label": "Salon 3",
+        "type": "list",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": "SalonProfile3"
+       }
+      ]
+     },
+     {
+      "name": "SalonProfile1",
+      "kind": "step",
+      "features": [
+       "Profil salonu",
+       "Cennik i opinie"
+      ],
+      "elements": [
+       {
+        "label": "Cennik",
+        "type": "button",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "PriceList"
+       },
+       {
+        "label": "Opinie",
+        "type": "button",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "Reviews"
+       },
+       {
+        "label": "Rezerwuj termin",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Calendar"
+       }
+      ]
+     },
+     {
+      "name": "Calendar",
+      "kind": "goal",
+      "features": [
+       "Kalendarz terminów",
+       "Wolne godziny na żywo"
+      ],
+      "elements": [
+       {
+        "label": "Dziś",
+        "type": "button",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "Today"
+       },
+       {
+        "label": "Następny tydzień",
+        "type": "button",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "NextWeek"
+       },
+       {
+        "label": "Potwierdź",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Confirmation"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 7.131672260999039,
+   "screens_ok": true,
+   "one_start_goal": false,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 1.0,
+   "issues": 9,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Szybki pomiar",
+       "Raport dla lekarza"
+      ],
+      "elements": [
+       {
+        "label": "Zapisz pomiar",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PomiarGlukozy"
+       },
+       {
+        "label": "Wyświetl raport",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "RaportLekarza"
+       }
+      ]
+     },
+     {
+      "name": "PomiarGlukozy",
+      "kind": "goal",
+      "features": [
+       "Szybki pomiar"
+      ],
+      "elements": [
+       {
+        "label": "Wpis glukozy",
+        "type": "input",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "DziennikPomiarow"
+       },
+       {
+        "label": "Dodaj posiłek",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "WybierzPoscilek"
+       }
+      ]
+     },
+     {
+      "name": "DziennikPomiarow",
+      "kind": "step",
+      "features": [
+       "Dziennik pomiarów"
+      ],
+      "elements": [
+       {
+        "label": "Dodaj nowy pomiar",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PomiarGlukozy"
+       },
+       {
+        "label": "Edytuj pomiar",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PomiarGlukozy"
+       }
+      ]
+     },
+     {
+      "name": "WybierzPoscilek",
+      "kind": "step",
+      "features": [
+       "Dziennik pomiarów"
+      ],
+      "elements": [
+       {
+        "label": "Pieczywo",
+        "type": "button",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "DziennikPomiarow"
+       },
+       {
+        "label": "Owoce",
+        "type": "button",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "DziennikPomiarow"
+       }
+      ]
+     },
+     {
+      "name": "RaportLekarza",
+      "kind": "goal",
+      "features": [
+       "Raport dla lekarza"
+      ],
+      "elements": [
+       {
+        "label": "Wyświetl raport",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "RaportLekarza"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 7.257865217998187,
+   "screens_ok": true,
+   "one_start_goal": false,
+   "goal_reachable": true,
+   "targets_valid": false,
+   "must_coverage": 1.0,
+   "issues": 3,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Szybki pomiar",
+       "Raport dla lekarza",
+       "Profil zdrowia"
+      ],
+      "elements": [
+       {
+        "label": "Zapisz pomiar",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PomiarGlukozy"
+       },
+       {
+        "label": "Wyświetl raport",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "RaportMiesieczny"
+       }
+      ]
+     },
+     {
+      "name": "PomiarGlukozy",
+      "kind": "step",
+      "features": [
+       "Szybki pomiar"
+      ],
+      "elements": [
+       {
+        "label": "Wpisz wartość glukozy",
+        "type": "input",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": "DziennikPomiarow"
+       },
+       {
+        "label": "Dodaj posiłek",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "WybierzPoscilek"
+       }
+      ]
+     },
+     {
+      "name": "DziennikPomiarow",
+      "kind": "step",
+      "features": [
+       "Dziennik pomiarów"
+      ],
+      "elements": [
+       {
+        "label": "Dodaj nowy pomiar",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PomiarGlukozy"
+       },
+       {
+        "label": "Usuń pomiar",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "RaportMiesieczny"
+       }
+      ]
+     },
+     {
+      "name": "RaportMiesieczny",
+      "kind": "goal",
+      "features": [
+       "Raport dla lekarza"
+      ],
+      "elements": [
+       {
+        "label": "Wyślij raport",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "WyświetlRaport"
+       },
+       {
+        "label": "Edytuj raport",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "DziennikPomiarow"
+       }
+      ]
+     },
+     {
+      "name": "WyświetlRaport",
+      "kind": "goal",
+      "features": [
+       "Raport dla lekarza"
+      ],
+      "elements": [
+       {
+        "label": "Pobierz raport",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "RaportMiesieczny"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 6.790506642999389,
+   "screens_ok": true,
+   "one_start_goal": false,
+   "goal_reachable": true,
+   "targets_valid": false,
+   "must_coverage": 0.75,
+   "issues": 5,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Profil zdrowia",
+       "Szybki pomiar",
+       "Dziennik pomiarów"
+      ],
+      "elements": [
+       {
+        "label": "Szybki pomiar",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PomiarGlukozy"
+       },
+       {
+        "label": "Dziennik pomiarów",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Dziennik"
+       },
+       {
+        "label": "Profil zdrowia",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Profil"
+       }
+      ]
+     },
+     {
+      "name": "PomiarGlukozy",
+      "kind": "goal",
+      "features": [
+       "Szybki pomiar"
+      ],
+      "elements": [
+       {
+        "label": "Wpis glukozy",
+        "type": "input",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PomiarGlukozy"
+       }
+      ]
+     },
+     {
+      "name": "Dziennik",
+      "kind": "goal",
+      "features": [
+       "Dziennik pomiarów"
+      ],
+      "elements": [
+       {
+        "label": "Dodaj pomiar",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "DodajPomiar"
+       },
+       {
+        "label": "Wybierz posiłek",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Pioselki"
+       }
+      ]
+     },
+     {
+      "name": "DodajPomiar",
+      "kind": "step",
+      "features": [
+       "Dziennik pomiarów"
+      ],
+      "elements": [
+       {
+        "label": "Wpis glukozy",
+        "type": "input",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PomiarGlukozy"
+       },
+       {
+        "label": "Wpis czasu",
+        "type": "input",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PomiarGlukozy"
+       }
+      ]
+     },
+     {
+      "name": "Pioselki",
+      "kind": "step",
+      "features": [
+       "Dziennik pomiarów"
+      ],
+      "elements": [
+       {
+        "label": "Kawior",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Dziennik"
+       },
+       {
+        "label": "Wegiel",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Dziennik"
+       },
+       {
+        "label": "Zupa",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Dziennik"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 4.091705403003289,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 0.0,
+   "issues": 1,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Zainteresowania: Dziedziny pomocy",
+       "Lista akcji: Akcje w najbliższy weekend"
+      ],
+      "elements": [
+       {
+        "label": "Wybierz dziedzinę",
+        "type": "select",
+        "size": "L",
+        "zone": "bottom",
+        "options": 4,
+        "target": "ListaAkcji"
+       }
+      ]
+     },
+     {
+      "name": "ListaAkcji",
+      "kind": "step",
+      "features": [
+       "Lista akcji: Akcje w najbliższy weekend"
+      ],
+      "elements": [
+       {
+        "label": "Wyświetl akcje",
+        "type": "list",
+        "size": "M",
+        "zone": "center",
+        "options": 5,
+        "target": "SzczegolyAkcji"
+       }
+      ]
+     },
+     {
+      "name": "SzczegolyAkcji",
+      "kind": "step",
+      "features": [
+       "Szczegóły akcji: Czas, miejsce i wymagania"
+      ],
+      "elements": [
+       {
+        "label": "Zobacz szczegóły",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PotwierdzUczestnictwa"
+       }
+      ]
+     },
+     {
+      "name": "PotwierdzUczestnictwa",
+      "kind": "goal",
+      "features": [
+       "Potwierdzenie udziału: Kontakt do koordynatora"
+      ],
+      "elements": [
+       {
+        "label": "Potwierdź udział",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Start"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 5.538941819999309,
+   "screens_ok": true,
+   "one_start_goal": false,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 0.0,
+   "issues": 1,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Zainteresowania: Dziedziny pomocy",
+       "Lista akcji: Akcje w najbliższy weekend"
+      ],
+      "elements": [
+       {
+        "label": "Akcje",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "ListAkcji"
+       },
+       {
+        "label": "Pomoc",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "SzczegolyAkcji"
+       }
+      ]
+     },
+     {
+      "name": "ListAkcji",
+      "kind": "goal",
+      "features": [
+       "Lista akcji: Akcje w najbliższy weekend"
+      ],
+      "elements": [
+       {
+        "label": "Akcja 1",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "SzczegolyAkcji"
+       },
+       {
+        "label": "Akcja 2",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "SzczegolyAkcji"
+       },
+       {
+        "label": "Akcja 3",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "SzczegolyAkcji"
+       }
+      ]
+     },
+     {
+      "name": "SzczegolyAkcji",
+      "kind": "goal",
+      "features": [
+       "Szczegóły akcji: Czas, miejsce i wymagania",
+       "Potwierdzenie udziału: Kontakt do koordynatora"
+      ],
+      "elements": [
+       {
+        "label": "Potwierdź udział",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PotwierdzUczestnictwo"
+       },
+       {
+        "label": "Zakończ",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Start"
+       }
+      ]
+     },
+     {
+      "name": "PotwierdzUczestnictwo",
+      "kind": "goal",
+      "features": [
+       "Potwierdzenie udziału: Kontakt do koordynatora"
+      ],
+      "elements": [
+       {
+        "label": "Koordynator",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Start"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 5.031027686000016,
+   "screens_ok": true,
+   "one_start_goal": false,
+   "goal_reachable": true,
+   "targets_valid": false,
+   "must_coverage": 0.3333333333333333,
+   "issues": 1,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Lista akcji: Akcje w najbliższy weekend",
+       "Zainteresowania"
+      ],
+      "elements": [
+       {
+        "label": "Akcje",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "ListaAkcji"
+       },
+       {
+        "label": "Zainteresowania",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Zainteresowania"
+       }
+      ]
+     },
+     {
+      "name": "ListaAkcji",
+      "kind": "goal",
+      "features": [
+       "Lista akcji: Akcje w najbliższy weekend"
+      ],
+      "elements": [
+       {
+        "label": "Szczegóły akcji",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "SzczegolyAkcji"
+       }
+      ]
+     },
+     {
+      "name": "SzczegolyAkcji",
+      "kind": "goal",
+      "features": [
+       "Szczegóły akcji: Czas, miejsce i wymagania",
+       "Potwierdzenie udziału"
+      ],
+      "elements": [
+       {
+        "label": "Potwierdź udział",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PotwierdzUdzial"
+       }
+      ]
+     },
+     {
+      "name": "PotwierdzUdzial",
+      "kind": "goal",
+      "features": [
+       "Potwierdzenie udziału: Kontakt do koordynatora"
+      ],
+      "elements": [
+       {
+        "label": "Wyślij potwierdzenie",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Start"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 6.120247471000766,
+   "screens_ok": true,
+   "one_start_goal": false,
+   "goal_reachable": true,
+   "targets_valid": false,
+   "must_coverage": 0.0,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Cel biegowy: Dystans i termin zawodów",
+       "Plan treningowy: Bezpieczny przyrost kilometrów"
+      ],
+      "elements": [
+       {
+        "label": "Uruchom plan",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PlanTreningowy"
+       },
+       {
+        "label": "Dostosuj cel",
+        "type": "link",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "DostosowanieCelu"
+       }
+      ]
+     },
+     {
+      "name": "PlanTreningowy",
+      "kind": "goal",
+      "features": [
+       "Plan treningowy: Bezpieczny przyrost kilometrów"
+      ],
+      "elements": [
+       {
+        "label": "Wyświetl plan",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "WyświetlPlan"
+       },
+       {
+        "label": "Zmień plan",
+        "type": "link",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "WybierzPlan"
+       }
+      ]
+     },
+     {
+      "name": "WyświetlPlan",
+      "kind": "goal",
+      "features": [
+       "Śledzenie biegu: Tempo i dystans na żywo"
+      ],
+      "elements": [
+       {
+        "label": "Rozpocznij bieg",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "ŚledźBieg"
+       }
+      ]
+     },
+     {
+      "name": "ŚledźBieg",
+      "kind": "goal",
+      "features": [
+       "Śledzenie biegu: Tempo i dystans na żywo",
+       "Analiza biegu: Obciążenie i regeneracja"
+      ],
+      "elements": [
+       {
+        "label": "Zatrzymaj bieg",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "AnalizaBiegu"
+       },
+       {
+        "label": "Wstrzymaj analizę",
+        "type": "link",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "DostepneAnalizy"
+       }
+      ]
+     },
+     {
+      "name": "AnalizaBiegu",
+      "kind": "goal",
+      "features": [
+       "Analiza biegu: Obciążenie i regeneracja"
+      ],
+      "elements": [
+       {
+        "label": "Zakończ analizę",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Start"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 5.677150931998767,
+   "screens_ok": true,
+   "one_start_goal": false,
+   "goal_reachable": true,
+   "targets_valid": false,
+   "must_coverage": 0.0,
+   "issues": 3,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Cel biegowy: Dystans i termin zawodów"
+      ],
+      "elements": [
+       {
+        "label": "Rozpocznij",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PlanTreningowy"
+       },
+       {
+        "label": "Pomoc",
+        "type": "link",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "Pomoc"
+       }
+      ]
+     },
+     {
+      "name": "PlanTreningowy",
+      "kind": "goal",
+      "features": [
+       "Plan treningowy: Bezpieczny przyrost kilometrów"
+      ],
+      "elements": [
+       {
+        "label": "Dostosuj",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "AnalizaBiegu"
+       },
+       {
+        "label": "Zapisz plan",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Bieg"
+       }
+      ]
+     },
+     {
+      "name": "Bieg",
+      "kind": "goal",
+      "features": [
+       "Śledzenie biegu: Tempo i dystans na żywo"
+      ],
+      "elements": [
+       {
+        "label": "Zatrzymaj",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "AnalizaBiegu"
+       },
+       {
+        "label": "Zapisz",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Start"
+       }
+      ]
+     },
+     {
+      "name": "AnalizaBiegu",
+      "kind": "goal",
+      "features": [
+       "Analiza biegu: Obciążenie i regeneracja"
+      ],
+      "elements": [
+       {
+        "label": "Zakończ",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PlanTreningowy"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 4.984845653998491,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": false,
+   "must_coverage": 1.0,
+   "issues": 5,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Plan Treningowy",
+       "Śledzenie Biegu",
+       "Analiza Biegu"
+      ],
+      "elements": [
+       {
+        "label": "Rozpocznij",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PlanTreningowy"
+       },
+       {
+        "label": "Ustaw Cel",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "CelBiegowy"
+       },
+       {
+        "label": "Ustaw Biegi",
+        "type": "link",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Ustawienia"
+       }
+      ]
+     },
+     {
+      "name": "PlanTreningowy",
+      "kind": "goal",
+      "features": [
+       "Plan Treningowy"
+      ],
+      "elements": [
+       {
+        "label": "Powrót",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Start"
+       },
+       {
+        "label": "Dostosuj",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "DostosujPlan"
+       }
+      ]
+     },
+     {
+      "name": "DostosujPlan",
+      "kind": "step",
+      "features": [
+       "Plan Treningowy"
+      ],
+      "elements": [
+       {
+        "label": "Zmień Dystans",
+        "type": "input",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PlanTreningowy"
+       },
+       {
+        "label": "Zmień Czas",
+        "type": "input",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PlanTreningowy"
+       },
+       {
+        "label": "Powrót",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "PlanTreningowy"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 5.568422991000261,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 0.0,
+   "issues": 8,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Adres zamieszkania: Szkoły w rejonie",
+       "Lista szkół: Wyniki i opinie rodziców"
+      ],
+      "elements": [
+       {
+        "label": "Wpisz adres",
+        "type": "input",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Search"
+       },
+       {
+        "label": "Znajdź szkoły",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Search"
+       }
+      ]
+     },
+     {
+      "name": "Search",
+      "kind": "step",
+      "features": [
+       "Adres zamieszkania: Szkoły w rejonie"
+      ],
+      "elements": [
+       {
+        "label": "Powrót",
+        "type": "button",
+        "size": "S",
+        "zone": "top",
+        "options": 1,
+        "target": "Start"
+       },
+       {
+        "label": "Tabela szkół",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Comparison"
+       }
+      ]
+     },
+     {
+      "name": "Comparison",
+      "kind": "goal",
+      "features": [
+       "Porównanie szkół: Tabela kluczowych cech",
+       "Dzień otwarty: Zapis na dzień otwarty"
+      ],
+      "elements": [
+       {
+        "label": "Powrót",
+        "type": "button",
+        "size": "S",
+        "zone": "top",
+        "options": 1,
+        "target": "Search"
+       },
+       {
+        "label": "Zapisz na dzień otwarty",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "OpenDay"
+       }
+      ]
+     },
+     {
+      "name": "OpenDay",
+      "kind": "step",
+      "features": [
+       "Dzień otwarty: Zapis na dzień otwarty"
+      ],
+      "elements": [
+       {
+        "label": "Powrót",
+        "type": "button",
+        "size": "S",
+        "zone": "top",
+        "options": 1,
+        "target": "Comparison"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 7.433629420000216,
+   "screens_ok": true,
+   "one_start_goal": false,
+   "goal_reachable": true,
+   "targets_valid": false,
+   "must_coverage": 0.3333333333333333,
+   "issues": 9,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Adres zamieszkania: Szkoły w rejonie",
+       "Lista szkół: Wyniki i opinie rodziców"
+      ],
+      "elements": [
+       {
+        "label": "Wpisz adres",
+        "type": "input",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Start"
+       },
+       {
+        "label": "Szukaj",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "ListaSzul"
+       }
+      ]
+     },
+     {
+      "name": "ListaSzul",
+      "kind": "goal",
+      "features": [
+       "Lista szkół: Wyniki i opinie rodziców"
+      ],
+      "elements": [
+       {
+        "label": "Dzień otwarty",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "DzienOtwarty"
+       },
+       {
+        "label": "Szkoła 1",
+        "type": "list",
+        "size": "S",
+        "zone": "top",
+        "options": 1,
+        "target": "Szkoła1Detail"
+       },
+       {
+        "label": "Szkoła 2",
+        "type": "list",
+        "size": "S",
+        "zone": "top",
+        "options": 1,
+        "target": "Szkoła2Detail"
+       }
+      ]
+     },
+     {
+      "name": "Szkoła1Detail",
+      "kind": "goal",
+      "features": [
+       "Dzień otwarty",
+       "Porównanie szkół: Tabela kluczowych cech"
+      ],
+      "elements": [
+       {
+        "label": "Zapisz",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "DzienOtwarty"
+       },
+       {
+        "label": "Szkoła 1",
+        "type": "list",
+        "size": "S",
+        "zone": "top",
+        "options": 1,
+        "target": "PorownanieSzul"
+       }
+      ]
+     },
+     {
+      "name": "DzienOtwarty",
+      "kind": "goal",
+      "features": [
+       "Dzień otwarty"
+      ],
+      "elements": [
+       {
+        "label": "Wróć",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "ListaSzul"
+       }
+      ]
+     },
+     {
+      "name": "PorownanieSzul",
+      "kind": "goal",
+      "features": [
+       "Porównanie szkół: Tabela kluczowych cech"
+      ],
+      "elements": [
+       {
+        "label": "Wróć",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Szkoła1Detail"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 6.038567657000385,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 0.25,
+   "issues": 5,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Adres zamieszkania: Szkoły w rejonie"
+      ],
+      "elements": [
+       {
+        "label": "Wprowadź adres",
+        "type": "input",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Lista szkół"
+       }
+      ]
+     },
+     {
+      "name": "Lista szkół",
+      "kind": "step",
+      "features": [
+       "Lista szkół: Wyniki i opinie rodziców"
+      ],
+      "elements": [
+       {
+        "label": "Filtruj",
+        "type": "select",
+        "size": "M",
+        "zone": "top",
+        "options": 3,
+        "target": "Lista szkół"
+       },
+       {
+        "label": "Szkoła 1",
+        "type": "list",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": "Porównanie szkół"
+       },
+       {
+        "label": "Szkoła 2",
+        "type": "list",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": "Porównanie szkół"
+       }
+      ]
+     },
+     {
+      "name": "Porównanie szkół",
+      "kind": "step",
+      "features": [
+       "Porównanie szkół: Tabela kluczowych cech"
+      ],
+      "elements": [
+       {
+        "label": "Zapisz",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Dzień otwarty"
+       },
+       {
+        "label": "Szkoła 1",
+        "type": "list",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": "Lista szkół"
+       },
+       {
+        "label": "Szkoła 2",
+        "type": "list",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": "Lista szkół"
+       }
+      ]
+     },
+     {
+      "name": "Dzień otwarty",
+      "kind": "goal",
+      "features": [
+       "Dzień otwarty"
+      ],
+      "elements": [
+       {
+        "label": "Zapisz",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Start"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 5.744822520002344,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": false,
+   "must_coverage": 1.0,
+   "issues": 7,
+   "dead_ends": 1,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "New Invoice",
+       "View Invoices"
+      ],
+      "elements": [
+       {
+        "label": "New Invoice",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "InvoiceBuilder"
+       },
+       {
+        "label": "View Invoices",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "InvoiceList"
+       }
+      ]
+     },
+     {
+      "name": "InvoiceBuilder",
+      "kind": "step",
+      "features": [
+       "Invoice Builder"
+      ],
+      "elements": [
+       {
+        "label": "Client Name",
+        "type": "input",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "ClientList"
+       },
+       {
+        "label": "Invoice Amount",
+        "type": "input",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "InvoiceAmount"
+       },
+       {
+        "label": "Send Invoice",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "InvoiceSent"
+       }
+      ]
+     },
+     {
+      "name": "InvoiceSent",
+      "kind": "goal",
+      "features": [
+       "Payment Tracking"
+      ],
+      "elements": [
+       {
+        "label": "Invoice Sent",
+        "type": "link",
+        "size": "S",
+        "zone": "top",
+        "options": 1,
+        "target": "PaymentTracking"
+       },
+       {
+        "label": "Invoice Details",
+        "type": "button",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "InvoiceBuilder"
+       }
+      ]
+     },
+     {
+      "name": "PaymentTracking",
+      "kind": "step",
+      "features": [
+       "Payment Tracking"
+      ],
+      "elements": [
+       {
+        "label": "Late Payers",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "InvoiceList"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 6.0987362090018,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": false,
+   "targets_valid": false,
+   "must_coverage": 1.0,
+   "issues": 10,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Client List",
+      "kind": "start",
+      "features": [
+       "Client list"
+      ],
+      "elements": [
+       {
+        "label": "Select Client",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Invoice Builder"
+       },
+       {
+        "label": "Add New Client",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "New Client Form"
+       }
+      ]
+     },
+     {
+      "name": "Invoice Builder",
+      "kind": "step",
+      "features": [
+       "Invoice builder"
+      ],
+      "elements": [
+       {
+        "label": "Add Item",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Item Details"
+       },
+       {
+        "label": "Set Tax Rate",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Tax Rate Selection"
+       },
+       {
+        "label": "Client List",
+        "type": "list",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "Client List"
+       }
+      ]
+     },
+     {
+      "name": "Item Details",
+      "kind": "step",
+      "features": [
+       "Invoice builder"
+      ],
+      "elements": [
+       {
+        "label": "Item Name",
+        "type": "input",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "Invoice Builder"
+       },
+       {
+        "label": "Item Price",
+        "type": "input",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "Invoice Builder"
+       },
+       {
+        "label": "Back",
+        "type": "button",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "Invoice Builder"
+       }
+      ]
+     },
+     {
+      "name": "Tax Rate Selection",
+      "kind": "step",
+      "features": [
+       "Invoice builder"
+      ],
+      "elements": [
+       {
+        "label": "Select Rate",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Invoice Builder"
+       },
+       {
+        "label": "Rate List",
+        "type": "list",
+        "size": "M",
+        "zone": "top",
+        "options": 1,
+        "target": "Tax Rate Selection"
+       }
+      ]
+     },
+     {
+      "name": "Invoice Sent",
+      "kind": "goal",
+      "features": [
+       "Payment tracking"
+      ],
+      "elements": [
+       {
+        "label": "View Invoice",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Payment Tracking"
+       },
+       {
+        "label": "Send Reminder",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Payment Tracking"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 4.365291682999668,
+   "screens_ok": true,
+   "one_start_goal": false,
+   "goal_reachable": true,
+   "targets_valid": false,
+   "must_coverage": 1.0,
+   "issues": 1,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Client List",
+      "kind": "start",
+      "features": [
+       "Client list"
+      ],
+      "elements": [
+       {
+        "label": "Select Client",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Invoice Preview"
+       },
+       {
+        "label": "Add New Client",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Client Details"
+       }
+      ]
+     },
+     {
+      "name": "Invoice Preview",
+      "kind": "goal",
+      "features": [
+       "Invoice preview"
+      ],
+      "elements": [
+       {
+        "label": "Send Invoice",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Payment Tracking"
+       },
+       {
+        "label": "Edit Invoice",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Invoice Builder"
+       }
+      ]
+     },
+     {
+      "name": "Payment Tracking",
+      "kind": "goal",
+      "features": [
+       "Payment tracking"
+      ],
+      "elements": [
+       {
+        "label": "View All Invoices",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Client List"
+       },
+       {
+        "label": "Remind Client",
+        "type": "button",
+        "size": "M",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Client List"
+       }
+      ]
+     }
+    ]
+   }
+  }
+ ],
+ "quiz": [
+  {
+   "question": "Jaki minimalny rozmiar celu dotykowego wymaga WCAG 2.2 SC 2.5.8 (poziom AA)?",
+   "correct": true
+  },
+  {
+   "question": "Jaki rozmiar celu wymaga WCAG SC 2.5.5 Target Size (Enhanced, AAA)?",
+   "correct": false
+  },
+  {
+   "question": "Jaki minimalny cel dotykowy zaleca Material Design?",
+   "correct": false
+  },
+  {
+   "question": "Jaki minimalny obszar dotyku zalecają Apple Human Interface Guidelines?",
+   "correct": true
+  },
+  {
+   "question": "Zgodnie z prawem Fittsa czas wskazania celu rośnie, gdy…",
+   "correct": true
+  },
+  {
+   "question": "Prawo Hicka–Hymana mówi, że czas decyzji rośnie wraz z liczbą opcji…",
+   "correct": true
+  },
+  {
+   "question": "Ile wynosi typowy czas operatora M (przygotowanie mentalne) w modelu KLM?",
+   "correct": true
+  },
+  {
+   "question": "Gdzie na telefonie trzymanym jedną ręką najłatwiej sięgnąć kciukiem?",
+   "correct": true
+  },
+  {
+   "question": "Którą heurystykę Nielsena łamie ekran bez wyjścia (ślepa uliczka)?",
+   "correct": false
+  },
+  {
+   "question": "Ile elementów według Millera (1956) mieści się zwykle w pamięci krótkotrwałej?",
+   "correct": false
+  },
+  {
+   "question": "Jaki minimalny kontrast tekstu zwykłego wymaga WCAG 1.4.3 (AA)?",
+   "correct": false
+  },
+  {
+   "question": "Jaki minimalny kontrast dużego tekstu wymaga WCAG 1.4.3 (AA)?",
+   "correct": false
+  },
+  {
+   "question": "Jaki kontrast wymaga WCAG 1.4.11 dla elementów nietekstowych (np. obramowanie pola)?",
+   "correct": false
+  },
+  {
+   "question": "Jaka jest kolejność faz Double Diamond (Design Council)?",
+   "correct": true
+  },
+  {
+   "question": "Co oznacza litera W w metodzie MoSCoW?",
+   "correct": true
+  },
+  {
+   "question": "Jak najlepiej naprawić ekran, z którego nie da się przejść dalej?",
+   "correct": true
+  },
+  {
+   "question": "Na czym polega stopniowe ujawnianie (progressive disclosure)?",
+   "correct": true
+  },
+  {
+   "question": "Którego kryterium WCAG dotyczy widoczny wskaźnik fokusu klawiatury?",
+   "correct": true
+  },
+  {
+   "question": "Ilu ewaluatorów zaleca Nielsen do oceny heurystycznej?",
+   "correct": true
+  },
+  {
+   "question": "Ile pytań ma kwestionariusz SUS (System Usability Scale)?",
+   "correct": false
+  },
+  {
+   "question": "Jaki powinien być dobry komunikat błędu według heurystyk Nielsena?",
+   "correct": true
+  },
+  {
+   "question": "Co mówi zasada bliskości (Gestalt)?",
+   "correct": true
+  },
+  {
+   "question": "Dlaczego placeholder nie powinien zastępować etykiety pola?",
+   "correct": false
+  },
+  {
+   "question": "Czego wymaga WCAG 2.2 SC 2.5.7 Dragging Movements?",
+   "correct": true
+  },
+  {
+   "question": "Czego wymaga WCAG 2.2 SC 3.3.8 Accessible Authentication (Minimum)?",
+   "correct": false
+  },
+  {
+   "question": "Przy jakiej szerokości treść musi się przełamać bez przewijania w poziomie (WCAG 1.4.10 Reflow)?",
+   "correct": false
+  }
+ ]
+}
