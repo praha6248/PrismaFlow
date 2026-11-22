@@ -98,3 +98,12 @@ def test_score_is_bounded() -> None:
     assert 0 <= score_node(0, None, None) <= 1
     high = score_node(10, [{"score": 10000, "comments": 0}], {"series": [1], "anchor_ratio": 50, "growth": 3})
     assert 0.9 <= high <= 1
+
+
+def test_llm_schema_requires_new_nodes() -> None:
+    from backend.models import ExpansionPlan
+    from backend.ollama_client import inline_schema
+
+    schema = inline_schema(ExpansionPlan)
+    assert schema["properties"]["new_nodes"]["minItems"] == 1
+    assert "$ref" not in str(schema)

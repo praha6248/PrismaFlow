@@ -10,6 +10,23 @@ from pathlib import Path
 APP_NAME = "PrismFlow"
 
 
+def load_user_env() -> None:
+    """Load KEY=VALUE pairs from ~/.config/PrismFlow/prismflow.env without overriding the environment."""
+    base = os.environ.get("XDG_CONFIG_HOME") or str(Path.home() / ".config")
+    path = Path(base) / APP_NAME / "prismflow.env"
+    if not path.is_file():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip().strip("'\""))
+
+
+load_user_env()
+
+
 def resource_root() -> Path:
     """Return the directory holding bundled resources, aware of PyInstaller's _MEIPASS."""
     bundle = getattr(sys, "_MEIPASS", None)

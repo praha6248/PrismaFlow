@@ -58,7 +58,7 @@ class ExpansionPlan(BaseModel):
 
     language: str = Field(default="", description="ISO 639-1 code of the language the user's labels are written in")
     classified: list[ClassifiedNode] = Field(default_factory=list)
-    new_nodes: list[ProposedNode] = Field(default_factory=list)
+    new_nodes: list[ProposedNode] = Field(default_factory=list, json_schema_extra={"minItems": 1, "maxItems": 8})
 
 
 class ProjectCreate(BaseModel):

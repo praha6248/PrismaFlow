@@ -154,10 +154,10 @@ def build_prompt(
     if unclassified:
         parts.append(f"1. Classify each of these nodes: {', '.join(unclassified)}.")
     else:
-        parts.append("1. Nothing to classify, return an empty classified list.")
+        parts.append("1. All nodes are already classified, so leave the classified list empty.")
     hint = f" Prefer kinds still missing from the map: {', '.join(missing)}." if missing else ""
     parts.append(
-        f"2. Propose exactly {count} new nodes that deepen the focus node, with at least one target_group or "
+        f"2. Always propose exactly {count} new nodes in new_nodes that deepen the focus node, with at least one target_group or "
         f"pain_point among them.{hint} Each new node connects to the focus node or another relevant label."
     )
     return "\n".join(parts)
@@ -337,7 +337,8 @@ class DiscoverService:
                 try:
                     entry["posts"] = await self.collectors.reddit_search(self.db, http, query)
                 except CollectorUnavailable as exc:
-                    warn(f"reddit: {exc}")
+                    if reddit.credentials_configured():
+                        warn(f"reddit: {exc}")
             gathered[node["id"]] = entry
             done += 1
             progress(0.55 + 0.25 * done / len(nodes), "evidence")

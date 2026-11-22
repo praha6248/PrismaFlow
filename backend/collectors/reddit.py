@@ -1,8 +1,9 @@
 """Reddit search collector.
 
 Uses the official OAuth API with an application-only token when PRISMFLOW_REDDIT_CLIENT_ID
-is set (an "installed app" registered at reddit.com/prefs/apps), otherwise the public JSON
-endpoint, which Reddit may refuse for anonymous clients.
+is set: an "installed app" needs only the client id, a "script" or "web app" also needs
+PRISMFLOW_REDDIT_CLIENT_SECRET. Without credentials the public JSON endpoint is used, which
+Reddit may refuse for anonymous clients.
 """
 
 from __future__ import annotations
@@ -28,16 +29,26 @@ _token: tuple[str, float] | None = None
 _device_id = uuid.uuid4().hex
 
 
+def credentials_configured() -> bool:
+    """Tell whether the user supplied Reddit API credentials."""
+    return bool(os.environ.get("PRISMFLOW_REDDIT_CLIENT_ID"))
+
+
 async def _access_token(client: httpx.AsyncClient, client_id: str) -> str:
     """Obtain or reuse an application-only OAuth token for an installed app."""
     global _token
     if _token and _token[1] > time.time() + 60:
         return _token[0]
+    secret = os.environ.get("PRISMFLOW_REDDIT_CLIENT_SECRET", "")
+    if secret:
+        grant = {"grant_type": "client_credentials"}
+    else:
+        grant = {"grant_type": "https://oauth.reddit.com/grants/installed_client", "device_id": _device_id}
     try:
         response = await client.post(
             TOKEN_URL,
-            data={"grant_type": "https://oauth.reddit.com/grants/installed_client", "device_id": _device_id},
-            auth=(client_id, os.environ.get("PRISMFLOW_REDDIT_CLIENT_SECRET", "")),
+            data=grant,
+            auth=(client_id, secret),
             headers={"User-Agent": settings.user_agent},
         )
     except httpx.HTTPError as exc:
