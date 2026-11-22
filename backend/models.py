@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from enum import Enum
 from typing import Any, Literal
 
@@ -79,7 +80,7 @@ class ProjectUpdate(BaseModel):
     """Request body for updating project metadata."""
 
     name: str | None = None
-    stage: Literal["compose", "expanding", "select", "problems", "personas", "done"] | None = None
+    stage: Literal["compose", "expanding", "select", "problems", "personas", "done", "board", "flow"] | None = None
     phase: Literal["discover", "define", "develop", "deliver"] | None = None
 
 
@@ -232,3 +233,79 @@ class PersonaChoice(BaseModel):
     """Request body for picking a persona's main problem."""
 
     option: int = Field(ge=0, le=1)
+
+
+Priority = Literal["must", "should", "could", "wont"]
+
+
+class FeatureDraft(BaseModel):
+    """A product feature proposed for the chosen persona and problem."""
+
+    title: str = Field(description="Feature name in 2-4 words, sentence case")
+    description: str = Field(description="Benefit for the persona as a phrase of 3-8 words")
+    priority: Priority = Field(description="MoSCoW priority for the first version")
+    keywords: list[str] = Field(
+        description="1-4 single words, in the project's language, that people use when they need this feature",
+        json_schema_extra={"minItems": 1, "maxItems": 4},
+    )
+    evidence_ids: list[int] = Field(description="Ids of evidence lines that support the feature; empty when none")
+
+    @field_validator("title")
+    @classmethod
+    def _title(cls, value: str) -> str:
+        text = _sentence(value, 48).rstrip(".")
+        return text[:1].upper() + text[1:]
+
+    @field_validator("description")
+    @classmethod
+    def _description(cls, value: str) -> str:
+        first = re.split(r"(?<=[.!?])\s", value.strip(), maxsplit=1)[0]
+        text = _sentence(first, 90).rstrip(".")
+        return text[:1].upper() + text[1:]
+
+    @field_validator("keywords")
+    @classmethod
+    def _keywords(cls, value: list[str]) -> list[str]:
+        words = [" ".join(v.lower().split())[:30] for v in value if v.strip()]
+        return list(dict.fromkeys(words))[:4]
+
+
+class FeatureSet(BaseModel):
+    """Structured answer with the proposed feature backlog."""
+
+    features: list[FeatureDraft] = Field(json_schema_extra={"minItems": 6, "maxItems": 9})
+
+
+class FeatureCreate(BaseModel):
+    """Request body for a feature written by the user."""
+
+    title: str = Field(min_length=1, max_length=60)
+    description: str = Field(default="", max_length=140)
+    priority: Priority = "should"
+
+    @field_validator("title", "description")
+    @classmethod
+    def _strip(cls, value: str) -> str:
+        return " ".join(value.split())
+
+
+class FeatureUpdate(BaseModel):
+    """Partial update of a feature card."""
+
+    title: str | None = Field(default=None, min_length=1, max_length=60)
+    description: str | None = Field(default=None, max_length=140)
+    priority: Priority | None = None
+
+
+class FeatureOrderItem(BaseModel):
+    """One card's place on the MoSCoW board."""
+
+    id: int
+    priority: Priority
+    position: int = Field(ge=0)
+
+
+class FeatureOrder(BaseModel):
+    """Board state sent after a drag and drop."""
+
+    items: list[FeatureOrderItem]

@@ -10,7 +10,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Iterator
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS meta (
@@ -133,6 +133,31 @@ CREATE TABLE IF NOT EXISTS personas (
 );
 
 CREATE INDEX IF NOT EXISTS personas_problem ON personas(problem_id);
+
+CREATE TABLE IF NOT EXISTS features (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    priority TEXT NOT NULL CHECK (priority IN ('must', 'should', 'could', 'wont')),
+    position INTEGER NOT NULL DEFAULT 0,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    keywords TEXT NOT NULL DEFAULT '[]',
+    evidence_ids TEXT NOT NULL DEFAULT '[]',
+    support INTEGER NOT NULL DEFAULT 0,
+    pool INTEGER NOT NULL DEFAULT 0,
+    demand INTEGER NOT NULL DEFAULT 0,
+    origin TEXT NOT NULL DEFAULT 'ai' CHECK (origin IN ('user', 'ai')),
+    created_at REAL NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS features_project ON features(project_id);
+
+CREATE TABLE IF NOT EXISTS flows (
+    project_id INTEGER PRIMARY KEY REFERENCES projects(id) ON DELETE CASCADE,
+    data TEXT NOT NULL,
+    suggestions TEXT NOT NULL DEFAULT '[]',
+    updated_at REAL NOT NULL
+);
 
 CREATE TRIGGER IF NOT EXISTS evidence_ai AFTER INSERT ON evidence BEGIN
     INSERT INTO evidence_fts(rowid, title, body, source) VALUES (new.id, new.title, new.body, new.source);
@@ -565,3 +590,143 @@ class Database:
                 ).fetchall()
                 items.extend(dict(r) for r in rows)
         return items
+
+    @staticmethod
+    def _feature(row: sqlite3.Row) -> dict[str, Any]:
+        item = dict(row)
+        item["keywords"] = json.loads(item["keywords"])
+        item["evidence_ids"] = json.loads(item["evidence_ids"])
+        return item
+
+    def list_features(self, project_id: int) -> list[dict[str, Any]]:
+        """Return a project's features ordered by priority column and position."""
+        with self.connect() as conn:
+            rows = conn.execute(
+                "SELECT * FROM features WHERE project_id = ? ORDER BY "
+                "CASE priority WHEN 'must' THEN 0 WHEN 'should' THEN 1 WHEN 'could' THEN 2 ELSE 3 END, position, id",
+                (project_id,),
+            ).fetchall()
+        return [self._feature(r) for r in rows]
+
+    def get_feature(self, feature_id: int) -> dict[str, Any] | None:
+        """Return one feature or None."""
+        with self.connect() as conn:
+            row = conn.execute("SELECT * FROM features WHERE id = ?", (feature_id,)).fetchone()
+        return self._feature(row) if row else None
+
+    def _insert_feature(self, conn: sqlite3.Connection, project_id: int, item: dict[str, Any], now: float) -> int:
+        cur = conn.execute(
+            "INSERT INTO features(project_id, priority, position, title, description, keywords, evidence_ids, "
+            "support, pool, demand, origin, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                project_id,
+                item["priority"],
+                item.get("position", 0),
+                item["title"],
+                item.get("description", ""),
+                json.dumps(item.get("keywords", []), ensure_ascii=False),
+                json.dumps(item.get("evidence_ids", [])),
+                item.get("support", 0),
+                item.get("pool", 0),
+                item.get("demand", 0),
+                item.get("origin", "ai"),
+                now,
+            ),
+        )
+        return int(cur.lastrowid)
+
+    def replace_features(self, project_id: int, features: list[dict[str, Any]], keep_user: bool = True) -> list[dict[str, Any]]:
+        """Replace AI-proposed features, keeping the ones the user wrote unless told otherwise."""
+        now = time.time()
+        with self.connect() as conn:
+            if keep_user:
+                conn.execute("DELETE FROM features WHERE project_id = ? AND origin = 'ai'", (project_id,))
+            else:
+                conn.execute("DELETE FROM features WHERE project_id = ?", (project_id,))
+            for item in features:
+                self._insert_feature(conn, project_id, item, now)
+            self.touch_project(conn, project_id)
+        return self.list_features(project_id)
+
+    def add_feature(self, project_id: int, item: dict[str, Any]) -> dict[str, Any]:
+        """Append a feature at the end of its priority column."""
+        with self.connect() as conn:
+            last = conn.execute(
+                "SELECT COALESCE(MAX(position), -1) FROM features WHERE project_id = ? AND priority = ?",
+                (project_id, item["priority"]),
+            ).fetchone()[0]
+            feature_id = self._insert_feature(conn, project_id, {**item, "position": last + 1}, time.time())
+            self.touch_project(conn, project_id)
+        return self.get_feature(feature_id)
+
+    def update_feature(self, feature_id: int, **fields: Any) -> dict[str, Any] | None:
+        """Update editable feature fields."""
+        allowed = {"priority", "position", "title", "description", "keywords", "evidence_ids", "support", "pool", "demand"}
+        values = {k: v for k, v in fields.items() if k in allowed and v is not None}
+        for key in ("keywords", "evidence_ids"):
+            if key in values:
+                values[key] = json.dumps(values[key], ensure_ascii=False)
+        if values:
+            with self.connect() as conn:
+                conn.execute(
+                    f"UPDATE features SET {', '.join(f'{k} = ?' for k in values)} WHERE id = ?",
+                    (*values.values(), feature_id),
+                )
+        return self.get_feature(feature_id)
+
+    def reorder_features(self, project_id: int, order: list[tuple[int, str, int]]) -> list[dict[str, Any]]:
+        """Apply (feature id, priority, position) triples from the board."""
+        with self.connect() as conn:
+            conn.executemany(
+                "UPDATE features SET priority = ?, position = ? WHERE id = ? AND project_id = ?",
+                [(priority, position, feature_id, project_id) for feature_id, priority, position in order],
+            )
+            self.touch_project(conn, project_id)
+        return self.list_features(project_id)
+
+    def delete_feature(self, feature_id: int) -> None:
+        """Delete a feature."""
+        with self.connect() as conn:
+            conn.execute("DELETE FROM features WHERE id = ?", (feature_id,))
+
+    def get_flow(self, project_id: int) -> dict[str, Any] | None:
+        """Return the stored user flow document with its pending AI suggestions."""
+        with self.connect() as conn:
+            row = conn.execute("SELECT data, suggestions, updated_at FROM flows WHERE project_id = ?", (project_id,)).fetchone()
+        if not row:
+            return None
+        return {"flow": json.loads(row["data"]), "suggestions": json.loads(row["suggestions"]), "updated_at": row["updated_at"]}
+
+    def save_flow(self, project_id: int, flow: dict[str, Any], suggestions: list[dict[str, Any]] | None = None) -> None:
+        """Store the user flow document, optionally replacing the AI suggestions."""
+        now = time.time()
+        with self.connect() as conn:
+            if suggestions is None:
+                conn.execute(
+                    "INSERT INTO flows(project_id, data, updated_at) VALUES (?, ?, ?) "
+                    "ON CONFLICT(project_id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at",
+                    (project_id, json.dumps(flow, ensure_ascii=False), now),
+                )
+            else:
+                conn.execute(
+                    "INSERT INTO flows(project_id, data, suggestions, updated_at) VALUES (?, ?, ?, ?) "
+                    "ON CONFLICT(project_id) DO UPDATE SET data = excluded.data, suggestions = excluded.suggestions, "
+                    "updated_at = excluded.updated_at",
+                    (project_id, json.dumps(flow, ensure_ascii=False), json.dumps(suggestions, ensure_ascii=False), now),
+                )
+            self.touch_project(conn, project_id)
+
+    def chosen_persona(self, project_id: int) -> dict[str, Any] | None:
+        """Return the persona picked in Define together with its chosen sub-problem."""
+        with self.connect() as conn:
+            row = conn.execute(
+                "SELECT pe.* FROM personas pe JOIN problems pr ON pr.id = pe.problem_id "
+                "WHERE pe.project_id = ? AND pr.chosen = 1 AND pe.chosen_option IS NOT NULL LIMIT 1",
+                (project_id,),
+            ).fetchone()
+        if not row:
+            return None
+        item = dict(row)
+        item["options"] = json.loads(item["options"])
+        item["focus"] = item["options"][item["chosen_option"]] if item["chosen_option"] < len(item["options"]) else ""
+        return item

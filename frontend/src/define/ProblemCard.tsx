@@ -11,9 +11,9 @@ interface Props {
 }
 
 function growthStyle(growth: number) {
-  if (growth >= 5) return { background: "#e8f6ec", color: "#3d8456", Icon: ArrowUpRight };
-  if (growth <= -5) return { background: "#fcebef", color: "#b04a63", Icon: ArrowDownRight };
-  return { background: "#f1edf6", color: "#7c6d88", Icon: ArrowRight };
+  if (growth >= 5) return { background: "#efe6fb", color: "#6d4f8e", Icon: ArrowUpRight };
+  if (growth <= -5) return { background: "#f4f0f8", color: "#8a7d96", Icon: ArrowDownRight };
+  return { background: "#f2edf8", color: "#7c6d88", Icon: ArrowRight };
 }
 
 export function ProblemCard({ problem, index, selected, scaleMax, onSelect }: Props) {

@@ -1,4 +1,4 @@
-"""FastAPI application exposing the Discover phase and serving the compiled frontend."""
+"""FastAPI application exposing the Double Diamond phases and serving the compiled frontend."""
 
 from __future__ import annotations
 
@@ -13,6 +13,9 @@ from .database import Database
 from .models import (
     DefineRequest,
     ExpandRequest,
+    FeatureCreate,
+    FeatureOrder,
+    FeatureUpdate,
     Job,
     NodeCreate,
     NodeUpdate,
@@ -24,6 +27,7 @@ from .models import (
 from .ollama_client import OllamaClient
 from .services import discover
 from .services.define import DefineService, define_state
+from .services.develop import DevelopService, develop_state
 from .services.discover import DiscoverService
 from .services.jobs import JobRegistry
 
@@ -34,12 +38,14 @@ def create_app(
     service: DiscoverService | None = None,
     frontend_dist: Path | None = None,
     define_service: DefineService | None = None,
+    develop_service: DevelopService | None = None,
 ) -> FastAPI:
     """Build the FastAPI app with its dependencies wired in."""
     database = db or Database(settings.database_path)
     ollama = llm or OllamaClient()
     discover_service = service or DiscoverService(database, ollama)
     define = define_service or DefineService(database, ollama)
+    develop = develop_service or DevelopService(database, ollama)
     jobs = JobRegistry()
 
     app = FastAPI(title="PrismFlow", version="0.1.0", docs_url="/api/docs", openapi_url="/api/openapi.json")
@@ -180,6 +186,46 @@ def create_app(
         if persona is None:
             raise HTTPException(404, "persona or option not found")
         return define_state(database, persona["project_id"])
+
+    @api.get("/projects/{project_id}/develop")
+    def get_develop(project_id: int) -> dict:
+        """Return the MoSCoW backlog with the persona and problem it serves."""
+        return develop_state(database, project_id)
+
+    @api.post("/develop/features", status_code=202)
+    async def develop_features(body: DefineRequest) -> Job:
+        """Start generating the feature backlog for the chosen persona."""
+        state = develop_state(database, body.project_id)
+        if state["persona"] is None:
+            raise HTTPException(400, "choose a persona in Define first")
+        return jobs.start("develop.features", lambda progress, warn: develop.generate(body.project_id, progress, warn))
+
+    @api.post("/projects/{project_id}/features", status_code=201)
+    def add_feature(project_id: int, body: FeatureCreate) -> dict:
+        """Add a feature written by the user."""
+        if database.get_project(project_id) is None:
+            raise HTTPException(404, "project not found")
+        return develop.add(project_id, body.title, body.description, body.priority)
+
+    @api.patch("/features/{feature_id}")
+    def update_feature(feature_id: int, body: FeatureUpdate) -> dict:
+        """Edit a feature card and rescore it when its text changed."""
+        if database.get_feature(feature_id) is None:
+            raise HTTPException(404, "feature not found")
+        database.update_feature(feature_id, **body.model_dump(exclude_none=True))
+        if body.title is not None or body.description is not None:
+            return develop.rescore(feature_id)
+        return database.get_feature(feature_id)
+
+    @api.put("/projects/{project_id}/features/order")
+    def order_features(project_id: int, body: FeatureOrder) -> list[dict]:
+        """Store the board layout after drag and drop."""
+        return database.reorder_features(project_id, [(i.id, i.priority, i.position) for i in body.items])
+
+    @api.delete("/features/{feature_id}", status_code=204)
+    def delete_feature(feature_id: int) -> None:
+        """Remove a feature card."""
+        database.delete_feature(feature_id)
 
     @api.get("/jobs/{job_id}")
     def job_status(job_id: str) -> Job:
