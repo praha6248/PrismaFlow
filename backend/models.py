@@ -309,3 +309,114 @@ class FeatureOrder(BaseModel):
     """Board state sent after a drag and drop."""
 
     items: list[FeatureOrderItem]
+
+
+ElementType = Literal["button", "link", "select", "input", "toggle", "list"]
+ElementSize = Literal["S", "M", "L"]
+ElementZone = Literal["top", "center", "bottom"]
+ScreenKind = Literal["start", "step", "goal"]
+
+
+class FlowElement(BaseModel):
+    """An interactive element placed on a screen; a target turns it into a transition."""
+
+    id: str = Field(min_length=1, max_length=24)
+    label: str = Field(min_length=1, max_length=60)
+    type: ElementType = "button"
+    size: ElementSize = "M"
+    zone: ElementZone = "center"
+    options: int = Field(default=1, ge=1, le=50)
+    target: str | None = None
+
+
+class FlowScreen(BaseModel):
+    """A screen node of the user flow."""
+
+    id: str = Field(min_length=1, max_length=24)
+    name: str = Field(min_length=1, max_length=60)
+    kind: ScreenKind = "step"
+    x: float = 0
+    y: float = 0
+    feature_ids: list[int] = Field(default_factory=list)
+    elements: list[FlowElement] = Field(default_factory=list)
+
+
+class Flow(BaseModel):
+    """The whole user flow document edited in the Deliver studio."""
+
+    screens: list[FlowScreen] = Field(default_factory=list)
+
+
+class FlowUpdate(BaseModel):
+    """Request body carrying the edited flow."""
+
+    flow: Flow
+
+
+class ElementDraft(BaseModel):
+    """An element proposed by the model."""
+
+    label: str = Field(description="Short visible label in 1-3 words")
+    type: ElementType = Field(description="UI control type")
+    size: ElementSize = Field(description="L for the primary action, M for secondary, S for minor links")
+    zone: ElementZone = Field(description="Where on a phone screen: bottom (thumb zone), center or top")
+    options: int = Field(description="Choices shown at once: 1 for buttons and links, the visible item count for lists")
+    target: str = Field(description="Exact name of the screen this element opens, or an empty string")
+
+    @field_validator("label")
+    @classmethod
+    def _label(cls, value: str) -> str:
+        text = _sentence(value, 40).rstrip(".!:?…").strip()
+        return text[:1].upper() + text[1:]
+
+    @field_validator("options")
+    @classmethod
+    def _options(cls, value: int) -> int:
+        return max(1, min(20, value))
+
+
+class ScreenDraft(BaseModel):
+    """A screen proposed by the model."""
+
+    name: str = Field(description="Screen name in 1-3 words")
+    kind: ScreenKind = Field(description="start for the entry screen, goal for the screen where the persona reaches value")
+    features: list[str] = Field(description="Titles of the backlog features shown on this screen")
+    elements: list[ElementDraft] = Field(json_schema_extra={"minItems": 1, "maxItems": 6})
+
+    @field_validator("name")
+    @classmethod
+    def _name(cls, value: str) -> str:
+        text = _sentence(value, 40).rstrip(".")
+        return text[:1].upper() + text[1:]
+
+
+class FlowDraft(BaseModel):
+    """Structured answer with a first user flow."""
+
+    screens: list[ScreenDraft] = Field(json_schema_extra={"minItems": 3, "maxItems": 6})
+
+
+SuggestionOp = Literal["resize", "move_zone", "group_options", "add_transition", "remove_element"]
+
+
+class SuggestionDraft(BaseModel):
+    """An optimisation the model proposes for the flow."""
+
+    title: str = Field(description="Imperative advice in at most 8 words")
+    reason: str = Field(description="Which audit finding it fixes, at most 12 words")
+    op: SuggestionOp
+    screen: str = Field(description="Exact name of the screen to change")
+    element: str = Field(description="Exact label of the element to change, or the new element label for add_transition")
+    value: str = Field(description="New size S/M/L for resize, zone top/center/bottom for move_zone, target screen name for add_transition, otherwise empty")
+
+    @field_validator("title", "reason")
+    @classmethod
+    def _text(cls, value: str) -> str:
+        text = _sentence(value, 110).rstrip(".")
+        return text[:1].upper() + text[1:]
+
+
+class SuggestionSet(BaseModel):
+    """Structured answer with flow optimisations."""
+
+    suggestions: list[SuggestionDraft] = Field(json_schema_extra={"minItems": 1, "maxItems": 4})

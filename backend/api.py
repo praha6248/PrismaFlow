@@ -16,6 +16,7 @@ from .models import (
     FeatureCreate,
     FeatureOrder,
     FeatureUpdate,
+    FlowUpdate,
     Job,
     NodeCreate,
     NodeUpdate,
@@ -27,6 +28,7 @@ from .models import (
 from .ollama_client import OllamaClient
 from .services import discover
 from .services.define import DefineService, define_state
+from .services.deliver import DeliverService
 from .services.develop import DevelopService, develop_state
 from .services.discover import DiscoverService
 from .services.jobs import JobRegistry
@@ -39,6 +41,7 @@ def create_app(
     frontend_dist: Path | None = None,
     define_service: DefineService | None = None,
     develop_service: DevelopService | None = None,
+    deliver_service: DeliverService | None = None,
 ) -> FastAPI:
     """Build the FastAPI app with its dependencies wired in."""
     database = db or Database(settings.database_path)
@@ -46,6 +49,7 @@ def create_app(
     discover_service = service or DiscoverService(database, ollama)
     define = define_service or DefineService(database, ollama)
     develop = develop_service or DevelopService(database, ollama)
+    deliver = deliver_service or DeliverService(database, ollama)
     jobs = JobRegistry()
 
     app = FastAPI(title="PrismFlow", version="0.1.0", docs_url="/api/docs", openapi_url="/api/openapi.json")
@@ -226,6 +230,47 @@ def create_app(
     def delete_feature(feature_id: int) -> None:
         """Remove a feature card."""
         database.delete_feature(feature_id)
+
+    @api.get("/projects/{project_id}/deliver")
+    def get_deliver(project_id: int) -> dict:
+        """Return the user flow, its live audit and pending AI suggestions."""
+        return deliver.state(project_id)
+
+    @api.put("/projects/{project_id}/flow")
+    def save_flow(project_id: int, body: FlowUpdate) -> dict:
+        """Store the edited flow and return a fresh audit."""
+        return deliver.save(project_id, body.flow)
+
+    @api.post("/deliver/flow", status_code=202)
+    async def deliver_flow(body: DefineRequest) -> Job:
+        """Start generating a first user flow from the backlog."""
+        if not [f for f in database.list_features(body.project_id) if f["priority"] != "wont"]:
+            raise HTTPException(400, "add features in Develop first")
+        return jobs.start("deliver.flow", lambda progress, warn: deliver.generate(body.project_id, progress, warn))
+
+    @api.post("/deliver/optimize", status_code=202)
+    async def deliver_optimize(body: DefineRequest) -> Job:
+        """Start asking the local model for flow optimisations."""
+        if not deliver.flow(body.project_id).screens:
+            raise HTTPException(400, "the flow is empty")
+        return jobs.start("deliver.optimize", lambda progress, warn: deliver.optimize(body.project_id, progress, warn))
+
+    @api.post("/projects/{project_id}/suggestions/{suggestion_id}/accept")
+    def accept_suggestion(project_id: int, suggestion_id: str) -> dict:
+        """Apply an AI suggestion to the flow."""
+        return deliver.accept(project_id, suggestion_id)
+
+    @api.delete("/projects/{project_id}/suggestions/{suggestion_id}")
+    def dismiss_suggestion(project_id: int, suggestion_id: str) -> dict:
+        """Dismiss an AI suggestion."""
+        return deliver.dismiss(project_id, suggestion_id)
+
+    @api.post("/projects/{project_id}/handoff")
+    def handoff(project_id: int) -> dict:
+        """Export the Figma prompt and CLAUDE.md and return their contents."""
+        if not deliver.flow(project_id).screens:
+            raise HTTPException(400, "the flow is empty")
+        return deliver.handoff(project_id)
 
     @api.get("/jobs/{job_id}")
     def job_status(job_id: str) -> Job:
