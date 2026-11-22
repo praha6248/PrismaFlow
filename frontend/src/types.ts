@@ -1,6 +1,12 @@
 export type NodeKind = "niche" | "idea" | "target_group" | "pain_point" | "competitor";
 
-export type Stage = "compose" | "expanding" | "select";
+export type Stage = "compose" | "expanding" | "select" | "problems" | "personas" | "done";
+
+export type DiscoverStage = "compose" | "expanding" | "select";
+
+export type Phase = "discover" | "define" | "develop" | "deliver";
+
+export const PHASES: Phase[] = ["discover", "define", "develop", "deliver"];
 
 export interface Project {
   id: number;
@@ -8,7 +14,7 @@ export interface Project {
   seed: string;
   language: string;
   geo: string;
-  phase: string;
+  phase: Phase;
   stage: Stage;
   created_at: number;
   updated_at: number;
@@ -50,7 +56,7 @@ export interface Job {
   status: "running" | "done" | "error";
   progress: number;
   stage: string;
-  result: Graph | null;
+  result: unknown;
   error: string | null;
   warnings: string[];
 }
@@ -81,4 +87,49 @@ export interface Evidence {
 export interface Health {
   ok: boolean;
   ollama: { ok: boolean; url: string; model: string | null; error?: string };
+}
+
+export interface TrendSummary {
+  available: boolean;
+  index?: number;
+  peak?: number;
+  growth?: number | null;
+  anchor: string;
+  anchor_ratio?: number | null;
+  months?: { month: string; value: number }[];
+}
+
+export interface Problem {
+  id: number;
+  project_id: number;
+  position: number;
+  title: string;
+  description: string;
+  keyword: string;
+  quote: string | null;
+  quote_source: string | null;
+  node_ids: number[];
+  evidence_ids: number[];
+  trend: TrendSummary | null;
+  chosen: boolean;
+}
+
+export interface Persona {
+  id: number;
+  project_id: number;
+  problem_id: number;
+  position: number;
+  name: string;
+  age: number;
+  role: string;
+  quote: string;
+  options: string[];
+  chosen_option: number | null;
+}
+
+export interface DefineState {
+  project: Project;
+  problems: Problem[];
+  personas: Persona[];
+  chosen_problem_id: number | null;
 }

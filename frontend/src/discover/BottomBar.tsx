@@ -7,6 +7,7 @@ export const STAGE_TEXT: Record<string, string> = {
   thinking: "Model analizuje mapę",
   placing: "Dodaję kolejne węzły",
   evidence: "Zbieram dowody z sieci",
+  translating: "Tłumaczę wyniki z angielskiego",
   trends: "Sprawdzam trendy Google",
   scoring: "Liczę popyt",
   done: "Gotowe",
@@ -105,6 +106,20 @@ export function ComposerBar({ onAdd, onDone, disabled }: ComposerProps) {
 export function ExpandProgress({ stage }: { stage: string }) {
   return (
     <Panel>
+      <ProgressContent title="Rozbudowuję mapę..." text={STAGE_TEXT[stage] ?? STAGE_TEXT.placing} stage={stage} />
+    </Panel>
+  );
+}
+
+interface ProgressContentProps {
+  title: string;
+  text: string;
+  stage: string;
+}
+
+export function ProgressContent({ title, text, stage }: ProgressContentProps) {
+  return (
+    <>
       <div
         className="absolute flex items-center"
         style={{ left: "calc(var(--u) * 10)", right: "calc(var(--u) * 12)", top: "calc(var(--u) * 9)" }}
@@ -119,10 +134,10 @@ export function ExpandProgress({ stage }: { stage: string }) {
           }}
         />
         <span className="text-mauve" style={{ marginLeft: "calc(var(--u) * 6)", fontSize: "calc(var(--u) * 8.3)" }}>
-          Rozbudowuję mapę...
+          {title}
         </span>
         <span key={stage} className="pf-fade ml-auto text-haze" style={{ fontSize: "calc(var(--u) * 6.8)" }}>
-          {STAGE_TEXT[stage] ?? STAGE_TEXT.placing}
+          {text}
         </span>
       </div>
       <div
@@ -146,6 +161,6 @@ export function ExpandProgress({ stage }: { stage: string }) {
           }}
         />
       </div>
-    </Panel>
+    </>
   );
 }

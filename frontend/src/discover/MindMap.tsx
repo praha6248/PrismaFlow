@@ -9,7 +9,7 @@ import {
   type OnNodeDrag,
 } from "@xyflow/react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { Graph, MapNode, Stage } from "../types";
+import type { DiscoverStage as Stage, Graph, MapNode } from "../types";
 import { BubbleNode, type BubbleFlowNode } from "./BubbleNode";
 import { CenterEdge } from "./CenterEdge";
 import { diameterFor } from "./kinds";

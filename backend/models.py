@@ -80,7 +80,7 @@ class ProjectUpdate(BaseModel):
 
     name: str | None = None
     stage: Literal["compose", "expanding", "select", "problems", "personas", "done"] | None = None
-    phase: Literal["discover", "define", "develop"] | None = None
+    phase: Literal["discover", "define", "develop", "deliver"] | None = None
 
 
 class NodeCreate(BaseModel):

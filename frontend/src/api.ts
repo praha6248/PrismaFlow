@@ -1,4 +1,4 @@
-import type { Evidence, Graph, Health, Job, MapNode, Stage } from "./types";
+import type { DefineState, Evidence, Graph, Health, Job, MapNode, Phase, Project, Stage } from "./types";
 
 export class ApiError extends Error {
   constructor(
@@ -53,6 +53,16 @@ export const api = {
       body: json({ project_id: projectId, node_id: nodeId ?? null, count }),
     }),
   job: (id: string) => request<Job>(`/jobs/${id}`),
+  setPhase: (id: number, phase: Phase) =>
+    request<Graph>(`/projects/${id}`, { method: "PATCH", body: json({ phase }) }).then((g) => g.project as Project),
+  getDefine: (projectId: number) => request<DefineState>(`/projects/${projectId}/define`),
+  generateProblems: (projectId: number) =>
+    request<Job>("/define/problems", { method: "POST", body: json({ project_id: projectId }) }),
+  chooseProblem: (problemId: number) => request<DefineState>(`/problems/${problemId}/choose`, { method: "POST" }),
+  generatePersonas: (projectId: number) =>
+    request<Job>("/define/personas", { method: "POST", body: json({ project_id: projectId }) }),
+  choosePersona: (personaId: number, option: number) =>
+    request<DefineState>(`/personas/${personaId}/choose`, { method: "POST", body: json({ option }) }),
 };
 
 export async function waitForJob(id: string, onProgress: (job: Job) => void, intervalMs = 450): Promise<Job> {

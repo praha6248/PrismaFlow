@@ -1,8 +1,8 @@
 import { ReactFlowProvider } from "@xyflow/react";
-import { ArrowRight, Lock } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, waitForJob } from "../api";
-import type { Graph, MapNode, Stage } from "../types";
+import type { DiscoverStage, Graph, MapNode, Stage } from "../types";
 import { ComposerBar, ExpandProgress } from "./BottomBar";
 import { EvidenceDrawer } from "./EvidenceDrawer";
 import { composeSlot } from "./layout";
@@ -16,57 +16,47 @@ const WARNINGS: [string, string][] = [
   ["autocomplete:", "Google Autocomplete nie odpowiada — pomijam podpowiedzi."],
 ];
 
-function projectFromHash(): number | null {
-  const match = window.location.hash.match(/^#\/p\/(\d+)/);
-  return match ? Number(match[1]) : null;
-}
+const DISCOVER_STAGES: Stage[] = ["compose", "expanding", "select"];
 
 interface Props {
-  resetSignal: number;
+  projectId: number | null;
+  onCreated: (projectId: number) => void;
+  onOpenDefine: () => void;
+  notify: (message: string) => void;
 }
 
-export function DiscoverView({ resetSignal }: Props) {
+export function DiscoverView({ projectId, onCreated, onOpenDefine, notify }: Props) {
   const [graph, setGraph] = useState<Graph | null>(null);
   const [leaving, setLeaving] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [localStage, setLocalStage] = useState<Stage | null>(null);
+  const [localStage, setLocalStage] = useState<DiscoverStage | null>(null);
   const [jobStage, setJobStage] = useState("queued");
   const [focusedId, setFocusedId] = useState<number | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
   const shownWarnings = useRef(new Set<string>());
-  const toastTimer = useRef<number | undefined>(undefined);
-
-  const notify = useCallback((message: string) => {
-    setToast(message);
-    window.clearTimeout(toastTimer.current);
-    toastTimer.current = window.setTimeout(() => setToast(null), 6000);
-  }, []);
+  const loadedId = graph?.project.id ?? null;
 
   useEffect(() => {
-    const id = projectFromHash();
-    if (!id) return;
+    if (projectId === null) {
+      setGraph(null);
+      setLeaving(false);
+      setFocusedId(null);
+      setLocalStage(null);
+      return;
+    }
+    if (projectId === loadedId) return;
     api
-      .getProject(id)
+      .getProject(projectId)
       .then((data) => {
-        if (data.project.stage === "expanding") {
-          const enriched = data.nodes.some((n) => n.enriched_at !== null);
+        const enriched = data.nodes.some((n) => n.enriched_at !== null);
+        if (!DISCOVER_STAGES.includes(data.project.stage) || data.project.stage === "expanding") {
           data = { ...data, project: { ...data.project, stage: enriched ? "select" : "compose" } };
         }
         setGraph(data);
       })
-      .catch(() => (window.location.hash = ""));
-  }, []);
+      .catch((error: Error) => notify(`Nie udało się wczytać projektu: ${error.message}`));
+  }, [projectId, loadedId, notify]);
 
-  useEffect(() => {
-    if (resetSignal === 0) return;
-    setGraph(null);
-    setLeaving(false);
-    setFocusedId(null);
-    setLocalStage(null);
-    window.location.hash = "";
-  }, [resetSignal]);
-
-  const stage: Stage = localStage ?? graph?.project.stage ?? "compose";
+  const stage = (localStage ?? graph?.project.stage ?? "compose") as DiscoverStage;
   const busy = stage === "expanding";
 
   const start = async (seed: string) => {
@@ -74,8 +64,8 @@ export function DiscoverView({ resetSignal }: Props) {
     setLeaving(true);
     try {
       const [data] = await Promise.all([api.createProject(seed), new Promise((r) => setTimeout(r, 380))]);
-      window.location.hash = `#/p/${data.project.id}`;
       setGraph(data);
+      onCreated(data.project.id);
     } catch (error) {
       setLeaving(false);
       notify(`Nie udało się utworzyć projektu: ${(error as Error).message}`);
@@ -115,7 +105,7 @@ export function DiscoverView({ resetSignal }: Props) {
         setLocalStage(previous);
         return;
       }
-      setGraph(finished.result);
+      setGraph(finished.result as Graph);
       setLocalStage(null);
     } catch (error) {
       notify((error as Error).message);
@@ -146,17 +136,16 @@ export function DiscoverView({ resetSignal }: Props) {
     }
   };
 
-  const projectId = graph?.project.id;
   const savePositions = useCallback(
     (positions: { id: number; x: number; y: number }[]) => {
-      if (projectId) api.savePositions(projectId, positions).catch(() => undefined);
+      if (loadedId) api.savePositions(loadedId, positions).catch(() => undefined);
     },
-    [projectId],
+    [loadedId],
   );
 
   const focused = useMemo(() => graph?.nodes.find((n) => n.id === focusedId) ?? null, [graph, focusedId]);
   const starredCount = graph?.nodes.filter((n) => n.starred).length ?? 0;
-  const mapStage: Stage = stage === "expanding" && graph?.project.stage === "select" ? "select" : stage;
+  const mapStage: DiscoverStage = stage === "expanding" && graph?.project.stage === "select" ? "select" : stage;
 
   return (
     <>
@@ -193,9 +182,8 @@ export function DiscoverView({ resetSignal }: Props) {
       {graph && stage === "select" && starredCount > 0 && !focused && (
         <button
           type="button"
-          disabled
-          title="Faza Define jest w przygotowaniu"
-          className="pf-fade-up absolute left-1/2 z-10 flex -translate-x-1/2 items-center rounded-full"
+          onClick={onOpenDefine}
+          className="pf-fade-up absolute left-1/2 z-10 flex -translate-x-1/2 items-center rounded-full transition-transform hover:scale-[1.02] active:scale-[0.98]"
           style={{
             bottom: "calc(var(--u) * 18)",
             gap: "calc(var(--u) * 5)",
@@ -206,7 +194,6 @@ export function DiscoverView({ resetSignal }: Props) {
             boxShadow: "0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(196, 160, 232, 0.28)",
           }}
         >
-          <Lock style={{ width: "calc(var(--u) * 7)" }} color="#aa9fb2" />
           Przejdź do Define
           <span className="rounded-full bg-[#fed3f9]" style={{ padding: "0 calc(var(--u) * 5)" }}>
             {starredCount}
@@ -226,24 +213,6 @@ export function DiscoverView({ resetSignal }: Props) {
         />
       )}
 
-      {toast && (
-        <div
-          role="status"
-          className="pf-fade-up absolute left-1/2 z-40 -translate-x-1/2 text-center text-mauve"
-          style={{
-            top: "calc(var(--u) * 98)",
-            maxWidth: "calc(var(--u) * 340)",
-            padding: "calc(var(--u) * 5) calc(var(--u) * 12)",
-            borderRadius: "calc(var(--u) * 10)",
-            background: "rgba(255,255,255,0.92)",
-            boxShadow: "0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(196, 160, 232, 0.3)",
-            fontSize: "calc(var(--u) * 6.4)",
-          }}
-          onClick={() => setToast(null)}
-        >
-          {toast}
-        </div>
-      )}
     </>
   );
 }

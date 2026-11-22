@@ -33,6 +33,7 @@ They are conceptual hypotheses to validate later, not interview results.
 Rules:
 - Write in {language}; use typical first names for that language.
 - Create three clearly different people (age, life situation, motivation) who all experience the chosen problem.
+- Spread their ages at least 8 years apart; include the person who pays for or decides about a solution (for example a parent, carer or teacher) when the problem concerns someone else.
 - Base them on the target groups and evidence when available.
 - The quote sounds natural and personal, as if said in an interview, 1-2 short sentences.
 - Each persona has two concrete sub-problems (3-7 words each) that a product could address; avoid repeating them across personas."""

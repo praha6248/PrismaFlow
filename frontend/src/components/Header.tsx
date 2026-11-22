@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 import sparkle from "../assets/sparkle.png";
 
 const PHASES = ["Discover", "Define", "Develop", "Deliver"] as const;
@@ -5,10 +6,12 @@ const STEP_X = [145, 262, 379, 500];
 
 interface Props {
   active: number;
+  reached: number;
   onHome: () => void;
+  onNavigate: (index: number) => void;
 }
 
-export function Header({ active, onHome }: Props) {
+export function Header({ active, reached, onHome, onNavigate }: Props) {
   return (
     <>
       <button
@@ -40,20 +43,35 @@ export function Header({ active, onHome }: Props) {
             width: `calc(var(--u) * ${STEP_X[3] - STEP_X[0]})`,
             top: "calc(var(--u) * 80.4)",
             height: "calc(var(--u) * 1.2)",
-            background: "#fcdbfb",
+            background: "#efe3f5",
           }}
         />
+        {reached > 0 && (
+          <div
+            className="absolute transition-[width] duration-500"
+            style={{
+              left: `calc(50% + var(--u) * ${STEP_X[0] - 322})`,
+              width: `calc(var(--u) * ${STEP_X[reached] - STEP_X[0]})`,
+              top: "calc(var(--u) * 80.4)",
+              height: "calc(var(--u) * 1.2)",
+              background: "linear-gradient(90deg, #c8a5e8 0%, #dca0e2 100%)",
+            }}
+          />
+        )}
         {PHASES.map((phase, index) => {
           const isActive = index === active;
-          const locked = index > active;
+          const done = index < reached && !isActive;
+          const locked = index > reached;
           return (
-            <div
+            <button
+              type="button"
               key={phase}
-              className="pointer-events-auto absolute flex flex-col items-center"
+              disabled={locked || isActive}
+              onClick={() => onNavigate(index)}
+              className="pointer-events-auto absolute flex flex-col items-center disabled:cursor-default"
               style={{ left: `calc(50% + var(--u) * ${STEP_X[index] - 322})`, top: "calc(var(--u) * 52.8)", transform: "translateX(-50%)" }}
-              title={locked ? "Faza w przygotowaniu" : phase}
+              title={locked ? "Ukończ wcześniejsze fazy" : phase}
               aria-current={isActive ? "step" : undefined}
-              aria-disabled={locked}
             >
               <span
                 className={locked ? "cursor-not-allowed text-ink" : "text-ink"}
@@ -62,23 +80,24 @@ export function Header({ active, onHome }: Props) {
                 {phase}
               </span>
               <span
-                className="relative flex items-center justify-center rounded-full"
+                className="relative flex items-center justify-center rounded-full transition-colors duration-300"
                 style={{
                   marginTop: "calc(var(--u) * 10.2)",
                   width: "calc(var(--u) * 14)",
                   height: "calc(var(--u) * 14)",
-                  border: `calc(var(--u) * 1) solid ${isActive ? "#fbb4f2" : "#fdd3fa"}`,
-                  background: isActive ? "#fff4fd" : "#f9f5ff",
+                  border: `calc(var(--u) * 1) solid ${isActive ? "#e2b3e8" : done ? "#d6a0e3" : "#ecdcf3"}`,
+                  background: isActive ? "#fcf5fd" : done ? "linear-gradient(135deg, #c8a5e8 0%, #dca0e2 100%)" : "#faf7fd",
                 }}
               >
                 {isActive && (
                   <span
                     className="rounded-full"
-                    style={{ width: "calc(var(--u) * 7.6)", height: "calc(var(--u) * 7.6)", background: "#f783e9" }}
+                    style={{ width: "calc(var(--u) * 7.6)", height: "calc(var(--u) * 7.6)", background: "linear-gradient(135deg, #c8a5e8 0%, #dca0e2 100%)" }}
                   />
                 )}
+                {done && <Check color="#ffffff" strokeWidth={3} style={{ width: "calc(var(--u) * 8)", height: "calc(var(--u) * 8)" }} />}
               </span>
-            </div>
+            </button>
           );
         })}
       </nav>
