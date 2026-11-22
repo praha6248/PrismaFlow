@@ -1,0 +1,7 @@
+corpus/raw/
+*.gguf
+*.log
+out/
+vendor/
+.venv/
+weights/

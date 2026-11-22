@@ -1,0 +1,3116 @@
+[
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/about",
+  "title": "About WCAG Understanding Documents",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--about-wcag-understanding-documents.txt",
+  "chars": 8389
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/text-alternatives",
+  "title": "Understanding Guideline 1.1 Text Alternatives",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-guideline-1-1-text-alternatives.txt",
+  "chars": 3869
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-content",
+  "title": "Understanding SC 1.1.1 Non-text Content (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-1-1-non-text-content-level-a.txt",
+  "chars": 28429
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/time-based-media",
+  "title": "Understanding Guideline 1.2 Time-based Media",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-guideline-1-2-time-based-media.txt",
+  "chars": 3920
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/audio-only-and-video-only-prerecorded",
+  "title": "Understanding SC 1.2.1 Audio-only and Video-only (Prerecorded) (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-2-1-audio-only-and-video-only-prerecorded-level-a.txt",
+  "chars": 8560
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/captions-prerecorded",
+  "title": "Understanding SC 1.2.2 Captions (Prerecorded) (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-2-2-captions-prerecorded-level-a.txt",
+  "chars": 12031
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/audio-description-or-media-alternative-prerecorded",
+  "title": "Understanding SC 1.2.3 Audio Description or Media Alternative (Prerecorded) (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-2-3-audio-description-or-media-alternative-prerecor.txt",
+  "chars": 10808
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/captions-live",
+  "title": "Understanding SC 1.2.4 Captions (Live) (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-2-4-captions-live-level-aa.txt",
+  "chars": 9143
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/audio-description-prerecorded",
+  "title": "Understanding SC 1.2.5 Audio Description (Prerecorded) (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-2-5-audio-description-prerecorded-level-aa.txt",
+  "chars": 8252
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/sign-language-prerecorded",
+  "title": "Understanding SC 1.2.6 Sign Language (Prerecorded) (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-2-6-sign-language-prerecorded-level-aaa.txt",
+  "chars": 5499
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/extended-audio-description-prerecorded",
+  "title": "Understanding SC 1.2.7 Extended Audio Description (Prerecorded) (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-2-7-extended-audio-description-prerecorded-level-aa.txt",
+  "chars": 5718
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/media-alternative-prerecorded",
+  "title": "Understanding SC 1.2.8 Media Alternative (Prerecorded) (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-2-8-media-alternative-prerecorded-level-aaa.txt",
+  "chars": 13107
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/audio-only-live",
+  "title": "Understanding SC 1.2.9 Audio-only (Live) (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-2-9-audio-only-live-level-aaa.txt",
+  "chars": 5156
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/adaptable",
+  "title": "Understanding Guideline 1.3 Adaptable",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-guideline-1-3-adaptable.txt",
+  "chars": 1405
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships",
+  "title": "Understanding SC 1.3.1 Info and Relationships (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-3-1-info-and-relationships-level-a.txt",
+  "chars": 15848
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/meaningful-sequence",
+  "title": "Understanding SC 1.3.2 Meaningful Sequence (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-3-2-meaningful-sequence-level-a.txt",
+  "chars": 6870
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/sensory-characteristics",
+  "title": "Understanding SC 1.3.3 Sensory Characteristics (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-3-3-sensory-characteristics-level-a.txt",
+  "chars": 5515
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/orientation",
+  "title": "Understanding SC 1.3.4 Orientation (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-3-4-orientation-level-aa.txt",
+  "chars": 6555
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/identify-input-purpose",
+  "title": "Understanding SC 1.3.5 Identify Input Purpose (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-3-5-identify-input-purpose-level-aa.txt",
+  "chars": 10914
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/identify-purpose",
+  "title": "Understanding SC 1.3.6 Identify Purpose (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-3-6-identify-purpose-level-aaa.txt",
+  "chars": 7390
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/distinguishable",
+  "title": "Understanding Guideline 1.4 Distinguishable",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-guideline-1-4-distinguishable.txt",
+  "chars": 1273
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color",
+  "title": "Understanding SC 1.4.1 Use of Color (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-4-1-use-of-color-level-a.txt",
+  "chars": 10440
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/audio-control",
+  "title": "Understanding SC 1.4.2 Audio Control (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-4-2-audio-control-level-a.txt",
+  "chars": 7771
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum",
+  "title": "Understanding SC 1.4.3 Contrast (Minimum) (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-4-3-contrast-minimum-level-aa.txt",
+  "chars": 28750
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/resize-text",
+  "title": "Understanding SC 1.4.4 Resize Text (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-4-4-resize-text-level-aa.txt",
+  "chars": 15903
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/images-of-text",
+  "title": "Understanding SC 1.4.5 Images of Text (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-4-5-images-of-text-level-aa.txt",
+  "chars": 11500
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced",
+  "title": "Understanding SC 1.4.6 Contrast (Enhanced) (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-4-6-contrast-enhanced-level-aaa.txt",
+  "chars": 27791
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/low-or-no-background-audio",
+  "title": "Understanding SC 1.4.7 Low or No Background Audio (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-4-7-low-or-no-background-audio-level-aaa.txt",
+  "chars": 4163
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/visual-presentation",
+  "title": "Understanding SC 1.4.8 Visual Presentation (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-4-8-visual-presentation-level-aaa.txt",
+  "chars": 17128
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/images-of-text-no-exception",
+  "title": "Understanding SC 1.4.9 Images of Text (No Exception) (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-4-9-images-of-text-no-exception-level-aaa.txt",
+  "chars": 9268
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/reflow",
+  "title": "Understanding SC 1.4.10 Reflow (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-4-10-reflow-level-aa.txt",
+  "chars": 37375
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast",
+  "title": "Understanding SC 1.4.11 Non-text Contrast (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-4-11-non-text-contrast-level-aa.txt",
+  "chars": 48201
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/text-spacing",
+  "title": "Understanding SC 1.4.12 Text Spacing (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-4-12-text-spacing-level-aa.txt",
+  "chars": 16238
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/content-on-hover-or-focus",
+  "title": "Understanding SC 1.4.13 Content on Hover or Focus (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-1-4-13-content-on-hover-or-focus-level-aa.txt",
+  "chars": 13327
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard-accessible",
+  "title": "Understanding Guideline 2.1 Keyboard Accessible",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-guideline-2-1-keyboard-accessible.txt",
+  "chars": 2162
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard",
+  "title": "Understanding SC 2.1.1 Keyboard (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-1-1-keyboard-level-a.txt",
+  "chars": 10158
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/no-keyboard-trap",
+  "title": "Understanding SC 2.1.2 No Keyboard Trap (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-1-2-no-keyboard-trap-level-a.txt",
+  "chars": 5703
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard-no-exception",
+  "title": "Understanding SC 2.1.3 Keyboard (No Exception) (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-1-3-keyboard-no-exception-level-aaa.txt",
+  "chars": 4434
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/character-key-shortcuts",
+  "title": "Understanding SC 2.1.4 Character Key Shortcuts (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-1-4-character-key-shortcuts-level-a.txt",
+  "chars": 13086
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/enough-time",
+  "title": "Understanding Guideline 2.2 Enough Time",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-guideline-2-2-enough-time.txt",
+  "chars": 970
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/timing-adjustable",
+  "title": "Understanding SC 2.2.1 Timing Adjustable (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-2-1-timing-adjustable-level-a.txt",
+  "chars": 13685
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide",
+  "title": "Understanding SC 2.2.2 Pause, Stop, Hide (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-2-2-pause-stop-hide-level-a.txt",
+  "chars": 20279
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/no-timing",
+  "title": "Understanding SC 2.2.3 No Timing (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-2-3-no-timing-level-aaa.txt",
+  "chars": 3686
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/interruptions",
+  "title": "Understanding SC 2.2.4 Interruptions (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-2-4-interruptions-level-aaa.txt",
+  "chars": 3074
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/re-authenticating",
+  "title": "Understanding SC 2.2.5 Re-authenticating (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-2-5-re-authenticating-level-aaa.txt",
+  "chars": 4346
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/timeouts",
+  "title": "Understanding SC 2.2.6 Timeouts (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-2-6-timeouts-level-aaa.txt",
+  "chars": 5902
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/seizures-and-physical-reactions",
+  "title": "Understanding Guideline 2.3 Seizures and Physical Reactions",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-guideline-2-3-seizures-and-physical-reactions.txt",
+  "chars": 907
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/three-flashes-or-below-threshold",
+  "title": "Understanding SC 2.3.1 Three Flashes or Below Threshold (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-3-1-three-flashes-or-below-threshold-level-a.txt",
+  "chars": 16065
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/three-flashes",
+  "title": "Understanding SC 2.3.2 Three Flashes (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-3-2-three-flashes-level-aaa.txt",
+  "chars": 10522
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions",
+  "title": "Understanding SC 2.3.3 Animation from Interactions (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-3-3-animation-from-interactions-level-aaa.txt",
+  "chars": 5070
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/navigable",
+  "title": "Understanding Guideline 2.4 Navigable",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-guideline-2-4-navigable.txt",
+  "chars": 2015
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/bypass-blocks",
+  "title": "Understanding SC 2.4.1 Bypass Blocks (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-4-1-bypass-blocks-level-a.txt",
+  "chars": 9449
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/page-titled",
+  "title": "Understanding SC 2.4.2 Page Titled (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-4-2-page-titled-level-a.txt",
+  "chars": 7708
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-order",
+  "title": "Understanding SC 2.4.3 Focus Order (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-4-3-focus-order-level-a.txt",
+  "chars": 12724
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/link-purpose-in-context",
+  "title": "Understanding SC 2.4.4 Link Purpose (In Context) (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-4-4-link-purpose-in-context-level-a.txt",
+  "chars": 20476
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/multiple-ways",
+  "title": "Understanding SC 2.4.5 Multiple Ways (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-4-5-multiple-ways-level-aa.txt",
+  "chars": 7043
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/headings-and-labels",
+  "title": "Understanding SC 2.4.6 Headings and Labels (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-4-6-headings-and-labels-level-aa.txt",
+  "chars": 12085
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-visible",
+  "title": "Understanding SC 2.4.7 Focus Visible (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-4-7-focus-visible-level-aa.txt",
+  "chars": 5864
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/location",
+  "title": "Understanding SC 2.4.8 Location (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-4-8-location-level-aaa.txt",
+  "chars": 4896
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/link-purpose-link-only",
+  "title": "Understanding SC 2.4.9 Link Purpose (Link Only) (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-4-9-link-purpose-link-only-level-aaa.txt",
+  "chars": 11163
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/section-headings",
+  "title": "Understanding SC 2.4.10 Section Headings (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-4-10-section-headings-level-aaa.txt",
+  "chars": 4245
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum",
+  "title": "Understanding SC 2.4.11 Focus Not Obscured (Minimum) (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-4-11-focus-not-obscured-minimum-level-aa.txt",
+  "chars": 16100
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-enhanced",
+  "title": "Understanding SC 2.4.12 Focus Not Obscured (Enhanced) (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-4-12-focus-not-obscured-enhanced-level-aaa.txt",
+  "chars": 6375
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance",
+  "title": "Understanding SC 2.4.13 Focus Appearance (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-4-13-focus-appearance-level-aaa.txt",
+  "chars": 40246
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/input-modalities",
+  "title": "Understanding Guideline 2.5 Input Modalities",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-guideline-2-5-input-modalities.txt",
+  "chars": 1801
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/pointer-gestures",
+  "title": "Understanding SC 2.5.1 Pointer Gestures (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-5-1-pointer-gestures-level-a.txt",
+  "chars": 11969
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/pointer-cancellation",
+  "title": "Understanding SC 2.5.2 Pointer Cancellation (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-5-2-pointer-cancellation-level-a.txt",
+  "chars": 12073
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/label-in-name",
+  "title": "Understanding SC 2.5.3 Label in Name (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-5-3-label-in-name-level-a.txt",
+  "chars": 21581
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/motion-actuation",
+  "title": "Understanding SC 2.5.4 Motion Actuation (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-5-4-motion-actuation-level-a.txt",
+  "chars": 12995
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced",
+  "title": "Understanding SC 2.5.5 Target Size (Enhanced) (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-5-5-target-size-enhanced-level-aaa.txt",
+  "chars": 11480
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/concurrent-input-mechanisms",
+  "title": "Understanding SC 2.5.6 Concurrent Input Mechanisms (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-5-6-concurrent-input-mechanisms-level-aaa.txt",
+  "chars": 4862
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements",
+  "title": "Understanding SC 2.5.7 Dragging Movements (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-5-7-dragging-movements-level-aa.txt",
+  "chars": 13167
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum",
+  "title": "Understanding SC 2.5.8 Target Size (Minimum) (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-2-5-8-target-size-minimum-level-aa.txt",
+  "chars": 23130
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/readable",
+  "title": "Understanding Guideline 3.1 Readable",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-guideline-3-1-readable.txt",
+  "chars": 1711
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/language-of-page",
+  "title": "Understanding SC 3.1.1 Language of Page (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-1-1-language-of-page-level-a.txt",
+  "chars": 6565
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts",
+  "title": "Understanding SC 3.1.2 Language of Parts (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-1-2-language-of-parts-level-aa.txt",
+  "chars": 12630
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/unusual-words",
+  "title": "Understanding SC 3.1.3 Unusual Words (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-1-3-unusual-words-level-aaa.txt",
+  "chars": 8653
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/abbreviations",
+  "title": "Understanding SC 3.1.4 Abbreviations (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-1-4-abbreviations-level-aaa.txt",
+  "chars": 10437
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/reading-level",
+  "title": "Understanding SC 3.1.5 Reading Level (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-1-5-reading-level-level-aaa.txt",
+  "chars": 12731
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/pronunciation",
+  "title": "Understanding SC 3.1.6 Pronunciation (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-1-6-pronunciation-level-aaa.txt",
+  "chars": 7867
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/predictable",
+  "title": "Understanding Guideline 3.2 Predictable",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-guideline-3-2-predictable.txt",
+  "chars": 1899
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/on-focus",
+  "title": "Understanding SC 3.2.1 On Focus (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-2-1-on-focus-level-a.txt",
+  "chars": 7301
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/on-input",
+  "title": "Understanding SC 3.2.2 On Input (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-2-2-on-input-level-a.txt",
+  "chars": 9499
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/consistent-navigation",
+  "title": "Understanding SC 3.2.3 Consistent Navigation (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-2-3-consistent-navigation-level-aa.txt",
+  "chars": 7248
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/consistent-identification",
+  "title": "Understanding SC 3.2.4 Consistent Identification (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-2-4-consistent-identification-level-aa.txt",
+  "chars": 14378
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/change-on-request",
+  "title": "Understanding SC 3.2.5 Change on Request (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-2-5-change-on-request-level-aaa.txt",
+  "chars": 11262
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/consistent-help",
+  "title": "Understanding SC 3.2.6 Consistent Help (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-2-6-consistent-help-level-a.txt",
+  "chars": 15596
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/input-assistance",
+  "title": "Understanding Guideline 3.3 Input Assistance",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-guideline-3-3-input-assistance.txt",
+  "chars": 994
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification",
+  "title": "Understanding SC 3.3.1 Error Identification (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-3-1-error-identification-level-a.txt",
+  "chars": 16358
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions",
+  "title": "Understanding SC 3.3.2 Labels or Instructions (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-3-2-labels-or-instructions-level-a.txt",
+  "chars": 16862
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-suggestion",
+  "title": "Understanding SC 3.3.3 Error Suggestion (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-3-3-error-suggestion-level-aa.txt",
+  "chars": 7014
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-legal-financial-data",
+  "title": "Understanding SC 3.3.4 Error Prevention (Legal, Financial, Data) (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-3-4-error-prevention-legal-financial-data-level-aa.txt",
+  "chars": 9551
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/help",
+  "title": "Understanding SC 3.3.5 Help (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-3-5-help-level-aaa.txt",
+  "chars": 3297
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/error-prevention-all",
+  "title": "Understanding SC 3.3.6 Error Prevention (All) (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-3-6-error-prevention-all-level-aaa.txt",
+  "chars": 5728
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/redundant-entry",
+  "title": "Understanding SC 3.3.7 Redundant Entry (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-3-7-redundant-entry-level-a.txt",
+  "chars": 7058
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/accessible-authentication-minimum",
+  "title": "Understanding SC 3.3.8 Accessible Authentication (Minimum) (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-3-8-accessible-authentication-minimum-level-aa.txt",
+  "chars": 21129
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/accessible-authentication-enhanced",
+  "title": "Understanding SC 3.3.9 Accessible Authentication (Enhanced) (Level AAA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-3-3-9-accessible-authentication-enhanced-level-aaa.txt",
+  "chars": 9338
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/compatible",
+  "title": "Understanding Guideline 4.1 Compatible",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-guideline-4-1-compatible.txt",
+  "chars": 976
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/parsing",
+  "title": "Understanding SC 4.1.1 Parsing (Obsolete and removed)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-4-1-1-parsing-obsolete-and-removed.txt",
+  "chars": 4537
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/name-role-value",
+  "title": "Understanding SC 4.1.2 Name, Role, Value (Level A)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-4-1-2-name-role-value-level-a.txt",
+  "chars": 18857
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/status-messages",
+  "title": "Understanding SC 4.1.3 Status Messages (Level AA)",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-sc-4-1-3-status-messages-level-aa.txt",
+  "chars": 19618
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/intro",
+  "title": "Introduction to Understanding WCAG 2.2",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--introduction-to-understanding-wcag-2-2.txt",
+  "chars": 6848
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/understanding-techniques",
+  "title": "Understanding Techniques for WCAG 2.2 Success Criteria",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-techniques-for-wcag-2-2-success-criteria.txt",
+  "chars": 9798
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/understanding-act-rules",
+  "title": "Understanding Test Rules for WCAG 2 Success Criteria",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-test-rules-for-wcag-2-success-criteria.txt",
+  "chars": 4628
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/conformance",
+  "title": "Understanding Conformance",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-conformance.txt",
+  "chars": 61135
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/refer-to-wcag",
+  "title": "How to refer to WCAG 2.2 from other documents",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--how-to-refer-to-wcag-2-2-from-other-documents.txt",
+  "chars": 4815
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/documenting-accessibility-support",
+  "title": "Documenting Accessibility Support for Uses of a Web Technology",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--documenting-accessibility-support-for-uses-of-a-web-technology.txt",
+  "chars": 4190
+ },
+ {
+  "source": "wcag22",
+  "url": "https://www.w3.org/WAI/WCAG22/Understanding/understanding-metadata",
+  "title": "Understanding Metadata",
+  "lang": "en",
+  "license": "W3C Software and Document License",
+  "file": "wcag22--understanding-metadata.txt",
+  "chars": 2673
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/accordion/",
+  "title": "Accordion",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--accordion.txt",
+  "chars": 8661
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/back-link/",
+  "title": "Back link",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--back-link.txt",
+  "chars": 4339
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/breadcrumbs/",
+  "title": "Breadcrumbs",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--breadcrumbs.txt",
+  "chars": 3235
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/button/",
+  "title": "Button",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--button.txt",
+  "chars": 7571
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/character-count/",
+  "title": "Character count",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--character-count.txt",
+  "chars": 7590
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/checkboxes/",
+  "title": "Checkboxes",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--checkboxes.txt",
+  "chars": 8920
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/cookie-banner/",
+  "title": "Cookie banner",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--cookie-banner.txt",
+  "chars": 10795
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/date-input/",
+  "title": "Date input",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--date-input.txt",
+  "chars": 8173
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/details/",
+  "title": "Details",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--details.txt",
+  "chars": 2750
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/error-message/",
+  "title": "Error message",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--error-message.txt",
+  "chars": 7345
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/error-summary/",
+  "title": "Error summary",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--error-summary.txt",
+  "chars": 3909
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/exit-this-page/",
+  "title": "Exit this page",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--exit-this-page.txt",
+  "chars": 7031
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/feedback/",
+  "title": "Feedback",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--feedback.txt",
+  "chars": 3210
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/fieldset/",
+  "title": "Fieldset",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--fieldset.txt",
+  "chars": 2399
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/file-upload/",
+  "title": "File upload",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--file-upload.txt",
+  "chars": 8680
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/generic-header/",
+  "title": "Generic header",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--generic-header.txt",
+  "chars": 3153
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/footer/",
+  "title": "GOV.UK footer",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--gov-uk-footer.txt",
+  "chars": 4130
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/header/",
+  "title": "GOV.UK header",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--gov-uk-header.txt",
+  "chars": 4480
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/inset-text/",
+  "title": "Inset text",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--inset-text.txt",
+  "chars": 1747
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/language-navigation/",
+  "title": "Language navigation",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--language-navigation.txt",
+  "chars": 7286
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/notification-banner/",
+  "title": "Notification banner",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--notification-banner.txt",
+  "chars": 6849
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/pagination/",
+  "title": "Pagination",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--pagination.txt",
+  "chars": 4926
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/panel/",
+  "title": "Panel",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--panel.txt",
+  "chars": 2838
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/password-input/",
+  "title": "Password input",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--password-input.txt",
+  "chars": 6888
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/phase-banner/",
+  "title": "Phase banner",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--phase-banner.txt",
+  "chars": 2459
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/radios/",
+  "title": "Radios",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--radios.txt",
+  "chars": 8765
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/select/",
+  "title": "Select",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--select.txt",
+  "chars": 3870
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/service-navigation/",
+  "title": "Service navigation",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--service-navigation.txt",
+  "chars": 5555
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/skip-link/",
+  "title": "Skip link",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--skip-link.txt",
+  "chars": 3360
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/summary-list/",
+  "title": "Summary list",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--summary-list.txt",
+  "chars": 8677
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/table/",
+  "title": "Table",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--table.txt",
+  "chars": 4048
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/tabs/",
+  "title": "Tabs",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--tabs.txt",
+  "chars": 6187
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/tag/",
+  "title": "Tag",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--tag.txt",
+  "chars": 4983
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/task-list/",
+  "title": "Task list",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--task-list.txt",
+  "chars": 6303
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/text-input/",
+  "title": "Text input",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--text-input.txt",
+  "chars": 14917
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/textarea/",
+  "title": "Textarea",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--textarea.txt",
+  "chars": 4536
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/components/warning-text/",
+  "title": "Warning text",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--warning-text.txt",
+  "chars": 1859
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/addresses/",
+  "title": "Ask users for Addresses",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--ask-users-for-addresses.txt",
+  "chars": 6951
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/bank-details/",
+  "title": "Ask users for Bank details",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--ask-users-for-bank-details.txt",
+  "chars": 5993
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/dates/",
+  "title": "Ask users for Dates",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--ask-users-for-dates.txt",
+  "chars": 3212
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/email-addresses/",
+  "title": "Ask users for Email addresses",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--ask-users-for-email-addresses.txt",
+  "chars": 3766
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/equality-information/",
+  "title": "Ask users for Equality information",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--ask-users-for-equality-information.txt",
+  "chars": 9862
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/names/",
+  "title": "Ask users for Names",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--ask-users-for-names.txt",
+  "chars": 4696
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/national-insurance-numbers/",
+  "title": "Ask users for National Insurance numbers",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--ask-users-for-national-insurance-numbers.txt",
+  "chars": 2556
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/passwords/",
+  "title": "Ask users for Passwords",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--ask-users-for-passwords.txt",
+  "chars": 4498
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/payment-card-details/",
+  "title": "Ask users for Payment card details",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--ask-users-for-payment-card-details.txt",
+  "chars": 3191
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/phone-numbers/",
+  "title": "Ask users for Phone numbers",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--ask-users-for-phone-numbers.txt",
+  "chars": 4431
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/check-a-service-is-suitable/",
+  "title": "Help users to Check a service is suitable",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--help-users-to-check-a-service-is-suitable.txt",
+  "chars": 2680
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/check-answers/",
+  "title": "Help users to Check answers",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--help-users-to-check-answers.txt",
+  "chars": 4039
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/complete-multiple-tasks/",
+  "title": "Help users to Complete multiple tasks",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--help-users-to-complete-multiple-tasks.txt",
+  "chars": 6801
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/confirm-a-phone-number/",
+  "title": "Help users to Confirm a phone number",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--help-users-to-confirm-a-phone-number.txt",
+  "chars": 5462
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/confirm-an-email-address/",
+  "title": "Help users to Confirm an email address",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--help-users-to-confirm-an-email-address.txt",
+  "chars": 4650
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/contact-a-department-or-service-team/",
+  "title": "Help users to Contact a department or service team",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--help-users-to-contact-a-department-or-service-team.txt",
+  "chars": 3772
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/create-a-username/",
+  "title": "Help users to Create a username",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--help-users-to-create-a-username.txt",
+  "chars": 1822
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/create-accounts/",
+  "title": "Help users to Create accounts",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--help-users-to-create-accounts.txt",
+  "chars": 2924
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/exit-a-page-quickly/",
+  "title": "Help users to Exit a page quickly",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--help-users-to-exit-a-page-quickly.txt",
+  "chars": 4634
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/navigate-a-service/",
+  "title": "Help users to Navigate a service",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--help-users-to-navigate-a-service.txt",
+  "chars": 8029
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/validation/",
+  "title": "Help users to Recover from validation errors",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--help-users-to-recover-from-validation-errors.txt",
+  "chars": 5648
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/start-using-a-service/",
+  "title": "Help users to Start using a service",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--help-users-to-start-using-a-service.txt",
+  "chars": 4762
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/confirmation-pages/",
+  "title": "Confirmation pages",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--confirmation-pages.txt",
+  "chars": 2228
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/cookies-page/",
+  "title": "Cookies page",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--cookies-page.txt",
+  "chars": 6130
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/interruption-pages/",
+  "title": "Interruption pages",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--interruption-pages.txt",
+  "chars": 3180
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/page-not-found-pages/",
+  "title": "Page not found pages",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--page-not-found-pages.txt",
+  "chars": 1895
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/question-pages/",
+  "title": "Question pages",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--question-pages.txt",
+  "chars": 7334
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/service-unavailable-pages/",
+  "title": "Service unavailable pages",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--service-unavailable-pages.txt",
+  "chars": 3699
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/step-by-step-navigation/",
+  "title": "Step by step navigation",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--step-by-step-navigation.txt",
+  "chars": 7240
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/patterns/problem-with-the-service-pages/",
+  "title": "There is a problem with the service pages",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--there-is-a-problem-with-the-service-pages.txt",
+  "chars": 3800
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/styles/page-template/",
+  "title": "Page template",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--page-template.txt",
+  "chars": 8766
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/styles/layout/",
+  "title": "Layout",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--layout.txt",
+  "chars": 5889
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/styles/spacing/",
+  "title": "Spacing",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--spacing.txt",
+  "chars": 3253
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/styles/section-break/",
+  "title": "Section break",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--section-break.txt",
+  "chars": 682
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/styles/typeface/",
+  "title": "Typeface",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--typeface.txt",
+  "chars": 942
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/styles/type-scale/",
+  "title": "Type scale",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--type-scale.txt",
+  "chars": 2433
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/styles/headings/",
+  "title": "Headings",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--headings.txt",
+  "chars": 2093
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/styles/paragraphs/",
+  "title": "Paragraphs",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--paragraphs.txt",
+  "chars": 1318
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/styles/links/",
+  "title": "Links",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--links.txt",
+  "chars": 3211
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/styles/lists/",
+  "title": "Lists",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--lists.txt",
+  "chars": 1305
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/styles/font-override-classes/",
+  "title": "Font override classes",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--font-override-classes.txt",
+  "chars": 3997
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/styles/colour/",
+  "title": "Colour",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--colour.txt",
+  "chars": 3538
+ },
+ {
+  "source": "govuk",
+  "url": "https://design-system.service.gov.uk/styles/images/",
+  "title": "Images",
+  "lang": "en",
+  "license": "Open Government Licence v3.0",
+  "file": "govuk--images.txt",
+  "chars": 10740
+ },
+ {
+  "source": "mdn",
+  "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/What_is_accessibility",
+  "title": "What is accessibility?",
+  "lang": "en",
+  "license": "CC BY-SA 2.5 (MDN contributors)",
+  "file": "mdn--what-is-accessibility.txt",
+  "chars": 16889
+ },
+ {
+  "source": "mdn",
+  "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/HTML",
+  "title": "HTML: A good basis for accessibility",
+  "lang": "en",
+  "license": "CC BY-SA 2.5 (MDN contributors)",
+  "file": "mdn--html-a-good-basis-for-accessibility.txt",
+  "chars": 24295
+ },
+ {
+  "source": "mdn",
+  "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/CSS_and_JavaScript",
+  "title": "CSS and JavaScript accessibility best practices",
+  "lang": "en",
+  "license": "CC BY-SA 2.5 (MDN contributors)",
+  "file": "mdn--css-and-javascript-accessibility-best-practices.txt",
+  "chars": 19359
+ },
+ {
+  "source": "mdn",
+  "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/WAI-ARIA_basics",
+  "title": "WAI-ARIA basics",
+  "lang": "en",
+  "license": "CC BY-SA 2.5 (MDN contributors)",
+  "file": "mdn--wai-aria-basics.txt",
+  "chars": 24244
+ },
+ {
+  "source": "mdn",
+  "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/Multimedia",
+  "title": "Accessible multimedia",
+  "lang": "en",
+  "license": "CC BY-SA 2.5 (MDN contributors)",
+  "file": "mdn--accessible-multimedia.txt",
+  "chars": 13826
+ },
+ {
+  "source": "mdn",
+  "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/Mobile",
+  "title": "Mobile accessibility",
+  "lang": "en",
+  "license": "CC BY-SA 2.5 (MDN contributors)",
+  "file": "mdn--mobile-accessibility.txt",
+  "chars": 16992
+ },
+ {
+  "source": "mdn",
+  "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/Guides/Understanding_WCAG/Perceivable",
+  "title": "Perceivable",
+  "lang": "en",
+  "license": "CC BY-SA 2.5 (MDN contributors)",
+  "file": "mdn--perceivable.txt",
+  "chars": 13993
+ },
+ {
+  "source": "mdn",
+  "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/Guides/Understanding_WCAG/Operable",
+  "title": "Operable",
+  "lang": "en",
+  "license": "CC BY-SA 2.5 (MDN contributors)",
+  "file": "mdn--operable.txt",
+  "chars": 15823
+ },
+ {
+  "source": "mdn",
+  "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/Guides/Understanding_WCAG/Understandable",
+  "title": "Understandable",
+  "lang": "en",
+  "license": "CC BY-SA 2.5 (MDN contributors)",
+  "file": "mdn--understandable.txt",
+  "chars": 13516
+ },
+ {
+  "source": "mdn",
+  "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/Guides/Understanding_WCAG/Robust",
+  "title": "Robust",
+  "lang": "en",
+  "license": "CC BY-SA 2.5 (MDN contributors)",
+  "file": "mdn--robust.txt",
+  "chars": 2476
+ },
+ {
+  "source": "mdn",
+  "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/Guides/Understanding_WCAG/Perceivable/Color_contrast",
+  "title": "Color contrast",
+  "lang": "en",
+  "license": "CC BY-SA 2.5 (MDN contributors)",
+  "file": "mdn--color-contrast.txt",
+  "chars": 3316
+ },
+ {
+  "source": "mdn",
+  "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/Guides/Understanding_WCAG/Keyboard",
+  "title": "Keyboard accessible",
+  "lang": "en",
+  "license": "CC BY-SA 2.5 (MDN contributors)",
+  "file": "mdn--keyboard-accessible.txt",
+  "chars": 4444
+ },
+ {
+  "source": "mdn",
+  "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/Guides/Mobile_accessibility_checklist",
+  "title": "Mobile accessibility checklist",
+  "lang": "en",
+  "license": "CC BY-SA 2.5 (MDN contributors)",
+  "file": "mdn--mobile-accessibility-checklist.txt",
+  "chars": 3553
+ },
+ {
+  "source": "mdn",
+  "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/Guides/Information_for_Web_authors",
+  "title": "Accessibility information for web authors",
+  "lang": "en",
+  "license": "CC BY-SA 2.5 (MDN contributors)",
+  "file": "mdn--accessibility-information-for-web-authors.txt",
+  "chars": 2322
+ },
+ {
+  "source": "mdn",
+  "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/Guides/Cognitive_accessibility",
+  "title": "Cognitive accessibility",
+  "lang": "en",
+  "license": "CC BY-SA 2.5 (MDN contributors)",
+  "file": "mdn--cognitive-accessibility.txt",
+  "chars": 22985
+ },
+ {
+  "source": "mdn",
+  "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Media_queries/Using_for_accessibility",
+  "title": "Using media queries for accessibility",
+  "lang": "en",
+  "license": "CC BY-SA 2.5 (MDN contributors)",
+  "file": "mdn--using-media-queries-for-accessibility.txt",
+  "chars": 1815
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Usability",
+  "title": "Usability",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--usability.txt",
+  "chars": 41297
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/User_experience",
+  "title": "User experience",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--user-experience.txt",
+  "chars": 12784
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/User_experience_design",
+  "title": "User experience design",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--user-experience-design.txt",
+  "chars": 17357
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/User_interface_design",
+  "title": "User interface design",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--user-interface-design.txt",
+  "chars": 9188
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Interaction_design",
+  "title": "Interaction design",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--interaction-design.txt",
+  "chars": 8215
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Human%E2%80%93computer_interaction",
+  "title": "Human–computer interaction",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--human-computer-interaction.txt",
+  "chars": 27203
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Fitts's_law",
+  "title": "Fitts's law",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--fitts-s-law.txt",
+  "chars": 15855
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Hick's_law",
+  "title": "Hick's law",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--hick-s-law.txt",
+  "chars": 6172
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Keystroke-level_model",
+  "title": "Keystroke-level model",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--keystroke-level-model.txt",
+  "chars": 8896
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/GOMS",
+  "title": "GOMS",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--goms.txt",
+  "chars": 13131
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Cognitive_load",
+  "title": "Cognitive load",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--cognitive-load.txt",
+  "chars": 20983
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/The_Magical_Number_Seven,_Plus_or_Minus_Two",
+  "title": "The Magical Number Seven, Plus or Minus Two",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--the-magical-number-seven-plus-or-minus-two.txt",
+  "chars": 7469
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Heuristic_evaluation",
+  "title": "Heuristic evaluation",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--heuristic-evaluation.txt",
+  "chars": 14406
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Usability_testing",
+  "title": "Usability testing",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--usability-testing.txt",
+  "chars": 25777
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Affordance",
+  "title": "Affordance",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--affordance.txt",
+  "chars": 18284
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Gestalt_psychology",
+  "title": "Gestalt psychology",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--gestalt-psychology.txt",
+  "chars": 27583
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Principles_of_grouping",
+  "title": "Principles of grouping",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--principles-of-grouping.txt",
+  "chars": 6071
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Visual_hierarchy",
+  "title": "Visual hierarchy",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--visual-hierarchy.txt",
+  "chars": 5749
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Information_architecture",
+  "title": "Information architecture",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--information-architecture.txt",
+  "chars": 2719
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Progressive_disclosure",
+  "title": "Progressive disclosure",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--progressive-disclosure.txt",
+  "chars": 1374
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Dark_pattern",
+  "title": "Dark pattern",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--dark-pattern.txt",
+  "chars": 17225
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Mental_model",
+  "title": "Mental model",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--mental-model.txt",
+  "chars": 9508
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Card_sorting",
+  "title": "Card sorting",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--card-sorting.txt",
+  "chars": 10276
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Persona_(user_experience)",
+  "title": "Persona (user experience)",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--persona-user-experience.txt",
+  "chars": 10920
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/User_journey",
+  "title": "User journey",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--user-journey.txt",
+  "chars": 8355
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Customer_journey",
+  "title": "Customer experience",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--customer-experience.txt",
+  "chars": 34758
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Website_wireframe",
+  "title": "Website wireframe",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--website-wireframe.txt",
+  "chars": 8586
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Responsive_web_design",
+  "title": "Responsive web design",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--responsive-web-design.txt",
+  "chars": 5576
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Mobile_app_development",
+  "title": "Mobile app development",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--mobile-app-development.txt",
+  "chars": 13051
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Web_accessibility",
+  "title": "Web accessibility",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--web-accessibility.txt",
+  "chars": 33345
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Accessibility",
+  "title": "Accessibility",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--accessibility.txt",
+  "chars": 40041
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Web_Content_Accessibility_Guidelines",
+  "title": "Web Content Accessibility Guidelines",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--web-content-accessibility-guidelines.txt",
+  "chars": 11789
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Material_Design",
+  "title": "Material Design",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--material-design.txt",
+  "chars": 3329
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Human_interface_guidelines",
+  "title": "Human interface guidelines",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--human-interface-guidelines.txt",
+  "chars": 4099
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Design_system",
+  "title": "Design system",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--design-system.txt",
+  "chars": 5854
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Flat_design",
+  "title": "Flat design",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--flat-design.txt",
+  "chars": 4648
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Skeuomorph",
+  "title": "Skeuomorph",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--skeuomorph.txt",
+  "chars": 10815
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Double_Diamond_(design_process_model)",
+  "title": "Double Diamond (design process model)",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--double-diamond-design-process-model.txt",
+  "chars": 1927
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/MoSCoW_method",
+  "title": "MoSCoW method",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--moscow-method.txt",
+  "chars": 3933
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Design_thinking",
+  "title": "Design thinking",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--design-thinking.txt",
+  "chars": 15844
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/User-centered_design",
+  "title": "User-centered design",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--user-centered-design.txt",
+  "chars": 5953
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Participatory_design",
+  "title": "Participatory design",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--participatory-design.txt",
+  "chars": 23286
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/System_usability_scale",
+  "title": "System usability scale",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--system-usability-scale.txt",
+  "chars": 2879
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Think_aloud_protocol",
+  "title": "Think aloud protocol",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--think-aloud-protocol.txt",
+  "chars": 4718
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/A/B_testing",
+  "title": "A/B testing",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--a-b-testing.txt",
+  "chars": 12632
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Cognitive_walkthrough",
+  "title": "Cognitive walkthrough",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--cognitive-walkthrough.txt",
+  "chars": 9142
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Paper_prototyping",
+  "title": "Paper prototyping",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--paper-prototyping.txt",
+  "chars": 5731
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Software_prototyping",
+  "title": "Software prototyping",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--software-prototyping.txt",
+  "chars": 27497
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Typography",
+  "title": "Typography",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--typography.txt",
+  "chars": 25904
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Readability",
+  "title": "Readability",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--readability.txt",
+  "chars": 30944
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Legibility",
+  "title": "Legibility",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--legibility.txt",
+  "chars": 6597
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Color_contrast",
+  "title": "Contrast (vision)",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--contrast-vision.txt",
+  "chars": 12879
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Contrast_(vision)",
+  "title": "Contrast (vision)",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--contrast-vision.txt",
+  "chars": 12879
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Color_blindness",
+  "title": "Color blindness",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--color-blindness.txt",
+  "chars": 46418
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Navigation_bar",
+  "title": "Navigation bar",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--navigation-bar.txt",
+  "chars": 1767
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Hamburger_button",
+  "title": "Hamburger button",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--hamburger-button.txt",
+  "chars": 3761
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Breadcrumb_navigation",
+  "title": "Breadcrumb navigation",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--breadcrumb-navigation.txt",
+  "chars": 3341
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Tab_(interface)",
+  "title": "Tab (interface)",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--tab-interface.txt",
+  "chars": 5639
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Modal_window",
+  "title": "Modal window",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--modal-window.txt",
+  "chars": 8834
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Form_(document)",
+  "title": "Form (document)",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--form-document.txt",
+  "chars": 2812
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Placeholder_text",
+  "title": "Filler text",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--filler-text.txt",
+  "chars": 2977
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Error_message",
+  "title": "Error message",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--error-message.txt",
+  "chars": 4821
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Onboarding",
+  "title": "Onboarding",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--onboarding.txt",
+  "chars": 26301
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Infinite_scrolling",
+  "title": "Infinite scrolling",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--infinite-scrolling.txt",
+  "chars": 1861
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Pagination",
+  "title": "Pagination",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--pagination.txt",
+  "chars": 8085
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Touchscreen",
+  "title": "Touchscreen",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--touchscreen.txt",
+  "chars": 34692
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Multi-touch",
+  "title": "Multi-touch",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--multi-touch.txt",
+  "chars": 16181
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Gesture_recognition",
+  "title": "Gesture recognition",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--gesture-recognition.txt",
+  "chars": 16234
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Haptic_technology",
+  "title": "Haptic technology",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--haptic-technology.txt",
+  "chars": 19457
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Dialog_box",
+  "title": "Dialog box",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--dialog-box.txt",
+  "chars": 5899
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Toast_(computing)",
+  "title": "Pop-up notification",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--pop-up-notification.txt",
+  "chars": 3067
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Tooltip",
+  "title": "Tooltip",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--tooltip.txt",
+  "chars": 2607
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Drop-down_list",
+  "title": "Drop-down list",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--drop-down-list.txt",
+  "chars": 1367
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Checkbox",
+  "title": "Checkbox",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--checkbox.txt",
+  "chars": 3042
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Radio_button",
+  "title": "Radio button",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--radio-button.txt",
+  "chars": 1793
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Toggle_switch_(widget)",
+  "title": "Toggle switch (widget)",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--toggle-switch-widget.txt",
+  "chars": 871
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Slider_(computing)",
+  "title": "Slider (computing)",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--slider-computing.txt",
+  "chars": 845
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Icon_(computing)",
+  "title": "Icon (computing)",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--icon-computing.txt",
+  "chars": 14098
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Font_size",
+  "title": "Point (typography)",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--point-typography.txt",
+  "chars": 11768
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/White_space_(visual_arts)",
+  "title": "White space (visual arts)",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--white-space-visual-arts.txt",
+  "chars": 1001
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Grid_(graphic_design)",
+  "title": "Grid (graphic design)",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--grid-graphic-design.txt",
+  "chars": 3836
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/F-pattern",
+  "title": "Screen reading",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--screen-reading.txt",
+  "chars": 5924
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Banner_blindness",
+  "title": "Banner blindness",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--banner-blindness.txt",
+  "chars": 8819
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Serial-position_effect",
+  "title": "Serial-position effect",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--serial-position-effect.txt",
+  "chars": 11113
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Von_Restorff_effect",
+  "title": "von Restorff effect",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--von-restorff-effect.txt",
+  "chars": 10110
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Zeigarnik_effect",
+  "title": "Zeigarnik effect",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--zeigarnik-effect.txt",
+  "chars": 3770
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Peak%E2%80%93end_rule",
+  "title": "Peak–end rule",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--peak-end-rule.txt",
+  "chars": 17022
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Aesthetic%E2%80%93usability_effect",
+  "title": "Aesthetic–usability effect",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--aesthetic-usability-effect.txt",
+  "chars": 9667
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Choice_overload",
+  "title": "Overchoice",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--overchoice.txt",
+  "chars": 7840
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Paradox_of_choice",
+  "title": "The Paradox of Choice",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--the-paradox-of-choice.txt",
+  "chars": 10916
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Decision_fatigue",
+  "title": "Decision fatigue",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--decision-fatigue.txt",
+  "chars": 13881
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Nudge_theory",
+  "title": "Nudge theory",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--nudge-theory.txt",
+  "chars": 22058
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Persuasive_technology",
+  "title": "Persuasive technology",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--persuasive-technology.txt",
+  "chars": 16196
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Gamification",
+  "title": "Gamification",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--gamification.txt",
+  "chars": 25762
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Information_foraging",
+  "title": "Information foraging",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--information-foraging.txt",
+  "chars": 4081
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Human_factors_and_ergonomics",
+  "title": "Ergonomics",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--ergonomics.txt",
+  "chars": 37916
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/ISO_9241",
+  "title": "ISO 9241",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--iso-9241.txt",
+  "chars": 14436
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Jakob_Nielsen_(usability_consultant)",
+  "title": "Jakob Nielsen (usability consultant)",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--jakob-nielsen-usability-consultant.txt",
+  "chars": 7942
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Don_Norman",
+  "title": "Don Norman",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--don-norman.txt",
+  "chars": 8385
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/The_Design_of_Everyday_Things",
+  "title": "The Design of Everyday Things",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--the-design-of-everyday-things.txt",
+  "chars": 10410
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Don't_Make_Me_Think",
+  "title": "Don't Make Me Think",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--don-t-make-me-think.txt",
+  "chars": 1919
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Ben_Shneiderman",
+  "title": "Ben Shneiderman",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--ben-shneiderman.txt",
+  "chars": 16025
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Direct_manipulation_interface",
+  "title": "Direct manipulation interface",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--direct-manipulation-interface.txt",
+  "chars": 6367
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/WIMP_(computing)",
+  "title": "WIMP (computing)",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--wimp-computing.txt",
+  "chars": 4346
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Graphical_user_interface",
+  "title": "Graphical user interface",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--graphical-user-interface.txt",
+  "chars": 17147
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Look_and_feel",
+  "title": "Look and feel",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--look-and-feel.txt",
+  "chars": 5307
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Usability_engineering",
+  "title": "Usability engineering",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--usability-engineering.txt",
+  "chars": 7515
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Contextual_inquiry",
+  "title": "Contextual inquiry",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--contextual-inquiry.txt",
+  "chars": 5817
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Affinity_diagram",
+  "title": "Affinity diagram",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--affinity-diagram.txt",
+  "chars": 1990
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Storyboard",
+  "title": "Storyboard",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--storyboard.txt",
+  "chars": 19405
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Use_case",
+  "title": "Use case",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--use-case.txt",
+  "chars": 26354
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/User_story",
+  "title": "User story",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--user-story.txt",
+  "chars": 11887
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Minimum_viable_product",
+  "title": "Minimum viable product",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--minimum-viable-product.txt",
+  "chars": 7685
+ },
+ {
+  "source": "wikipedia-en",
+  "url": "https://en.wikipedia.org/wiki/Kano_model",
+  "title": "Kano model",
+  "lang": "en",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-en--kano-model.txt",
+  "chars": 6566
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/User_experience",
+  "title": "User experience",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--user-experience.txt",
+  "chars": 2250
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Projektowanie_interakcji",
+  "title": "Projektowanie interakcji",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--projektowanie-interakcji.txt",
+  "chars": 7665
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Prawo_Fittsa",
+  "title": "Prawo Fittsa",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--prawo-fittsa.txt",
+  "chars": 3163
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Ergonomia",
+  "title": "Ergonomia",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--ergonomia.txt",
+  "chars": 1526
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Psychologia_postaci",
+  "title": "Psychologia postaci",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--psychologia-postaci.txt",
+  "chars": 3828
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Architektura_informacji",
+  "title": "Architektura informacji",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--architektura-informacji.txt",
+  "chars": 5725
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Graficzny_interfejs_u%C5%BCytkownika",
+  "title": "Graficzny interfejs użytkownika",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--graficzny-interfejs-u-ytkownika.txt",
+  "chars": 2334
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Interfejs_u%C5%BCytkownika",
+  "title": "Interfejs użytkownika",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--interfejs-u-ytkownika.txt",
+  "chars": 3111
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Dost%C4%99pno%C5%9B%C4%87_(projektowanie)",
+  "title": "Dostępność (projektowanie)",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--dost-pno-projektowanie.txt",
+  "chars": 563
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Web_Content_Accessibility_Guidelines",
+  "title": "Web Content Accessibility Guidelines",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--web-content-accessibility-guidelines.txt",
+  "chars": 8270
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Prototyp",
+  "title": "Prototyp",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--prototyp.txt",
+  "chars": 4796
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Typografia",
+  "title": "Typografia",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--typografia.txt",
+  "chars": 2696
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Czytelno%C5%9B%C4%87",
+  "title": "Czytelność",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--czytelno.txt",
+  "chars": 1728
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Daltonizm",
+  "title": "Ślepota barw",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--lepota-barw.txt",
+  "chars": 5676
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Ekran_dotykowy",
+  "title": "Ekran dotykowy",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--ekran-dotykowy.txt",
+  "chars": 2643
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Grywalizacja",
+  "title": "Grywalizacja",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--grywalizacja.txt",
+  "chars": 8383
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Metoda_MoSCoW",
+  "title": "Metoda MoSCoW",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--metoda-moscow.txt",
+  "chars": 1643
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Design_thinking",
+  "title": "Design thinking",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--design-thinking.txt",
+  "chars": 4092
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Test_A/B",
+  "title": "Test A/B",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--test-a-b.txt",
+  "chars": 3071
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Projektowanie_zorientowane_na_u%C5%BCytkownika",
+  "title": "Projektowanie zorientowane na użytkownika",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--projektowanie-zorientowane-na-u-ytkownika.txt",
+  "chars": 3269
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Responsive_web_design",
+  "title": "Responsywne projektowanie stron internetowych",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--responsywne-projektowanie-stron-internetowych.txt",
+  "chars": 3354
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Skeuomorfizm",
+  "title": "Skeumorfizm",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--skeumorfizm.txt",
+  "chars": 672
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Flat_design",
+  "title": "Flat design",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--flat-design.txt",
+  "chars": 1177
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Ikona_(informatyka)",
+  "title": "Ikona (informatyka)",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--ikona-informatyka.txt",
+  "chars": 1507
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Okno_dialogowe",
+  "title": "Okno dialogowe",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--okno-dialogowe.txt",
+  "chars": 722
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Pole_wyboru",
+  "title": "Pole wyboru",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--pole-wyboru.txt",
+  "chars": 579
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Przycisk_opcji",
+  "title": "Przycisk opcji",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--przycisk-opcji.txt",
+  "chars": 808
+ },
+ {
+  "source": "wikipedia-pl",
+  "url": "https://pl.wikipedia.org/wiki/Historyjka_u%C5%BCytkownika",
+  "title": "Historyjka użytkownika",
+  "lang": "pl",
+  "license": "CC BY-SA 4.0 (Wikipedia contributors)",
+  "file": "wikipedia-pl--historyjka-u-ytkownika.txt",
+  "chars": 1743
+ }
+]
