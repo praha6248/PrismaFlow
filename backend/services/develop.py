@@ -9,6 +9,7 @@ from typing import Any
 
 from ..database import Database
 from ..models import FeatureSet
+from ..retrieval import Retriever, graph_boost
 from .discover import LANGUAGE_NAMES, StructuredLLM
 from .jobs import ProgressFn, WarnFn
 
@@ -94,20 +95,30 @@ class DevelopService:
     def __init__(self, db: Database, llm: StructuredLLM) -> None:
         self.db = db
         self.llm = llm
+        self.retriever = Retriever(db, llm)
+
+    def _queries(self, project_id: int) -> list[str]:
+        problem = next((p for p in self.db.list_problems(project_id) if p["chosen"]), None)
+        persona = self.db.chosen_persona(project_id)
+        queries = [problem["title"], problem["keyword"]] if problem else []
+        if persona:
+            queries.append(persona["focus"])
+        return queries
 
     def pool(self, project_id: int) -> dict[int, dict[str, Any]]:
         """Collect the evidence sample used to measure demand: the chosen problem's nodes, starred topics and search hits."""
         problem = next((p for p in self.db.list_problems(project_id) if p["chosen"]), None)
-        persona = self.db.chosen_persona(project_id)
         nodes = self.db.list_nodes(project_id)
         node_ids = list(problem["node_ids"]) if problem else []
         node_ids += [n["id"] for n in nodes if n["starred"] and n["id"] not in node_ids]
         if not node_ids:
             node_ids = [n["id"] for n in sorted(nodes, key=lambda n: n["score"], reverse=True)[:6]]
         items: OrderedDict[int, dict[str, Any]] = OrderedDict()
-        queries = [problem["title"], problem["keyword"]] if problem else []
-        if persona:
-            queries.append(persona["focus"])
+        queries = self._queries(project_id)
+        boost = graph_boost(set(node_ids), self.db.list_edges(project_id))
+        for query in queries:
+            for item in self.retriever.nearest(project_id, query, limit=15, boost=boost):
+                items.setdefault(item["id"], item)
         for query in queries:
             for item in self.db.search_evidence(project_id, query, limit=15):
                 if item["source"] in ("community", "reddit", "autocomplete"):
@@ -133,6 +144,7 @@ class DevelopService:
             raise ValueError("choose a problem and a persona in Define first")
 
         progress(0.1, "context")
+        await self.retriever.prepare(project_id, self._queries(project_id), warn)
         pool = self.pool(project_id)
         evidence_lines = [f"[{item_id}] ({item['source']}) {item['title']}" for item_id, item in pool.items()]
         prompt = "\n".join(

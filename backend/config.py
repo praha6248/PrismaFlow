@@ -8,12 +8,25 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 APP_NAME = "PrismaFlow"
+LEGACY_NAME = "PrismFlow"
+
+
+def adopt_legacy(path: Path) -> None:
+    """Rename a directory left by the app's former name so existing settings and projects carry over."""
+    legacy = path.with_name(LEGACY_NAME)
+    if not path.exists() and legacy.is_dir():
+        legacy.rename(path)
 
 
 def load_user_env() -> None:
     """Load KEY=VALUE pairs from ~/.config/PrismaFlow/prismaflow.env without overriding the environment."""
     base = os.environ.get("XDG_CONFIG_HOME") or str(Path.home() / ".config")
+    adopt_legacy(Path(base) / APP_NAME)
     path = Path(base) / APP_NAME / "prismaflow.env"
+    legacy = path.with_name("prismflow.env")
+    if not path.exists() and legacy.is_file():
+        legacy.write_text(legacy.read_text(encoding="utf-8").replace("PRISMFLOW_", "PRISMAFLOW_"), encoding="utf-8")
+        legacy.rename(path)
     if not path.is_file():
         return
     for line in path.read_text(encoding="utf-8").splitlines():
@@ -43,6 +56,7 @@ def data_dir() -> Path:
     else:
         base = os.environ.get("XDG_DATA_HOME") or str(Path.home() / ".local" / "share")
         path = Path(base) / APP_NAME
+        adopt_legacy(path)
     path.mkdir(parents=True, exist_ok=True)
     return path
 
@@ -111,6 +125,7 @@ class Settings:
 
     ollama_url: str = field(default_factory=lambda: normalize_host(os.environ.get("OLLAMA_HOST", "")))
     model: str | None = field(default_factory=lambda: os.environ.get("PRISMAFLOW_MODEL") or None)
+    embed_model: str = field(default_factory=lambda: os.environ.get("PRISMAFLOW_EMBED_MODEL", "bge-m3"))
     trend_anchor: str = field(default_factory=lambda: os.environ.get("PRISMAFLOW_TREND_ANCHOR", "calendar"))
     cache_ttl_seconds: int = 60 * 60 * 24 * 3
     negative_cache_ttl_seconds: int = 60 * 30

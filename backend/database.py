@@ -10,7 +10,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Iterator
 
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS meta (
@@ -98,6 +98,20 @@ CREATE VIRTUAL TABLE IF NOT EXISTS evidence_fts USING fts5(
     content='evidence',
     content_rowid='id',
     tokenize='unicode61 remove_diacritics 2'
+);
+
+CREATE TABLE IF NOT EXISTS evidence_vectors (
+    evidence_id INTEGER NOT NULL REFERENCES evidence(id) ON DELETE CASCADE,
+    model TEXT NOT NULL,
+    vector BLOB NOT NULL,
+    PRIMARY KEY (evidence_id, model)
+);
+
+CREATE TABLE IF NOT EXISTS query_vectors (
+    model TEXT NOT NULL,
+    query TEXT NOT NULL,
+    vector BLOB NOT NULL,
+    PRIMARY KEY (model, query)
 );
 
 CREATE TABLE IF NOT EXISTS problems (
@@ -601,6 +615,48 @@ class Database:
                 ).fetchall()
                 items.extend(dict(r) for r in rows)
         return items
+
+    def unembedded_evidence(self, project_id: int, model: str) -> list[dict[str, Any]]:
+        """Return retrievable evidence of a project that has no vector for the given model yet."""
+        with self.connect() as conn:
+            rows = conn.execute(
+                "SELECT e.id, e.title, e.body FROM evidence e LEFT JOIN evidence_vectors v "
+                "ON v.evidence_id = e.id AND v.model = ? WHERE e.project_id = ? AND v.evidence_id IS NULL "
+                "AND e.source IN ('community', 'reddit', 'autocomplete') ORDER BY e.id",
+                (model, project_id),
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+    def save_evidence_vectors(self, model: str, vectors: list[tuple[int, bytes]]) -> None:
+        """Store evidence vectors for one embedding model."""
+        with self.connect() as conn:
+            conn.executemany(
+                "INSERT OR REPLACE INTO evidence_vectors(evidence_id, model, vector) VALUES (?, ?, ?)",
+                [(evidence_id, model, blob) for evidence_id, blob in vectors],
+            )
+
+    def evidence_vectors(self, project_id: int, model: str) -> list[dict[str, Any]]:
+        """Return a project's embedded evidence together with the raw vectors."""
+        with self.connect() as conn:
+            rows = conn.execute(
+                "SELECT e.id, e.node_id, e.source, e.title, e.body, e.url, e.weight, v.vector FROM evidence e "
+                "JOIN evidence_vectors v ON v.evidence_id = e.id AND v.model = ? WHERE e.project_id = ?",
+                (model, project_id),
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+    def query_vector(self, model: str, query: str) -> bytes | None:
+        """Return the cached vector of a query text."""
+        with self.connect() as conn:
+            row = conn.execute("SELECT vector FROM query_vectors WHERE model = ? AND query = ?", (model, query)).fetchone()
+        return row["vector"] if row else None
+
+    def save_query_vector(self, model: str, query: str, blob: bytes) -> None:
+        """Cache the vector of a query text."""
+        with self.connect() as conn:
+            conn.execute(
+                "INSERT OR REPLACE INTO query_vectors(model, query, vector) VALUES (?, ?, ?)", (model, query, blob)
+            )
 
     @staticmethod
     def _feature(row: sqlite3.Row) -> dict[str, Any]:

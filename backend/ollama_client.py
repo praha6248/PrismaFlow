@@ -94,6 +94,23 @@ class OllamaClient:
             self._task_models[task] = match or await self.resolve_model()
         return self._task_models[task]
 
+    async def embed(self, texts: list[str]) -> list[list[float]]:
+        """Embed texts with the configured embedding model."""
+        model = settings.embed_model
+        installed = {name.removesuffix(":latest") for name in await self.list_models()}
+        if model.removesuffix(":latest") not in installed:
+            raise OllamaError(f"embedding model {model!r} is not installed in Ollama")
+        try:
+            async with self._client() as client:
+                response = await client.post("/api/embed", json={"model": model, "input": texts})
+                response.raise_for_status()
+        except httpx.HTTPError as exc:
+            raise OllamaError(f"Ollama embedding request failed: {exc}") from exc
+        vectors = response.json().get("embeddings", [])
+        if len(vectors) != len(texts):
+            raise OllamaError("Ollama returned a different number of embeddings than requested")
+        return vectors
+
     async def health(self) -> dict[str, Any]:
         """Report reachability and the model that would be used."""
         try:

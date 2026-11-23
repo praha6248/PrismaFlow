@@ -13,6 +13,7 @@ from ..collectors import CollectorUnavailable, autocomplete, trends
 from ..config import settings
 from ..database import Database
 from ..models import PersonaSet, ProblemSet
+from ..retrieval import Retriever, graph_boost
 from .discover import LANGUAGE_NAMES, StructuredLLM, normalize_label
 from .jobs import ProgressFn, WarnFn
 
@@ -89,6 +90,7 @@ class DefineService:
         self.db = db
         self.llm = llm
         self.collectors = collectors or DefineCollectors()
+        self.retriever = Retriever(db, llm)
 
     def _focus_nodes(self, project_id: int) -> list[dict[str, Any]]:
         nodes = [n for n in self.db.list_nodes(project_id) if not n["is_root"]]
@@ -97,6 +99,13 @@ class DefineService:
             return starred
         ranked = sorted(nodes, key=lambda n: (n["kind"] == "pain_point", n["score"]), reverse=True)
         return ranked[:6]
+
+    @staticmethod
+    def _query(focus: list[dict[str, Any]]) -> str:
+        return " ".join(n["label"] for n in focus)
+
+    async def _prepare(self, project_id: int, warn: WarnFn) -> None:
+        await self.retriever.prepare(project_id, [self._query(self._focus_nodes(project_id))], warn)
 
     def _context(self, project_id: int) -> tuple[list[dict[str, Any]], str, dict[int, dict[str, Any]]]:
         nodes = {n["id"]: n for n in self.db.list_nodes(project_id)}
@@ -118,7 +127,9 @@ class DefineService:
         evidence: OrderedDict[int, dict[str, Any]] = OrderedDict()
         for item in self.db.evidence_for_nodes([*focus_ids, *(neighbour_ids - focus_ids)], per_node=5):
             evidence.setdefault(item["id"], item)
-        query = " ".join(n["label"] for n in focus)
+        query = self._query(focus)
+        for item in self.retriever.nearest(project_id, query, limit=12, boost=graph_boost(focus_ids, edges)):
+            evidence.setdefault(item["id"], item)
         for item in self.db.search_evidence(project_id, query, limit=12):
             if item["source"] in ("community", "reddit", "autocomplete"):
                 evidence.setdefault(item["id"], item)
@@ -133,6 +144,7 @@ class DefineService:
         language, geo = project["language"], project["geo"]
 
         progress(0.05, "context")
+        await self._prepare(project_id, warn)
         focus, map_lines, evidence = self._context(project_id)
         if not focus:
             raise ValueError("the map has no topics yet; add or expand nodes in Discover first")
@@ -248,6 +260,7 @@ class DefineService:
         progress(0.1, "context")
         nodes = self.db.list_nodes(project_id)
         groups = [n["label"] for n in nodes if n["kind"] == "target_group"]
+        await self._prepare(project_id, warn)
         _, _, evidence = self._context(project_id)
         lines = [f"- ({item['source']}) {item['title']}" for item in list(evidence.values())[:20]]
         prompt = "\n".join(

@@ -51,6 +51,7 @@ Environment variables, or `KEY=value` lines in `~/.config/PrismaFlow/prismaflow.
 | --- | --- |
 | `OLLAMA_HOST` | Ollama address, e.g. `127.0.0.1:11434` |
 | `PRISMAFLOW_MODEL` | Force a specific Ollama model |
+| `PRISMAFLOW_EMBED_MODEL` | Ollama embedding model for semantic evidence retrieval (default `bge-m3`; without it retrieval falls back to full-text and graph neighbours) |
 | `PRISMAFLOW_LOCALE` | Default content locale, e.g. `pl_PL` or `en_US` |
 | `PRISMAFLOW_TREND_ANCHOR` | Google Trends calibration keyword |
 | `PRISMAFLOW_REDDIT_CLIENT_ID` / `PRISMAFLOW_REDDIT_CLIENT_SECRET` | Optional Reddit OAuth app credentials |
