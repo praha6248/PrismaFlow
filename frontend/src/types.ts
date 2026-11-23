@@ -286,3 +286,20 @@ export interface ValidateState {
   target: number;
   progress: { interviews: number; confirmed: number; rejected: number };
 }
+
+export interface SetupModel {
+  id: "chat" | "embed" | "ux";
+  name: string;
+  size: string;
+  required: boolean;
+  installed: boolean;
+  command: string;
+  source: string;
+}
+
+export interface SetupState {
+  ready: boolean;
+  ollama: { ok: boolean; url: string; download: string };
+  memory_gb: number | null;
+  models: SetupModel[];
+}

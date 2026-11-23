@@ -4,7 +4,7 @@ import { api } from "../api";
 import type { QualityState } from "../types";
 import { SHADOW, u } from "./ui";
 
-export function QualityButton() {
+export function QualityButton({ onShowSetup }: { onShowSetup: () => void }) {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<QualityState | null>(null);
 
@@ -32,7 +32,15 @@ export function QualityButton() {
         <Sparkles style={{ width: u(6), height: u(6) }} />
         {state?.enabled ? "Tryb jakości" : "Model lokalny"}
       </button>
-      {open && <QualityModal state={state} onChange={setState} onClose={() => setOpen(false)} />}
+      {open && <QualityModal
+          state={state}
+          onChange={setState}
+          onClose={() => setOpen(false)}
+          onShowSetup={() => {
+            setOpen(false);
+            onShowSetup();
+          }}
+        />}
     </>
   );
 }
@@ -41,9 +49,10 @@ interface ModalProps {
   state: QualityState | null;
   onChange: (state: QualityState) => void;
   onClose: () => void;
+  onShowSetup: () => void;
 }
 
-function QualityModal({ state, onChange, onClose }: ModalProps) {
+function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
   const [key, setKey] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -106,6 +115,9 @@ function QualityModal({ state, onChange, onClose }: ModalProps) {
         )}
 
         <div className="flex items-center" style={{ gap: u(6), marginTop: u(2) }}>
+          <button type="button" onClick={onShowSetup} className="text-haze underline hover:text-plum" style={{ fontSize: u(5.6) }}>
+            Modele lokalne
+          </button>
           {state?.has_key && (
             <button type="button" disabled={busy} onClick={() => save(false, "")} className="text-haze hover:text-plum" style={{ fontSize: u(5.6) }}>
               Usuń klucz

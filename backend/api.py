@@ -29,6 +29,7 @@ from .models import (
 )
 from .claude_client import HybridLLM, QualityConfig
 from .ollama_client import OllamaClient
+from .services.setup import memory_gb, setup_status
 from .services import discover
 from .services.define import DefineService, define_state
 from .services.validate import ValidateService
@@ -71,6 +72,12 @@ def create_app(
     async def health() -> dict:
         """Report backend and local model status."""
         return {"ok": True, "ollama": await ollama.health(), "language": settings.language, "geo": settings.country}
+
+    @api.get("/setup")
+    async def setup() -> dict:
+        """Report which local models are installed and how to install the missing ones."""
+        health = await ollama.health()
+        return setup_status(health["ok"], health["models"], health["url"], memory_gb(), settings.ux_model_repo)
 
     @api.get("/settings/quality")
     def quality_settings() -> dict:
