@@ -18,6 +18,12 @@ def adopt_legacy(path: Path) -> None:
         legacy.rename(path)
 
 
+def user_env_path() -> Path:
+    """Location of the user's settings file, ~/.config/PrismaFlow/prismaflow.env."""
+    base = os.environ.get("XDG_CONFIG_HOME") or str(Path.home() / ".config")
+    return Path(base) / APP_NAME / "prismaflow.env"
+
+
 def load_user_env() -> None:
     """Load KEY=VALUE pairs from ~/.config/PrismaFlow/prismaflow.env without overriding the environment."""
     base = os.environ.get("XDG_CONFIG_HOME") or str(Path.home() / ".config")

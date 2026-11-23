@@ -247,3 +247,9 @@ export interface Handoff {
   claude_md: string;
   directory: string;
 }
+
+export interface QualityState {
+  enabled: boolean;
+  has_key: boolean;
+  model: string;
+}

@@ -24,7 +24,9 @@ from .models import (
     PositionsUpdate,
     ProjectCreate,
     ProjectUpdate,
+    QualityUpdate,
 )
+from .claude_client import HybridLLM, QualityConfig
 from .ollama_client import OllamaClient
 from .services import discover
 from .services.define import DefineService, define_state
@@ -45,7 +47,8 @@ def create_app(
 ) -> FastAPI:
     """Build the FastAPI app with its dependencies wired in."""
     database = db or Database(settings.database_path)
-    ollama = llm or OllamaClient()
+    quality = QualityConfig()
+    ollama = llm or HybridLLM(OllamaClient(), quality)
     discover_service = service or DiscoverService(database, ollama)
     define = define_service or DefineService(database, ollama)
     develop = develop_service or DevelopService(database, ollama)
@@ -65,6 +68,16 @@ def create_app(
     async def health() -> dict:
         """Report backend and local model status."""
         return {"ok": True, "ollama": await ollama.health(), "language": settings.language, "geo": settings.country}
+
+    @api.get("/settings/quality")
+    def quality_settings() -> dict:
+        """Return whether the Claude quality mode is on and whether a key is saved (never the key)."""
+        return quality.public()
+
+    @api.put("/settings/quality")
+    def update_quality(body: QualityUpdate) -> dict:
+        """Turn the Claude quality mode on or off and save or remove the user's API key."""
+        return quality.update(enabled=body.enabled, key=body.key)
 
     @api.get("/projects")
     def list_projects() -> list[dict]:

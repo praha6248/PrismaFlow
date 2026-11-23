@@ -5,3 +5,5 @@ networkx>=3.4
 httpx>=0.27
 trendspy>=0.1.6
 pywebview>=5.3
+playwright>=1.51
+anthropic>=2.12

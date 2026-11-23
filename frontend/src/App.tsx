@@ -1,3 +1,4 @@
+import { QualityButton } from "./components/QualitySettings";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "./api";
 import { Header } from "./components/Header";
@@ -91,6 +92,7 @@ export function App() {
           onHome={() => navigate({ projectId: null, phase: "discover" })}
           onNavigate={(index) => projectId !== null && navigate({ projectId, phase: PHASES[index] })}
         />
+        <QualityButton />
         {route.phase === "discover" && (
           <DiscoverView
             projectId={projectId}

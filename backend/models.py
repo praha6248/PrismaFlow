@@ -481,3 +481,10 @@ class StyleDraft(BaseModel):
         if not HEX_COLOR.match(value):
             raise ValueError("expected a #RRGGBB colour")
         return value.upper()
+
+
+class QualityUpdate(BaseModel):
+    """Request body for the Claude quality mode settings."""
+
+    enabled: bool | None = None
+    key: str | None = Field(default=None, max_length=300)

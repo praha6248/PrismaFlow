@@ -1,4 +1,4 @@
-import type { DefineState, DeliverState, DevelopState, Flow, FlowAudit, Handoff, Evidence, Feature, Priority, Graph, Health, Job, MapNode, Phase, Project, Stage } from "./types";
+import type { DefineState, DeliverState, DevelopState, Flow, FlowAudit, Handoff, Evidence, Feature, Priority, Graph, Health, Job, MapNode, Phase, Project, QualityState, Stage } from "./types";
 
 export class ApiError extends Error {
   constructor(
@@ -32,6 +32,9 @@ const json = (body: unknown) => JSON.stringify(body);
 
 export const api = {
   health: () => request<Health>("/health"),
+  quality: () => request<QualityState>("/settings/quality"),
+  updateQuality: (body: { enabled?: boolean; key?: string }) =>
+    request<QualityState>("/settings/quality", { method: "PUT", body: JSON.stringify(body) }),
   createProject: (seed: string) => request<Graph>("/projects", { method: "POST", body: json({ seed }) }),
   getProject: (id: number) => request<Graph>(`/projects/${id}`),
   setStage: (id: number, stage: Stage) =>
