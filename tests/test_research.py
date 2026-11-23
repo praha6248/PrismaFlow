@@ -7,14 +7,18 @@ from backend.services.define import DefineService
 from backend.services.develop import confidence, develop_state, rice
 from backend.services.report import markdown_html, prototype_svg, report_markdown
 from backend.services.research import ResearchService, board_lines, real_notes, split_notes
-from backend.services.usability import UsabilityService, deviation, optimal_path
+from backend.models import short_phrase
+from backend.services.usability import UsabilityService, addresses_participant, deviation, optimal_path
 
 from .test_define import SchemaLLM, _noop, define_collectors
 from .test_deliver import sample_flow
 from .test_develop import _defined
 
 EMPATHY = {
-    "says": [{"text": "Nie mam czasu na długi trening", "note": 1}, {"text": "Zaczynam z zapałem", "note": 0}],
+    "says": [
+        {"text": "Nie mam czasu na długi trening", "note": 1},
+        {"text": "Zaczynam każdy poniedziałek z ogromnym zapałem, ale po kilku dniach praca i dom zabierają mi cały wolny czas", "note": 0},
+    ],
     "thinks": [{"text": "Znowu odpuszczę", "note": 0}, {"text": "Inni dają radę", "note": 99}],
     "does": [{"text": "Zapisuje treningi w notatkach", "note": 2}, {"text": "Ćwiczy wieczorem", "note": 0}],
     "feels": [{"text": "Wstyd po przerwie", "note": 1}, {"text": "Zmęczenie", "note": 0}],
@@ -34,12 +38,21 @@ class ResearchLLM(SchemaLLM):
         if schema.__name__ == "AffinityDraft":
             self.prompts.append(prompt)
             return schema.model_validate(
-                {"themes": [{"name": "Brak czasu", "insight": "Praca wypiera trening.", "notes": [1, 2, 1]}, {"name": "Powroty", "insight": "Przerwa kończy plan.", "notes": [3]}]}
+                {
+                    "themes": [{"name": "Brak czasu", "insight": "Praca wypiera trening.", "notes": [1, 2, 1, 4]}, {"name": "Powroty", "insight": "Przerwa kończy plan.", "notes": [3]}],
+                    "off_topic": [1, 4],
+                }
             )
+        if schema.__name__ == "ShortTexts":
+            count = len([line for line in prompt.splitlines() if line.strip()])
+            return schema.model_validate({"items": [f"Krótko {i}" for i in range(count)]})
         if schema.__name__ == "EmpathyDraft":
             self.prompts.append(prompt)
             return schema.model_validate(EMPATHY)
         if schema.__name__ == "TaskSet":
+            self.task_calls = getattr(self, "task_calls", 0) + 1
+            if self.task_calls == 1:
+                return schema.model_validate({"tasks": [{"goal": "s3", "scenario": "Marta chce zacząć dzisiejszy trening."}]})
             return schema.model_validate({"tasks": [{"goal": "s3", "scenario": "Masz wolny wieczór i chcesz zacząć dzisiejszy trening."}]})
         return await super().structured(schema, system, prompt, **kwargs)
 
@@ -57,10 +70,12 @@ async def test_board_groups_notes_and_feeds_problems(db: Database) -> None:
     assert board["notes"] and all(n["source"] == "evidence" for n in board["notes"])
     service.add_notes(project_id, "Rzucam plan, gdy mam nadgodziny\n\nNotatki w telefonie wystarczają", "interview", "Ola")
     service.add_notes(project_id, "Wracam po przerwie z poczuciem winy", "note", "")
+    before = len(service.board(project_id)["notes"])
     state = await service.cluster(project_id, _noop, _noop)
     assert [t["name"] for t in state["themes"]] == ["Brak czasu", "Powroty"]
     first, second = state["themes"]
     assert [n["theme"] for n in state["notes"][:3]] == [first["id"], first["id"], second["id"]]
+    assert state["dropped"] == 1 and len(state["notes"]) == before - 1
     note = state["notes"][2]["id"]
     state = service.move_note(project_id, note, first["id"])
     assert state["notes"][2]["theme"] == first["id"]
@@ -93,6 +108,7 @@ async def test_empathy_map_links_items_to_notes_and_frames_develop(db: Database)
     state = await service.generate_empathy(project_id, _noop, _noop)
     data = state["map"]
     assert data["says"][0]["from"]["text"] == "Nie mam czasu na długi trening" and data["says"][1]["from"] is None
+    assert data["says"][0]["text"] == "Nie mam czasu na długi trening" and data["says"][1]["text"] == "Krótko 0"
     assert data["thinks"][1]["from"] is None
     assert [s["phase"] for s in data["journey"]] == ["before", "during", "during", "after", "after"]
     assert data["journey"][3]["emotion"] == -2
@@ -100,6 +116,15 @@ async def test_empathy_map_links_items_to_notes_and_frames_develop(db: Database)
     state = service.choose_hmw(project_id, "Jak moglibyśmy skrócić trening do 15 minut?")
     assert state["map"]["hmw_chosen"] in state["map"]["hmw"]
     assert develop_state(db, project_id)["hmw"] == "Jak moglibyśmy skrócić trening do 15 minut?"
+
+
+def test_short_texts_and_second_person() -> None:
+    assert short_phrase("Sprawdza pogodę codziennie.") == "Sprawdza pogodę codziennie"
+    assert short_phrase("jeden dwa trzy cztery pięć sześć siedem, osiem dziewięć dziesięć jedenaście", 8) == "jeden dwa trzy cztery pięć sześć siedem"
+    assert addresses_participant("Masz wolny wieczór i chcesz ćwiczyć.", "pl")
+    assert not addresses_participant("Marta chce ćwiczyć wieczorem.", "pl", "Marta")
+    assert not addresses_participant("Chce zobaczyć wynik.", "pl")
+    assert addresses_participant("You want to train tonight.", "en")
 
 
 def test_rice_scores() -> None:
@@ -119,14 +144,18 @@ async def test_usability_sessions_reveal_issues(db: Database) -> None:
     service = UsabilityService(db, llm)
     state = await service.plan(project_id, _noop, _noop)
     task = state["tasks"][0]
-    assert task["goal"] == "s3" and task["scenario"].startswith("Masz wolny wieczór")
-    service.add_session(project_id, "Ola", [{"task": task["id"], "success": False, "seconds": 40, "path": ["s1", "s4"], "quote": "Myślałam, że plan jest w ustawieniach"}])
-    service.add_session(project_id, "Jan", [{"task": task["id"], "success": True, "seconds": 30, "path": ["s1", "s2", "s3"], "quote": ""}])
+    assert task["goal"] == "s3" and task["scenario"].startswith("Masz wolny wieczór") and llm.task_calls == 2
+    misses = [{"screen": "s4", "element": "Język"}, {"screen": "s4", "element": "Język"}]
+    service.add_session(project_id, "Ola", [{"task": task["id"], "success": False, "seconds": 40, "path": ["s1", "s4"], "misclicks": misses, "quote": "Myślałam, że plan jest w ustawieniach"}])
+    service.add_session(project_id, "Jan", [{"task": task["id"], "success": True, "seconds": 30, "path": ["s1", "s2", "s3"], "misclicks": [], "quote": ""}])
     state = service.state(project_id)
     summary = state["tasks"][0]
     assert summary["attempts"] == 2 and summary["successes"] == 1 and summary["seconds"] == 30
     kinds = {i["kind"] for i in state["issues"]}
-    assert kinds == {"success", "slow", "detour"}
+    assert kinds == {"success", "slow", "detour", "misclick"}
+    miss = next(i for i in state["issues"] if i["kind"] == "misclick")
+    assert miss == {"kind": "misclick", "task": "Trening", "screen": "Ustawienia", "element": "Język", "count": 1}
+    assert summary["misclicks"] == 1.0
     assert next(i for i in state["issues"] if i["kind"] == "detour")["screen"] == "Start"
 
 

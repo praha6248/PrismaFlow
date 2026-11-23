@@ -396,6 +396,7 @@ export interface BoardState {
   notes: BoardNote[];
   themes: Theme[];
   clustered_at: number | null;
+  dropped?: number;
 }
 
 export interface NoteRef {
@@ -448,6 +449,7 @@ export interface TestTask {
   seconds: number | null;
   predicted: number | null;
   extra_steps: number;
+  misclicks: number;
   detours: { screen: string; count: number }[];
   quotes: { participant: string; quote: string; success: boolean }[];
 }
@@ -457,6 +459,7 @@ export interface TestResult {
   success: boolean;
   seconds: number;
   path: string[];
+  misclicks: { screen: string; element: string }[];
   quote: string;
 }
 
@@ -470,7 +473,8 @@ export interface TestSession {
 export type TestIssue =
   | { kind: "success"; task: string; successes: number; attempts: number }
   | { kind: "slow"; task: string; ratio: number }
-  | { kind: "detour"; task: string; screen: string; count: number };
+  | { kind: "detour"; task: string; screen: string; count: number }
+  | { kind: "misclick"; task: string; screen: string; element: string; count: number };
 
 export interface TestsState {
   tasks: TestTask[];

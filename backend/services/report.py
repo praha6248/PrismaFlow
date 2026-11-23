@@ -37,6 +37,7 @@ TEXT = {
         "success": "sukces",
         "seconds": "średni czas",
         "predicted": "przewidywany (KLM)",
+        "misclicks": "kliknięć bez efektu na osobę",
         "none": "Brak danych.",
         "source": "źródło",
         "inferred": "wniosek modelu",
@@ -69,6 +70,7 @@ TEXT = {
         "success": "success",
         "seconds": "mean time",
         "predicted": "predicted (KLM)",
+        "misclicks": "dead taps per person",
         "none": "No data.",
         "source": "source",
         "inferred": "model inference",
@@ -165,7 +167,8 @@ def report_markdown(context: dict[str, Any]) -> str:
             continue
         timing = f", {words['seconds']} {task['seconds']} s" if task["seconds"] is not None else ""
         predicted = f" ({words['predicted']} {task['predicted']} s)" if task["predicted"] else ""
-        lines.append(f"- **{task['goal_name']}**: {words['success']} {task['successes']}/{task['attempts']}{timing}{predicted}")
+        misses = f", {words['misclicks']}: {task['misclicks']}" if task.get("misclicks") else ""
+        lines.append(f"- **{task['goal_name']}**: {words['success']} {task['successes']}/{task['attempts']}{timing}{predicted}{misses}")
         lines += [f"  - {q['participant']}: „{q['quote']}”" for q in task["quotes"][:3]]
     if not tests.get("participants"):
         lines.append(words["none"])

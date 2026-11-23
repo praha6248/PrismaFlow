@@ -17,6 +17,13 @@ export function issueText(issue: TestIssue): string {
       task: issue.task,
       ratio: number(issue.ratio, 1),
     });
+  if (issue.kind === "misclick")
+    return t("„{task}”: „{element}” na ekranie „{screen}” nic nie robi, a klikało w to: {count}.", {
+      task: issue.task,
+      element: issue.element,
+      screen: issue.screen,
+      count: `${issue.count} ${plural(issue.count, "osoba", "osoby", "osób")}`,
+    });
   return t("„{task}”: na ekranie „{screen}” najkrótszą drogę opuściło: {count}.", {
     task: issue.task,
     count: `${issue.count} ${plural(issue.count, "osoba", "osoby", "osób")}`,
@@ -113,6 +120,7 @@ export function TestsPanel({ projectId, flow, onClose, onChanged, notify }: Prop
   const [index, setIndex] = useState(-1);
   const [screen, setScreen] = useState<string | null>(null);
   const [path, setPath] = useState<string[]>([]);
+  const [misses, setMisses] = useState<{ screen: string; element: string }[]>([]);
   const [quote, setQuote] = useState("");
   const [outcome, setOutcome] = useState<boolean | null>(null);
   const [results, setResults] = useState<TestResult[]>([]);
@@ -162,6 +170,7 @@ export function TestsPanel({ projectId, flow, onClose, onChanged, notify }: Prop
     setIndex(next);
     setScreen(state?.start ?? null);
     setPath(state?.start ? [state.start] : []);
+    setMisses([]);
     setQuote("");
     setOutcome(null);
     started.current = performance.now();
@@ -173,7 +182,11 @@ export function TestsPanel({ projectId, flow, onClose, onChanged, notify }: Prop
   };
 
   const tap = (element: FlowElement) => {
-    if (!task || outcome !== null || !element.target) return;
+    if (!task || outcome !== null) return;
+    if (!element.target || element.target === screen) {
+      if (screen) setMisses((current) => [...current, { screen, element: element.label }]);
+      return;
+    }
     setScreen(element.target);
     setPath((current) => [...current, element.target!]);
     if (element.target === task.goal) finish(true);
@@ -183,7 +196,14 @@ export function TestsPanel({ projectId, flow, onClose, onChanged, notify }: Prop
     if (!task || outcome === null) return;
     const all = [
       ...results,
-      { task: task.id, success: outcome, seconds: Math.round(elapsed.current * 10) / 10, path, quote: quote.trim() },
+      {
+        task: task.id,
+        success: outcome,
+        seconds: Math.round(elapsed.current * 10) / 10,
+        path,
+        misclicks: misses,
+        quote: quote.trim(),
+      },
     ];
     setResults(all);
     if (index + 1 < tasks.length) {
@@ -292,7 +312,7 @@ export function TestsPanel({ projectId, flow, onClose, onChanged, notify }: Prop
               )}
             </p>
             {tasks.map((item, i) => (
-              <label key={item.id} className="flex flex-col" style={{ gap: u(2) }}>
+              <label key={`${item.id}:${item.scenario}`} className="flex flex-col" style={{ gap: u(2) }}>
                 <span className="text-haze" style={{ fontSize: "var(--text-small)" }}>
                   {t("Zadanie {n} · cel: {goal}", { n: i + 1, goal: item.goal_name })}
                 </span>
@@ -378,6 +398,14 @@ export function TestsPanel({ projectId, flow, onClose, onChanged, notify }: Prop
                   >
                     {task.scenario}
                   </p>
+                  {misses.length > 0 && (
+                    <span className="text-mauve" style={{ fontSize: "var(--text-small)" }}>
+                      {t("Kliknięcia bez efektu: {n} ({last})", {
+                        n: misses.length,
+                        last: misses[misses.length - 1].element,
+                      })}
+                    </span>
+                  )}
                   {outcome === null ? (
                     <button
                       type="button"
@@ -446,6 +474,7 @@ export function TestsPanel({ projectId, flow, onClose, onChanged, notify }: Prop
                       {t("sukces {done}/{all}", { done: item.successes, all: item.attempts })}
                       {item.seconds !== null && ` · ${t("{s} s", { s: number(item.seconds, 1) })}`}
                       {item.predicted !== null && ` · KLM ${number(item.predicted, 1)} s`}
+                      {item.misclicks > 0 && ` · ${t("pomyłki {n}", { n: number(item.misclicks, 1) })}`}
                     </span>
                   </div>
                   {item.quotes.map((q, i) => (

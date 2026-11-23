@@ -438,5 +438,11 @@
   "Sesje:": "Sessions:",
   "Usuń sesję: {who}": "Delete session: {who}",
   "Dalej: mapa empatii": "Next: empathy map",
-  "Wróć do tablicy notatek": "Back to the notes board"
+  "Wróć do tablicy notatek": "Back to the notes board",
+  "Przenieś do tematu": "Move to theme",
+  "Bez tematu": "No theme",
+  "usunięte nie na temat: {n}": "removed as off-topic: {n}",
+  "Kliknięcia bez efektu: {n} ({last})": "Taps with no effect: {n} ({last})",
+  "„{task}”: „{element}” na ekranie „{screen}” nic nie robi, a klikało w to: {count}.": "“{task}”: “{element}” on “{screen}” does nothing, yet it was tapped by {count}.",
+  "pomyłki {n}": "dead taps {n}"
 }

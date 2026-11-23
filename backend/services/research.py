@@ -12,7 +12,7 @@ import uuid
 from typing import Any
 
 from ..database import Database
-from ..models import AffinityDraft, EmpathyDraft
+from ..models import AffinityDraft, EmpathyDraft, ShortTexts, short_phrase
 from .discover import LANGUAGE_NAMES, StructuredLLM
 from .jobs import ProgressFn, WarnFn
 from .validate import quote_in_notes, validated_insights
@@ -30,6 +30,8 @@ Rules:
 - Create 3-6 themes. A theme groups notes that describe the same need, behaviour or frustration,
   not the same topic word.
 - Every note belongs to at most one theme; leave out notes that fit no theme.
+- List in off_topic the numbers of web notes that have nothing to do with the niche (for example a software
+  question in a gardening project). Never list notes from interviews, the founder's notes or tests.
 - The insight states what the notes reveal about people, in one sentence, without inventing numbers."""
 
 EMPATHY_SYSTEM = """You are a UX researcher building an empathy map and a user journey for one persona.
@@ -40,11 +42,19 @@ Rules:
   feels: emotions and worries.
 - Base each item on a numbered note when one fits and give its number in note; use 0 only when the item is
   an inference from the persona profile. Prefer notes from real people (interviews, own notes, tests).
-- journey: 5-7 stages in time order covering before (trigger, preparation), during (doing the task) and after
-  (result, follow-up). emotion goes from -2 (frustrated) to 2 (delighted); pain names the frustration of a
+- journey: 5-7 stages in time order covering what happens before, during and after the task. Each stage name is
+  a concrete step of this persona in {language} (for example "Notices the drought", "Asks for advice", translated), never a generic
+  label like trigger, preparation, doing or result. emotion goes from -2 (frustrated) to 2 (delighted); pain names the frustration of a
   stage, empty when there is none.
 - hmw: three "How might we..." questions (in {language}, for Polish start with "Jak moglibyśmy"), each built on
   one of the strongest journey frustrations, open enough to allow several solutions and never naming a feature."""
+
+
+SHORTEN_SYSTEM = """You shorten notes for an empathy map and a user journey.
+Rewrite every numbered text as one natural phrase of at most {limit} words in {language}, keeping its meaning
+and its grammatical person. Return the items in the same order, without numbers."""
+
+WORD_LIMITS = {"text": 12, "action": 10, "thought": 10, "pain": 8}
 
 
 def _id(prefix: str) -> str:
@@ -222,10 +232,11 @@ class ResearchService:
         draft: AffinityDraft = await self.llm.structured(
             AffinityDraft, AFFINITY_SYSTEM.format(language=self._language(project)), prompt, temperature=0.3
         )
+        dropped = {n - 1 for n in draft.off_topic if 0 < n <= len(notes) and notes[n - 1]["source"] == "evidence"}
         themes = []
         assigned: dict[int, str] = {}
         for item in draft.themes[:6]:
-            members = [n - 1 for n in item.notes if 0 < n <= len(notes) and n - 1 not in assigned]
+            members = [n - 1 for n in item.notes if 0 < n <= len(notes) and n - 1 not in assigned and n - 1 not in dropped]
             if not members:
                 continue
             theme = {"id": _id("t"), "name": item.name, "insight": item.insight.strip()}
@@ -236,8 +247,11 @@ class ResearchService:
             raise ValueError("the model did not group any notes")
         for index, note in enumerate(notes):
             note["theme"] = assigned.get(index)
+        kept = [note for index, note in enumerate(notes) if index not in dropped]
         progress(0.9, "saving")
-        self.db.save_document(project_id, "board", {"notes": notes, "themes": themes, "clustered_at": time.time()})
+        self.db.save_document(
+            project_id, "board", {"notes": kept, "themes": themes, "clustered_at": time.time(), "dropped": len(dropped)}
+        )
         return self.board(project_id)
 
     def empathy(self, project_id: int) -> dict[str, Any]:
@@ -295,6 +309,8 @@ class ResearchService:
                 return {"text": note["text"], "source": note["source"], "label": note.get("label", ""), "url": note.get("url")}
             return None
 
+        progress(0.7, "shortening")
+        await self._shorten(draft, self._language(project), warn)
         progress(0.85, "saving")
         data: dict[str, Any] = {q: [{"text": i.text.strip(), "from": source(i.note)} for i in getattr(draft, q)[:4]] for q in QUADRANTS}
         stages = sorted(draft.journey[:7], key=lambda s: PHASE_ORDER[s.phase])
@@ -317,6 +333,29 @@ class ResearchService:
         data["generated_at"] = time.time()
         self.db.save_document(project_id, "empathy", data)
         return self.empathy(project_id)
+
+    async def _shorten(self, draft: EmpathyDraft, language: str, warn: WarnFn) -> None:
+        """Ask the model to shorten items over the word limit, cutting them only as a last resort."""
+        fields = [(item, "text") for q in QUADRANTS for item in getattr(draft, q)]
+        fields += [(stage, key) for stage in draft.journey for key in ("action", "thought", "pain")]
+        long = [(obj, key) for obj, key in fields if len(getattr(obj, key).split()) > WORD_LIMITS[key] + 2]
+        if long:
+            limit = max(WORD_LIMITS[key] for _, key in long)
+            prompt = "\n".join(f"{i + 1}. {getattr(obj, key)}" for i, (obj, key) in enumerate(long))
+            try:
+                answer: ShortTexts = await self.llm.structured(
+                    ShortTexts, SHORTEN_SYSTEM.format(limit=limit, language=language), prompt, temperature=0.2
+                )
+                if len(answer.items) == len(long):
+                    for (obj, key), text in zip(long, answer.items):
+                        if text.strip():
+                            setattr(obj, key, text.strip())
+            except (ValueError, TypeError, AttributeError) as exc:
+                warn(f"empathy: shortening failed ({type(exc).__name__})")
+        for obj, key in fields:
+            value = getattr(obj, key)
+            if value.strip():
+                setattr(obj, key, short_phrase(value, WORD_LIMITS[key] + 2))
 
     def choose_hmw(self, project_id: int, text: str) -> dict[str, Any]:
         """Pick or rewrite the How Might We question that frames Develop."""

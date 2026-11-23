@@ -597,6 +597,9 @@ class AffinityDraft(BaseModel):
     """Themes proposed by the model for the affinity board."""
 
     themes: list[ThemeDraft] = Field(json_schema_extra={"minItems": 2, "maxItems": 6})
+    off_topic: list[int] = Field(
+        default_factory=list, description="Numbers of web notes that have nothing to do with the niche"
+    )
 
 
 class BoardNoteCreate(BaseModel):
@@ -619,6 +622,21 @@ class ThemeUpdate(BaseModel):
 
     name: str | None = Field(default=None, min_length=1, max_length=60)
     insight: str | None = Field(default=None, max_length=240)
+
+
+BREAKS = re.compile(r",|;|:|\s[–—-]\s|\s(?:i|a|ale|bo|więc|że|and|but|so|because)\s", re.IGNORECASE)
+
+
+def short_phrase(value: str, limit: int = 14) -> str:
+    """Keep one short phrase: the first sentence, cut at a natural break when it runs past the word limit."""
+    text = " ".join(value.split()).strip()
+    first = re.split(r"(?<=[.!?])\s", text, maxsplit=1)[0].rstrip(".")
+    words = first.split()
+    if len(words) <= limit:
+        return first
+    head = " ".join(words[:limit])
+    cuts = [m.start() for m in BREAKS.finditer(head) if len(head[: m.start()].split()) >= max(3, limit // 2)]
+    return head[: cuts[-1]].rstrip(" ,;:") if cuts else head.rstrip(" ,;:") + "…"
 
 
 class EmpathyItem(BaseModel):
@@ -657,6 +675,12 @@ class EmpathyDraft(BaseModel):
         description="Three 'How might we...' questions, each built on a journey frustration",
         json_schema_extra={"minItems": 3, "maxItems": 3},
     )
+
+
+class ShortTexts(BaseModel):
+    """Shortened versions of numbered texts, in the same order."""
+
+    items: list[str]
 
 
 class HmwUpdate(BaseModel):
@@ -698,6 +722,13 @@ class TestTaskUpdate(BaseModel):
     scenario: str = Field(min_length=5, max_length=300)
 
 
+class Misclick(BaseModel):
+    """A tap on an element that leads nowhere."""
+
+    screen: str
+    element: str
+
+
 class TestResult(BaseModel):
     """One participant's attempt at one task."""
 
@@ -705,6 +736,7 @@ class TestResult(BaseModel):
     success: bool
     seconds: float = Field(ge=0, le=3600)
     path: list[str] = Field(default_factory=list, max_length=200)
+    misclicks: list[Misclick] = Field(default_factory=list, max_length=200)
     quote: str = Field(default="", max_length=600)
 
 

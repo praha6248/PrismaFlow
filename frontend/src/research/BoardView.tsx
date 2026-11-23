@@ -11,7 +11,7 @@ import {
   u,
 } from "../components/ui";
 import { plural, t } from "../i18n";
-import type { BoardNote, BoardState, NoteSource } from "../types";
+import type { BoardNote, BoardState, NoteSource, Theme } from "../types";
 
 export const SOURCE_STYLE: Record<NoteSource, { background: string; color: string }> = {
   evidence: { background: "#efe9f7", color: "var(--color-mauve)" },
@@ -36,9 +36,13 @@ interface Props {
 
 function NoteCard({
   note,
+  themes,
+  onMove,
   onRemove,
 }: {
   note: BoardNote;
+  themes: Theme[];
+  onMove: (theme: string | null) => void;
   onRemove: () => void;
 }) {
   const style = SOURCE_STYLE[note.source];
@@ -66,11 +70,26 @@ function NoteCard({
         >
           {sourceLabel(note.source, note.label)}
         </span>
+        <select
+          value={note.theme ?? ""}
+          onChange={(e) => onMove(e.target.value || null)}
+          aria-label={t("Przenieś do tematu")}
+          title={t("Przenieś do tematu")}
+          className="ml-auto min-w-0 cursor-pointer rounded bg-transparent text-haze outline-none hover:text-ink focus:text-ink"
+          style={{ fontSize: "var(--text-small)", maxWidth: u(34) }}
+        >
+          <option value="">{t("Bez tematu")}</option>
+          {themes.map((theme) => (
+            <option key={theme.id} value={theme.id}>
+              {theme.name}
+            </option>
+          ))}
+        </select>
         <button
           type="button"
           onClick={onRemove}
           aria-label={t("Usuń notatkę")}
-          className="ml-auto text-haze opacity-0 transition-opacity hover:text-ink group-hover:opacity-100"
+          className="text-haze opacity-0 transition-opacity hover:text-ink focus:opacity-100 group-hover:opacity-100"
         >
           <X style={{ width: u(5), height: u(5) }} />
         </button>
@@ -237,7 +256,13 @@ export function BoardView({ projectId, onBack, onDone, notify }: Props) {
                 <div key={i} className="shrink-0 animate-pulse rounded-md bg-[#f3ecfa]" style={{ height: u(28) }} />
               ))}
             {loose.map((note) => (
-              <NoteCard key={note.id} note={note} onRemove={() => run(() => api.removeNote(projectId, note.id))} />
+              <NoteCard
+                key={note.id}
+                note={note}
+                themes={themes}
+                onMove={(theme) => run(() => api.moveNote(projectId, note.id, theme))}
+                onRemove={() => run(() => api.removeNote(projectId, note.id))}
+              />
             ))}
           </div>
         </div>
@@ -291,7 +316,13 @@ export function BoardView({ projectId, onBack, onDone, notify }: Props) {
               />
               <div className="pf-scroll flex min-h-0 flex-1 flex-col overflow-y-auto" style={{ gap: u(4) }}>
                 {members.map((note) => (
-                  <NoteCard key={note.id} note={note} onRemove={() => run(() => api.removeNote(projectId, note.id))} />
+                  <NoteCard
+                key={note.id}
+                note={note}
+                themes={themes}
+                onMove={(theme) => run(() => api.moveNote(projectId, note.id, theme))}
+                onRemove={() => run(() => api.removeNote(projectId, note.id))}
+              />
                 ))}
                 {!members.length && (
                   <p className="text-center text-haze" style={{ fontSize: "var(--text-small)", marginTop: u(10) }}>
@@ -315,7 +346,7 @@ export function BoardView({ projectId, onBack, onDone, notify }: Props) {
           label={t("TABLICA")}
           value={
             themes.length
-              ? `${plural(themes.length, "{n} temat", "{n} tematy", "{n} tematów").replace("{n}", String(themes.length))} · ${t("{real} z {all} notatek od ludzi", { real, all: notes.length })}`
+              ? `${plural(themes.length, "{n} temat", "{n} tematy", "{n} tematów").replace("{n}", String(themes.length))} · ${t("{real} z {all} notatek od ludzi", { real, all: notes.length })}${state?.dropped ? ` · ${t("usunięte nie na temat: {n}", { n: state.dropped })}` : ""}`
               : null
           }
           placeholder={t("Pogrupuj notatki w tematy, zanim nazwiesz problem")}
