@@ -17,7 +17,7 @@ from ..database import Database
 from ..models import ExpansionPlan, NodeKind, ProposedNode
 from ..ollama_client import OllamaError
 from .jobs import ProgressFn, WarnFn
-from .translate import translate
+from .translate import translate, trend_queries
 
 LANGUAGE_NAMES = {
     "pl": "Polish",
@@ -110,6 +110,8 @@ def node_evidence(db: Database, node_id: int) -> dict[str, Any]:
         "suggestions": [i for i in items if i["source"] == "autocomplete"],
         "quotes": [i for i in items if i["source"] in ("community", "reddit")],
         "trend": {
+            "markets": (node["trend_series"] or {}).get("markets", {}),
+            "primary": (node["trend_series"] or {}).get("primary"),
             "growth": node["trend_growth"],
             "series": (node["trend_series"] or {}).get("series", []),
             "dates": (node["trend_series"] or {}).get("dates", []),
@@ -375,18 +377,30 @@ class DiscoverService:
 
         progress(0.82, "trends")
         labels = [n["label"] for n in nodes]
-        try:
-            trend_data = await self.collectors.trend_growth(self.db, labels, geo, language)
-        except CollectorUnavailable as exc:
-            warn(f"trends: {exc}")
-            trend_data = {}
+        market_queries = await trend_queries(self.llm, labels, language)
+        by_label = {label: {} for label in labels}
+        for code, terms in market_queries.items():
+            region = "PL" if code == "pl" else ""
+            keywords = list(dict.fromkeys(term for term in terms if term))
+            if not keywords:
+                continue
+            try:
+                results = await self.collectors.trend_growth(self.db, keywords, region, code)
+            except CollectorUnavailable as exc:
+                warn(f"trends: {code}: {exc}")
+                continue
+            for label, term in zip(labels, terms):
+                result = results.get(term)
+                if result and result.get("series"):
+                    by_label[label][code] = {**result, "query": term, "anchor": trends.anchor_for(code)}
 
         progress(0.94, "scoring")
-        anchor = trends.anchor_for(language)
         now = time.time()
         for node in nodes:
             entry = gathered.get(node["id"], {"suggestions": [], "posts": None, "en_suggestions": [], "en_posts": []})
-            trend = trend_data.get(node["label"])
+            markets = by_label[node["label"]]
+            primary = language if language in markets else next(iter(markets), None)
+            trend = markets.get(primary)
             for rank, text in enumerate(entry["suggestions"][:10]):
                 self.db.add_evidence(project["id"], node["id"], "autocomplete", text, weight=1 - rank / 10)
             for rank, text in enumerate(entry.get("en_suggestions", [])):
@@ -431,17 +445,20 @@ class DiscoverService:
                 fields["trend_series"] = {
                     "dates": trend.get("dates", []),
                     "series": trend["series"],
-                    "anchor": anchor,
+                    "anchor": trend["anchor"],
+                    "primary": primary,
+                    "markets": markets,
                     "anchor_ratio": trend.get("anchor_ratio"),
                 }
-                growth = trend.get("growth")
+            for code, result in markets.items():
+                growth = result.get("growth")
                 if growth is not None:
                     self.db.add_evidence(
                         project["id"],
                         node["id"],
                         "trends",
-                        f"{node['label']}: {growth:+.0%} (3m vs 9m)",
+                        f"{code.upper()} · {result['query']}: {growth:+.0%} (3m vs 9m)",
                         weight=growth,
-                        meta={"anchor": anchor, "anchor_ratio": trend.get("anchor_ratio")},
+                        meta={"lang": code, "anchor": result["anchor"], "anchor_ratio": result.get("anchor_ratio")},
                     )
             self.db.update_node(node["id"], **fields)

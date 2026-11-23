@@ -96,6 +96,10 @@ async def test_problems_are_grounded_scored_and_quoted(db: Database) -> None:
     assert problems[0]["quote"] == "jak plan treningowy"
     assert problems[0]["node_ids"] == [db.find_node(project_id, "plan")["id"]]
     assert all(p["trend"]["available"] and len(p["trend"]["months"]) == 12 for p in problems)
+    markets = problems[0]["trend"]["markets"]
+    assert markets["pl"]["query"] == "plan treningowy"
+    assert markets["en"]["query"] == "[en] plan treningowy"
+    assert markets["en"]["available"]
     assert problems[0]["trend"]["anchor"] == "kalendarz"
     assert problems[0]["trend"]["anchor_ratio"] is not None
     assert state["project"]["phase"] == "define"

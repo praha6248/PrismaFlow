@@ -97,7 +97,11 @@ export function ProblemCard({
           className="font-serif text-ink"
           style={{ fontSize: "var(--text-title)", lineHeight: 1 }}
         >
-          {trend?.available ? trend.index : "—"}
+          {trend?.markets ? ["pl", "en"].map(code => (
+            <span key={code} className="mr-2" style={{fontSize: "var(--text-body)"}} title={trend.markets?.[code]?.query}>
+              {code.toUpperCase()} {trend.markets?.[code]?.index ?? "—"}
+            </span>
+          )) : trend?.available ? trend.index : "—"}
         </div>
         <div
           className="text-haze"

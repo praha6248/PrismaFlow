@@ -16,6 +16,7 @@ from ..database import Database
 from ..models import PersonaSet, ProblemSet
 from ..retrieval import Retriever, graph_boost
 from .discover import LANGUAGE_NAMES, StructuredLLM, normalize_label
+from .translate import trend_queries
 from .jobs import ProgressFn, WarnFn
 
 PROBLEM_SYSTEM = """You are a product strategist running the Define phase of the Double Diamond.
@@ -259,9 +260,21 @@ class DefineService:
                 pass
 
         progress(0.5, "trends")
-        anchor = trends.anchor_for(language)
         keywords = list(dict.fromkeys(d.trend_keyword for d in drafts if d.trend_keyword))
-        trend_data, ratios = await self._compare_trends(keywords, anchor, geo, warn)
+        summaries = {keyword: {} for keyword in keywords}
+        for code, terms in (await trend_queries(self.llm, keywords, language)).items():
+            region = "PL" if code == "pl" else ""
+            anchor = trends.anchor_for(code)
+            distinct = list(dict.fromkeys(term for term in terms if term))
+            if not distinct:
+                continue
+            data, ratios = await self._compare_trends(distinct, anchor, region, warn)
+            for keyword, term in zip(keywords, terms):
+                if term:
+                    summaries[keyword][code] = {
+                        **summarize_trend(data["dates"], data["series"].get(term) or [], anchor, ratios.get(term)),
+                        "query": term,
+                    }
 
         progress(0.75, "quotes")
         by_label = {normalize_label(n["label"]): n for n in self.db.list_nodes(project_id)}
@@ -281,6 +294,11 @@ class DefineService:
                     if hints:
                         quote, source = hints[0], "autocomplete"
                 node_ids = [by_label[k]["id"] for k in map(normalize_label, draft.node_labels) if k in by_label]
+                markets = summaries.get(draft.trend_keyword, {})
+                primary = markets.get(language) or markets.get("pl") or markets.get("en") or {}
+                if not primary.get("available"):
+                    primary = next((row for row in markets.values() if row["available"]), primary)
+                primary = {"available": False, "anchor": trends.anchor_for(language), **primary}
                 rows.append(
                     {
                         "title": draft.title,
@@ -290,12 +308,7 @@ class DefineService:
                         "quote_source": source,
                         "node_ids": node_ids,
                         "evidence_ids": cited([*([draft.quote_id] if picked else []), *draft.evidence_ids], evidence),
-                        "trend": summarize_trend(
-                            trend_data["dates"],
-                            trend_data["series"].get(draft.trend_keyword) or [],
-                            anchor,
-                            ratios.get(draft.trend_keyword),
-                        ),
+                        "trend": {**primary, "markets": markets},
                     }
                 )
 

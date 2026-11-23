@@ -208,6 +208,9 @@ export function EvidenceDrawer({
               <SectionTitle>{`Google Trends · ${t("12 mies.")}`}</SectionTitle>
               {evidence.trend.series.length > 1 ? (
                 <>
+                  {evidence.trend.primary && (
+                    <p>{evidence.trend.primary === "pl" ? t("Polska") : t("Angielski · świat")} · {evidence.trend.markets?.[evidence.trend.primary]?.query}</p>
+                  )}
                   <Sparkline series={evidence.trend.series} />
                   <div
                     className="flex items-center text-mauve"
@@ -255,6 +258,13 @@ export function EvidenceDrawer({
                   {t("Google Trends nie zwrócił danych dla tego hasła.")}
                 </p>
               )}
+              {Object.entries(evidence.trend.markets ?? {}).filter(([code]) => code !== evidence.trend.primary).map(([code, market]) => (
+                <div key={code} className="mt-3">
+                  <p>{code === "pl" ? t("Polska") : t("Angielski · świat")} · {market.query}</p>
+                  <Sparkline series={market.series} />
+                  {market.growth != null && <span>{Math.round(market.growth * 100)}% · {t("3 mies. vs 9 mies.")}</span>}
+                </div>
+              ))}
             </section>
 
             <section style={{ marginTop: "calc(var(--u) * 11)" }}>

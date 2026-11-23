@@ -86,6 +86,8 @@ export interface Evidence {
   suggestions: EvidenceItem[];
   quotes: EvidenceItem[];
   trend: {
+    primary?: string;
+    markets?: Record<string, { query: string; series: number[]; growth: number | null }>;
     growth: number | null;
     series: number[];
     dates: string[];
@@ -100,6 +102,7 @@ export interface Health {
 }
 
 export interface TrendSummary {
+  markets?: Record<string, { available: boolean; index?: number; query: string }>;
   available: boolean;
   index?: number;
   peak?: number;

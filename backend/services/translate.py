@@ -20,9 +20,9 @@ def _schema(count: int) -> type[BaseModel]:
     )
 
 
-async def translate(llm: Any, texts: list[str], target: str, chunk: int = 25) -> list[str]:
-    """Translate texts into the target language, returning the originals for anything that fails."""
-    results = list(texts)
+async def translate(llm: Any, texts: list[str], target: str, chunk: int = 25, *, fallback: bool = True) -> list[str]:
+    """Translate texts into the target language, keeping the original or an empty placeholder on failure."""
+    results = list(texts) if fallback else [""] * len(texts)
     for start in range(0, len(texts), chunk):
         batch = texts[start : start + chunk]
         if not batch:
@@ -32,7 +32,7 @@ async def translate(llm: Any, texts: list[str], target: str, chunk: int = 25) ->
             answer = await llm.structured(
                 _schema(len(batch)), TRANSLATE_SYSTEM.format(target=target), prompt, temperature=0.1
             )
-        except OllamaError:
+        except (OllamaError, ValueError):
             continue
         items = [str(item).strip() for item in answer.items]
         if len(items) != len(batch):
@@ -41,3 +41,11 @@ async def translate(llm: Any, texts: list[str], target: str, chunk: int = 25) ->
             if item:
                 results[start + offset] = item.removeprefix(f"{offset + 1}.").strip()
     return results
+
+
+async def trend_queries(llm: Any, keywords: list[str], language: str) -> dict[str, list[str]]:
+    """Prepare aligned Polish and English queries for Poland and worldwide Trends."""
+    markets = {}
+    for code, target in (("pl", "Polish"), ("en", "English")):
+        markets[code] = keywords if language == code else await translate(llm, keywords, target, fallback=False)
+    return markets

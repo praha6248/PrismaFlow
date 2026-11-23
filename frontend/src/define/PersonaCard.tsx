@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { Expand } from "lucide-react";
+import { CardDialog } from "./CardDialog";
 import { Card, Radio, u } from "../components/ui";
 import type { Persona } from "../types";
 import { EvidenceBadge } from "./EvidenceBadge";
@@ -25,6 +28,7 @@ export function PersonaCard({
   selectedOption,
   onSelect,
 }: Props) {
+  const [expanded, setExpanded] = useState(false);
   const selected = selectedOption !== null;
   return (
     <Card
@@ -34,7 +38,7 @@ export function PersonaCard({
     >
       <div
         className="absolute flex items-center"
-        style={{ left: u(12), top: u(12), right: u(12) }}
+        style={{ left: u(12), top: u(12), right: u(31) }}
       >
         <span
           className="flex shrink-0 items-center justify-center rounded-full font-serif text-plum"
@@ -62,6 +66,20 @@ export function PersonaCard({
           </div>
         </div>
       </div>
+
+      <button type="button" aria-label={t("Rozwiń cytat")} title={t("Rozwiń cytat")}
+        className="absolute rounded-full p-1 text-mauve hover:bg-purple-50"
+        style={{ right: u(8), top: u(12) }}
+        onKeyDown={event => event.stopPropagation()}
+        onClick={event => { event.stopPropagation(); setExpanded(true); }}>
+        <Expand size={18} />
+      </button>
+      {expanded && (
+        <CardDialog title={persona.name} onClose={() => setExpanded(false)}>
+          <p className="mb-4 text-haze">{persona.role}</p>
+          <blockquote className="whitespace-pre-wrap break-words font-serif text-2xl leading-snug">„{persona.quote}”</blockquote>
+        </CardDialog>
+      )}
 
       <p
         className="absolute line-clamp-4 font-serif text-plum"

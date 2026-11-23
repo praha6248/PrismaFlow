@@ -1,6 +1,7 @@
 import { Paperclip } from "lucide-react";
 import { useState } from "react";
-import { u, SHADOW } from "../components/ui";
+import { CardDialog } from "./CardDialog";
+import { u } from "../components/ui";
 import type { CitedEvidence } from "../types";
 import { plural, t } from "../i18n";
 
@@ -29,6 +30,7 @@ export function EvidenceBadge({ evidence, style }: Props) {
     <div
       className="absolute"
       style={style}
+      onKeyDown={event => event.stopPropagation()}
       onClick={(event) => event.stopPropagation()}
     >
       <button
@@ -55,24 +57,7 @@ export function EvidenceBadge({ evidence, style }: Props) {
           : `${evidence.length} ${plural(evidence.length, "dowód", "dowody", "dowodów")}`}
       </button>
       {open && !empty && (
-        <div
-          className="pf-fade-up pf-scroll absolute z-30 overflow-y-auto bg-white"
-          style={{
-            right: 0,
-            bottom: `calc(100% + ${u(4)})`,
-            width: u(190),
-            maxHeight: u(150),
-            padding: u(7),
-            borderRadius: u(8),
-            boxShadow: SHADOW,
-          }}
-        >
-          <div
-            className="tracking-[0.12em] text-haze"
-            style={{ fontSize: "var(--text-small)", marginBottom: u(4) }}
-          >
-            {t("NA PODSTAWIE")}
-          </div>
+        <CardDialog title={t("NA PODSTAWIE")} onClose={() => setOpen(false)}>
           {evidence.map((item) => (
             <div
               key={item.id}
@@ -89,11 +74,15 @@ export function EvidenceBadge({ evidence, style }: Props) {
                 style={{ fontSize: "var(--text-small)", lineHeight: 1.35 }}
                 title={item.url ?? undefined}
               >
-                {item.title}
+                {item.url && /^https?:\/\//i.test(item.url) ? (
+                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="underline">{item.title}</a>
+                ) : item.source === "autocomplete" ? (
+                  <a href={`https://www.google.com/search?q=${encodeURIComponent(item.title)}`} target="_blank" rel="noopener noreferrer" className="underline">{item.title}</a>
+                ) : item.title}
               </div>
             </div>
           ))}
-        </div>
+        </CardDialog>
       )}
     </div>
   );

@@ -57,6 +57,10 @@ async def test_expand_classifies_creates_links_and_scores(db: Database) -> None:
     evidence = discover.node_evidence(db, nodes["młode kobiety"]["id"])
     assert evidence["quotes"] and evidence["suggestions"]
     assert evidence["trend"]["growth"] == 1.0
+    markets = evidence["trend"]["markets"]
+    assert markets["pl"]["query"] == "młode kobiety"
+    assert markets["en"]["query"] == "[en] młode kobiety"
+    assert markets["en"]["anchor"] == "calendar"
     english = [q for q in evidence["quotes"] if q["meta"].get("lang") == "en"]
     assert english and english[0]["title"].startswith("[pl] I struggle with [en] ")
     assert english[0]["meta"]["original"].startswith("I struggle with [en] ")
