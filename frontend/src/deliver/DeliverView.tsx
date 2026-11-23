@@ -11,7 +11,7 @@ import {
   type OnEdgesChange,
   type OnNodesChange,
 } from "@xyflow/react";
-import { Minus, Plus } from "lucide-react";
+import { LocateFixed, Minus, Plus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, waitForJob } from "../api";
 import { PageTitle, u, SHADOW } from "../components/ui";
@@ -56,7 +56,7 @@ function plural(count: number, one: string, few: string, many: string): string {
 }
 
 function ZoomControl() {
-  const { zoomIn, zoomOut } = useReactFlow();
+  const { zoomIn, zoomOut, fitView } = useReactFlow();
   const { zoom } = useViewport();
   return (
     <div className="flex items-center rounded-full bg-white text-mauve" style={{ gap: u(5), padding: `${u(2)} ${u(6)}`, fontSize: u(5.4), boxShadow: SHADOW }}>
@@ -66,6 +66,15 @@ function ZoomControl() {
       <span style={{ minWidth: u(17), textAlign: "center" }}>{Math.round(zoom * 100)}%</span>
       <button type="button" onClick={() => zoomIn({ duration: 200 })} aria-label="Powiększ">
         <Plus style={{ width: u(5.5), height: u(5.5) }} />
+      </button>
+      <button
+        type="button"
+        onClick={() => fitView({ padding: 0.12, maxZoom: 1, duration: 400 })}
+        aria-label="Pokaż wszystkie ekrany"
+        title="Pokaż wszystkie ekrany"
+        style={{ borderLeft: `${u(0.5)} solid #eee6f5`, paddingLeft: u(5) }}
+      >
+        <LocateFixed style={{ width: u(5.5), height: u(5.5) }} />
       </button>
     </div>
   );
@@ -85,6 +94,9 @@ interface CanvasProps {
 function Canvas({ flow, state, audit, selectedId, focusRequest, onSelect, onChange, actions }: CanvasProps) {
   const { fitView, setCenter, getZoom } = useReactFlow();
   const fitted = useRef(false);
+  const box = useRef<HTMLDivElement>(null);
+  const viewport = useViewport();
+  const [lost, setLost] = useState(false);
 
   const flagged = useMemo(() => {
     const ids = new Set<string>(audit.fitts.map((f) => f.element_id));
@@ -189,7 +201,24 @@ function Canvas({ flow, state, audit, selectedId, focusRequest, onSelect, onChan
     [actions],
   );
 
+  useEffect(() => {
+    const element = box.current;
+    if (!element || !nodes.length) {
+      setLost(false);
+      return;
+    }
+    const xs = nodes.map((n) => n.position.x);
+    const ys = nodes.map((n) => n.position.y);
+    const left = Math.min(...xs) * viewport.zoom + viewport.x;
+    const top = Math.min(...ys) * viewport.zoom + viewport.y;
+    const right = (Math.max(...xs) + 200) * viewport.zoom + viewport.x;
+    const bottom = (Math.max(...ys) + 160) * viewport.zoom + viewport.y;
+    const margin = 24;
+    setLost(right < margin || bottom < margin || left > element.clientWidth - margin || top > element.clientHeight - margin);
+  }, [viewport, nodes]);
+
   return (
+    <div ref={box} className="relative h-full w-full">
     <ReactFlow
       nodes={nodes}
       edges={edges}
@@ -208,6 +237,18 @@ function Canvas({ flow, state, audit, selectedId, focusRequest, onSelect, onChan
     >
       <Background variant={BackgroundVariant.Dots} gap={18} size={1} color="#e8dcf2" />
     </ReactFlow>
+      {lost && (
+        <button
+          type="button"
+          onClick={() => fitView({ padding: 0.12, maxZoom: 1, duration: 500 })}
+          className="pf-fade-up absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center text-white transition-transform hover:scale-[1.03]"
+          style={{ gap: u(4), padding: `${u(6)} ${u(11)}`, borderRadius: u(20), fontSize: u(6.2), background: "#f783e9", boxShadow: SHADOW }}
+        >
+          <LocateFixed style={{ width: u(7), height: u(7) }} />
+          Ekrany są poza widokiem · wróć do nich
+        </button>
+      )}
+    </div>
   );
 }
 
