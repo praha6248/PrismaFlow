@@ -10,6 +10,8 @@ GUI = "gtk" if sys.platform.startswith("linux") else None
 if GUI == "gtk":
     os.environ.setdefault("WEBKIT_DISABLE_COMPOSITING_MODE", "1")
     os.environ.setdefault("PYWEBVIEW_GUI", "gtk")
+if getattr(sys, "frozen", False):
+    os.environ.setdefault("PLAYWRIGHT_BROWSERS_PATH", "0")
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:

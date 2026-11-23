@@ -1,12 +1,17 @@
 import sys
 from pathlib import Path
 
-from PyInstaller.utils.hooks import collect_data_files, collect_submodules
+from PyInstaller.utils.hooks import collect_data_files, collect_submodules, get_package_paths
 
 root = Path(SPECPATH).parent
 dist = root / "frontend" / "dist"
 if not (dist / "index.html").is_file():
     raise SystemExit("frontend/dist is missing: run `npm run build` in frontend/ first")
+
+_, playwright_path = get_package_paths("playwright")
+browser_dir = Path(playwright_path) / "driver" / "package" / ".local-browsers"
+if not any(browser_dir.glob("chromium_headless_shell-*/INSTALLATION_COMPLETE")):
+    raise SystemExit("Chromium is missing: run `PLAYWRIGHT_BROWSERS_PATH=0 python -m playwright install --only-shell chromium` first")
 
 linux = sys.platform.startswith("linux")
 icon = root / "packaging" / ("prismaflow.ico" if sys.platform == "win32" else "prismaflow.png")
