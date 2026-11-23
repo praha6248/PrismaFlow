@@ -19,6 +19,7 @@ from backend.services.deliver import (
     from_draft,
     hick_time,
     klm_time,
+    movement_time,
 )
 
 from .conftest import FakeLLM
@@ -66,8 +67,11 @@ def test_audit_reports_every_metric() -> None:
     report = audit(sample_flow())
     assert report["steps"] == {"value": 2, "path": ["Start", "Plan tygodnia", "Trening"], "status": "ok"}
     assert report["transitions"] == 3
-    assert report["hick"][0]["screen"] == "Start" and report["hick"][0]["options"] == 11
-    assert report["hick"][0]["warning"] and report["hick"][0]["hide"] == 6
+    assert report["hick"][0]["screen"] == "Start" and report["hick"][0]["element"] == "Kategorie"
+    assert report["hick"][0]["options"] == 9 and report["hick"][0]["warning"] and report["hick"][0]["hide"] == 4
+    actions = next(h for h in report["hick"] if h["element"] is None)
+    assert actions["screen"] == "Start" and actions["options"] == 2 and not actions["warning"]
+    assert report["klm"]["steps"][0]["seconds"] == round(1.35 + hick_time(2) + movement_time("L", "bottom"), 2)
     assert {f["element"] for f in report["fitts"]} == {"Ustawienia", "Pomiń"}
     assert [d["screen"] for d in report["dead_ends"]] == ["Ustawienia", "Sierota"]
     assert [d["screen"] for d in report["unreachable"]] == ["Sierota"]
@@ -93,7 +97,7 @@ def test_fallback_suggestions_fix_the_flow() -> None:
     after = audit(flow)
     assert len(after["dead_ends"]) < len(report["dead_ends"])
     assert len(after["fitts"]) < len(report["fitts"])
-    assert after["hick"][0]["options"] < 11
+    assert all(not h["warning"] for h in after["hick"])
 
 
 def test_draft_resolves_targets_and_features() -> None:

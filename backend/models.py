@@ -360,7 +360,7 @@ class ElementDraft(BaseModel):
     type: ElementType = Field(description="UI control type")
     size: ElementSize = Field(description="L for the primary action, M for secondary, S for minor links")
     zone: ElementZone = Field(description="Where on a phone screen: bottom (thumb zone), center or top")
-    options: int = Field(description="Choices shown at once: 1 for buttons and links, the visible item count for lists")
+    options: int = Field(description="Alternatives inside this one control: 1 for buttons, links and inputs; the visible items or filters for a list or select")
     target: str = Field(description="Exact name of the screen this element opens, or an empty string")
 
     @field_validator("label")

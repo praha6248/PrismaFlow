@@ -107,7 +107,7 @@ export function AuditPanel({ audit, suggestions, optimizing, handoffBusy, onOpti
         {hick && (
           <Metric tone={hick.warning ? "warn" : "neutral"} title="Hick · złożoność decyzji">
             <button type="button" className="text-left hover:underline" onClick={() => onFocusScreen(hick.screen_id)}>
-              {hick.screen}: {hick.options} {plural(hick.options, "opcja", "opcje", "opcji")} = {pl(hick.seconds)} s.
+              {hick.screen} · {hick.element ? `„${hick.element}”` : "wybór akcji"}: {hick.options} {plural(hick.options, "opcja", "opcje", "opcji")} = {pl(hick.seconds)} s.
             </button>
             {hick.warning && (
               <>
@@ -117,7 +117,7 @@ export function AuditPanel({ audit, suggestions, optimizing, handoffBusy, onOpti
             )}
             <br />
             <span className="text-haze">
-              a = {pl(c.hick_a)} s · b = {pl(c.hick_b)} s
+              Liczone osobno dla każdej listy, filtra i wyboru akcji · a = {pl(c.hick_a)} s · b = {pl(c.hick_b)} s
             </span>
           </Metric>
         )}

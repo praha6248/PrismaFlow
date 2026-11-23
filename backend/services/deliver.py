@@ -46,7 +46,8 @@ Rules:
 - Elements are only interactive controls a user taps: buttons, links, selects, inputs, toggles (on/off settings)
   or lists of choices. Never use elements for headings, greetings or messages.
 - Labels are short verbs or nouns in 1-3 words, without exclamation marks or colons.
-- Keep 2-4 elements per screen; options is 1 for buttons and links and the number of visible items for lists.
+- Keep 2-4 elements per screen. options is the number of alternatives inside that one control: 1 for buttons,
+  links and inputs; the visible items, chips or filters for a list or select. Model each filter group as its own element.
 - Back navigation is provided by the system, do not add "back" elements.
 - Assign every Must-have feature to the screen where it lives using its exact title."""
 
@@ -54,7 +55,8 @@ OPTIMIZE_SYSTEM = """You are a UX auditor. Propose concrete, small changes that 
 Rules:
 - Write title and reason in {language}.
 - Use only these operations: resize (value S, M or L), move_zone (value top, center or bottom),
-  group_options (hide extra choices on a crowded screen behind a "more" control), add_transition (connect a dead-end
+  group_options (show at most 5 choices of a long list, select or filter group named in element and move the rest behind
+  a "more" control; without element it groups secondary actions), add_transition (connect a dead-end
   screen; element is the new button label and value the exact target screen name), remove_element.
 - Reference screens and elements by their exact names and labels from the flow.
 - Prioritise: dead ends, Fitts problems on frequent actions, touch targets below 44 px, Hick overload, then path length.
@@ -82,6 +84,37 @@ def graph(flow: Flow) -> nx.DiGraph:
     return g
 
 
+CHOICE_TYPES = ("list", "select")
+ACTION_TYPES = ("button", "link")
+
+
+def choice_sets(screen: FlowScreen) -> list[dict[str, Any]]:
+    """Return the separate decisions a screen asks for, each with its number of alternatives.
+
+    Hick-Hyman applies to one decision among equally likely alternatives, so a screen is not
+    one big choice: every list, select or filter group is its own decision with its own options,
+    and choosing which button or link to tap is one more decision among those actions.
+    """
+    sets = []
+    for element in screen.elements:
+        if element.type in CHOICE_TYPES or element.options > 1:
+            if element.options >= 2:
+                sets.append({"element_id": element.id, "element": element.label, "options": element.options})
+    actions = [e for e in screen.elements if e.type in ACTION_TYPES and e.options == 1]
+    if len(actions) >= 2:
+        sets.append({"element_id": None, "element": None, "options": len(actions)})
+    return sets
+
+
+def decision_options(screen: FlowScreen, element: FlowElement) -> int:
+    """Number of alternatives the user weighs when choosing this element."""
+    if element.options >= 2:
+        return element.options
+    if element.type in ACTION_TYPES:
+        return max(1, sum(1 for e in screen.elements if e.type in ACTION_TYPES and e.options == 1))
+    return 1
+
+
 def hick_time(options: int) -> float:
     """Hick-Hyman decision time in seconds for n equally likely choices."""
     return HICK_A + HICK_B * math.log2(options + 1)
@@ -100,8 +133,9 @@ def movement_time(size: str, zone: str) -> float:
 def klm_time(flow: Flow, path: list[str]) -> dict[str, Any] | None:
     """Keystroke-Level Model estimate of the time to walk a screen path.
 
-    Each step adds mental preparation (M), the Hick decision time of the screen and the Fitts
-    movement time of the element that leads to the next screen.
+    Each step adds mental preparation (M), the Hick decision time of the choice the user makes
+    (the list it belongs to, or the screen's set of actions) and the Fitts movement time of the
+    element that leads to the next screen.
     """
     if len(path) < 2:
         return None
@@ -110,10 +144,9 @@ def klm_time(flow: Flow, path: list[str]) -> dict[str, Any] | None:
     steps = []
     for current, following in zip(path, path[1:]):
         screen = by_id[current]
-        options = max(1, sum(e.options for e in screen.elements))
         candidates = [e for e in screen.elements if e.target == following]
         element = min(candidates, key=lambda e: movement_time(e.size, e.zone))
-        seconds = KLM_MENTAL + hick_time(options) + movement_time(element.size, element.zone)
+        seconds = KLM_MENTAL + hick_time(decision_options(screen, element)) + movement_time(element.size, element.zone)
         total += seconds
         steps.append({"screen": screen.name, "element": element.label, "seconds": round(seconds, 2)})
     return {"seconds": round(total, 1), "steps": steps}
@@ -162,20 +195,18 @@ def audit(flow: Flow) -> dict[str, Any]:
 
     hick = []
     for screen in flow.screens:
-        options = sum(e.options for e in screen.elements)
-        if not options:
-            continue
-        seconds = hick_time(options)
-        hick.append(
-            {
-                "screen_id": screen.id,
-                "screen": screen.name,
-                "options": options,
-                "seconds": round(seconds, 2),
-                "warning": options > HICK_LIMIT,
-                "hide": max(0, options - 5) if options > HICK_LIMIT else 0,
-            }
-        )
+        for choice in choice_sets(screen):
+            options = choice["options"]
+            hick.append(
+                {
+                    "screen_id": screen.id,
+                    "screen": screen.name,
+                    **choice,
+                    "seconds": round(hick_time(options), 2),
+                    "warning": options > HICK_LIMIT,
+                    "hide": max(0, options - 5) if options > HICK_LIMIT else 0,
+                }
+            )
     hick.sort(key=lambda h: h["options"], reverse=True)
 
     fitts = []
@@ -341,10 +372,10 @@ def fallback_suggestions(report: dict[str, Any], flow: Flow) -> list[dict[str, A
         suggestions.append(
             {
                 "title": f"Ukryj {item['hide']} opcji w sekcji „Więcej”",
-                "reason": f"{item['screen']}: {item['options']} opcji = {item['seconds']} s decyzji",
+                "reason": f"{item['screen']} · {item['element'] or 'akcje'}: {item['options']} opcji = {item['seconds']} s",
                 "op": "group_options",
                 "screen_id": item["screen_id"],
-                "element_id": None,
+                "element_id": item["element_id"],
                 "value": "",
                 "label": None,
             }
@@ -379,6 +410,9 @@ def apply_suggestion(flow: Flow, suggestion: dict[str, Any]) -> Flow:
         screen.elements.append(
             FlowElement(id=_id("e"), label=suggestion.get("label") or "Dalej", type="button", size="L", zone="bottom", target=value)
         )
+    elif op == "group_options" and element is not None and element.options > 5:
+        element.options = 5
+        screen.elements.append(FlowElement(id=_id("e"), label="Więcej", type="link", size="M", zone="center", options=1))
     elif op == "group_options":
         keep = [e for e in screen.elements if e.target or e.size == "L"]
         rest = [e for e in screen.elements if e not in keep]
@@ -502,7 +536,11 @@ class DeliverService:
             *(f"Dead end: {d['screen']}" for d in report["dead_ends"]),
             *(f"Unreachable: {d['screen']}" for d in report["unreachable"]),
             *(f"Fitts: \"{f['element']}\" on {f['screen']} size {f['size']} zone {f['zone']} ID {f['index']}" for f in report["fitts"]),
-            *(f"Hick: {h['screen']} {h['options']} options = {h['seconds']} s" for h in report["hick"] if h["warning"]),
+            *(
+                f"Hick: {h['screen']} " + (f"\"{h['element']}\"" if h["element"] else "choice between actions") + f" {h['options']} options = {h['seconds']} s"
+                for h in report["hick"]
+                if h["warning"]
+            ),
             *(
                 f"Touch target below 44 px (WCAG 2.5.5): \"{t['element']}\" on {t['screen']} size {t['size']}"
                 for t in report["targets"]["below_aaa"]
@@ -636,7 +674,7 @@ def handoff_documents(state: dict[str, Any]) -> tuple[str, str]:
         + (f" ({' → '.join(steps['path'])})" if steps["path"] else ""),
         f"- Szacowany czas do celu (KLM): {report['klm']['seconds']} s" if report["klm"] else "- Szacowany czas do celu (KLM): —",
         f"- Cele dotykowe ≥ 44 px (WCAG 2.5.5 AAA): {report['targets']['aaa']}/{report['targets']['total']}",
-        *(f"- Hick: {h['screen']} — {h['options']} opcji = {h['seconds']} s" for h in report["hick"][:3]),
+        *(f"- Hick: {h['screen']} · {h['element'] or 'wybór akcji'} — {h['options']} opcji = {h['seconds']} s" for h in report["hick"][:3]),
         *(f"- Fitts: {f['element']} na ekranie {f['screen']} — ID {f['index']}" for f in report["fitts"]),
         *(f"- Ślepa uliczka: {d['screen']}" for d in report["dead_ends"]),
     ]
