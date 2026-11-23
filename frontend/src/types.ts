@@ -225,6 +225,7 @@ export interface FlowElement {
   options: number;
   target: string | null;
   items?: string[];
+  item_targets?: (string | null)[];
 }
 
 export interface FlowScreen {
@@ -475,6 +476,7 @@ export interface TestTask {
   predicted: number | null;
   extra_steps: number;
   misclicks: number;
+  choices: { screen: string; element: string; item: string; count: number }[];
   detours: { screen: string; count: number }[];
   quotes: { participant: string; quote: string; success: boolean }[];
 }
@@ -485,7 +487,15 @@ export interface TestResult {
   seconds: number;
   path: string[];
   misclicks: { screen: string; element: string }[];
+  taps?: Tap[];
   quote: string;
+}
+
+export interface Tap {
+  screen: string;
+  element: string;
+  item: string;
+  to: string | null;
 }
 
 export interface TestSession {

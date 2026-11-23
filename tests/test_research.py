@@ -147,9 +147,11 @@ async def test_usability_sessions_reveal_issues(db: Database) -> None:
     assert task["goal"] == "s3" and task["scenario"].startswith("Masz wolny wieczór") and llm.task_calls == 2
     misses = [{"screen": "s4", "element": "Język"}, {"screen": "s4", "element": "Język"}]
     service.add_session(project_id, "Ola", [{"task": task["id"], "success": False, "seconds": 40, "path": ["s1", "s4"], "misclicks": misses, "quote": "Myślałam, że plan jest w ustawieniach"}])
-    service.add_session(project_id, "Jan", [{"task": task["id"], "success": True, "seconds": 30, "path": ["s1", "s2", "s3"], "misclicks": [], "quote": ""}])
+    taps = [{"screen": "s1", "element": "Filtr", "item": "Siła", "to": None}, {"screen": "s1", "element": "Start", "item": "", "to": "s2"}]
+    service.add_session(project_id, "Jan", [{"task": task["id"], "success": True, "seconds": 30, "path": ["s1", "s2", "s3"], "misclicks": [], "taps": taps, "quote": ""}])
     state = service.state(project_id)
     summary = state["tasks"][0]
+    assert summary["choices"] == [{"screen": "Start", "element": "Filtr", "item": "Siła", "count": 1}]
     assert summary["attempts"] == 2 and summary["successes"] == 1 and summary["seconds"] == 30
     kinds = {i["kind"] for i in state["issues"]}
     assert kinds == {"success", "slow", "detour", "misclick"}

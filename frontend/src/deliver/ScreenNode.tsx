@@ -31,13 +31,25 @@ export const TYPE_LABELS: Record<ElementType, string> = {
   text: t("Tekst"),
 };
 export const CHOICE_TYPES: ElementType[] = ["list", "select", "radio", "tabs"];
+export const ITEM_TYPES: ElementType[] = [...CHOICE_TYPES, "toggle"];
+
+export function itemHandle(elementId: string, index: number): string {
+  return `${elementId}#${index}`;
+}
+
+export function realign(element: FlowElement, items: string[]): (string | null)[] {
+  const old = element.items ?? [];
+  const targets = element.item_targets ?? [];
+  const next = items.map((item) => targets[old.indexOf(item)] ?? null);
+  return next.some(Boolean) ? next : [];
+}
 const ADD_ORDER: ElementType[] = ["button", "link", "input", "toggle", "checkbox", "select", "radio", "list", "tabs", "slider", "text"];
 
 const PRESETS: Record<ElementType, Omit<FlowElement, "id">> = {
   button: { label: t("Nowy przycisk"), type: "button", size: "L", zone: "bottom", options: 1, target: null },
   link: { label: t("Nowy link"), type: "link", size: "M", zone: "center", options: 1, target: null },
   input: { label: t("Pole tekstowe"), type: "input", size: "M", zone: "center", options: 1, target: null },
-  toggle: { label: t("Przełącznik"), type: "toggle", size: "M", zone: "center", options: 1, target: null },
+  toggle: { label: t("Przełącznik"), type: "toggle", size: "M", zone: "center", options: 2, target: null, items: [t("Włączone"), t("Wyłączone")] },
   checkbox: { label: t("Zgoda"), type: "checkbox", size: "M", zone: "center", options: 1, target: null },
   select: { label: t("Wybierz"), type: "select", size: "M", zone: "center", options: 3, target: null, items: [t("Opcja 1"), t("Opcja 2"), t("Opcja 3")] },
   radio: { label: t("Wybierz jedno"), type: "radio", size: "M", zone: "center", options: 2, target: null, items: [t("Opcja 1"), t("Opcja 2")] },
@@ -70,6 +82,7 @@ export interface ScreenActions {
 
 export type ScreenNodeData = {
   screen: FlowScreen;
+  screenNames: Record<string, string>;
   detailed: boolean;
   index: number;
   features: Feature[];
@@ -183,8 +196,10 @@ function ElementRow({
   element,
   flagged,
   actions,
+  screenNames,
 }: {
   screenId: string;
+  screenNames: Record<string, string>;
   element: FlowElement;
   flagged: boolean;
   actions: ScreenActions;
@@ -207,13 +222,15 @@ function ElementRow({
           value={element.type}
           onChange={(e) => {
             const type = e.target.value as ElementType;
-            const items =
-              CHOICE_TYPES.includes(type) && !(element.items ?? []).length
-                ? (PRESETS[type].items ?? [])
-                : element.items;
+            const items = !ITEM_TYPES.includes(type)
+              ? []
+              : (element.items ?? []).length
+                ? element.items ?? []
+                : (PRESETS[type].items ?? []);
             actions.updateElement(screenId, element.id, {
               type,
               items,
+              item_targets: realign(element, items),
               options: (items ?? []).length >= 2 ? (items ?? []).length : element.options,
             });
           }}
@@ -284,7 +301,7 @@ function ElementRow({
           </label>
         )}
       </div>
-      {CHOICE_TYPES.includes(element.type) && (
+      {ITEM_TYPES.includes(element.type) && (
         <div className="flex items-center text-haze" style={{ gap: 3, marginTop: 4, fontSize: 7.5 }}>
           <span className="shrink-0">{t("Opcje:")}</span>
           <InlineText
@@ -299,6 +316,7 @@ function ElementRow({
                 .slice(0, 20);
               actions.updateElement(screenId, element.id, {
                 items,
+                item_targets: realign(element, items),
                 options: items.length >= 2 ? items.length : element.options,
               });
             }}
@@ -307,6 +325,50 @@ function ElementRow({
           />
         </div>
       )}
+      {ITEM_TYPES.includes(element.type) &&
+        (element.items ?? []).map((item, i) => {
+          const target = element.item_targets?.[i];
+          return (
+            <div
+              key={`${i}-${item}`}
+              className="relative flex items-center text-mauve"
+              style={{ fontSize: 7.5, gap: 3, marginTop: 2, paddingLeft: 8 }}
+            >
+              <span className="text-haze">{i + 1}.</span>
+              <span className="min-w-0 flex-1 truncate">{item}</span>
+              <span className="truncate text-haze" style={{ maxWidth: 70 }}>
+                {target ? `→ ${screenNames[target] ?? ""}` : t("zostaje na ekranie")}
+              </span>
+              {target && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    actions.updateElement(screenId, element.id, {
+                      item_targets: (element.item_targets ?? []).map((value, j) => (j === i ? null : value)),
+                    })
+                  }
+                  className="nodrag text-haze hover:text-plum"
+                  aria-label={t("Odłącz opcję")}
+                >
+                  <X size={7} />
+                </button>
+              )}
+              <Handle
+                type="source"
+                id={itemHandle(element.id, i)}
+                position={Position.Right}
+                className="!border-0"
+                title={t("Przeciągnij na ekran, który otwiera ta opcja")}
+                style={{
+                  width: 5,
+                  height: 5,
+                  right: -8,
+                  background: target ? "var(--color-pink)" : "#efe4f5",
+                }}
+              />
+            </div>
+          );
+        })}
       <Handle
         type="source"
         id={element.id}
@@ -354,8 +416,13 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
   };
 
   if (!data.detailed) {
-    const exits = screen.elements.filter(element => element.target && element.target !== screen.id);
-    const branching = new Set(exits.map(element => element.target)).size > 1;
+    const exits = screen.elements.flatMap(element => [
+      ...(element.target && element.target !== screen.id ? [{ id: element.id, target: element.target }] : []),
+      ...(element.item_targets ?? []).flatMap((target, i) =>
+        target && target !== screen.id ? [{ id: itemHandle(element.id, i), target }] : [],
+      ),
+    ]);
+    const branching = new Set(exits.map(exit => exit.target)).size > 1;
     const terminal = screen.kind !== "step";
     return (
       <div data-screen-id={screen.id} className="relative text-ink"
@@ -384,8 +451,8 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
         {branching && <span aria-label={t("Wybór ścieżki")} title={t("Wybór ścieżki")}
           className="absolute top-1/2 h-4 w-4 -translate-y-1/2 rotate-45 border-2 border-pink"
           style={{right: -9, background: "#fbdcf3"}} />}
-        {exits.map(element => (
-          <Handle key={element.id} type="source" position={Position.Right} id={element.id}
+        {exits.map(exit => (
+          <Handle key={exit.id} type="source" position={Position.Right} id={exit.id}
             isConnectable={false} style={{opacity: 0}} />
         ))}
       </div>
@@ -521,6 +588,7 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
           element={element}
           flagged={flagged.has(element.id)}
           actions={actions}
+          screenNames={data.screenNames}
         />
       ))}
       {adding ? (

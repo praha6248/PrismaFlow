@@ -217,3 +217,46 @@ def test_product_style_is_accessible() -> None:
     assert contrast(style["text"], style["background"]) >= 4.5 and style["contrast_text"] >= 4.5
     assert style["contrast_primary"] >= 4.5
     assert fallback_style("sport") == fallback_style("Sport")
+
+
+def test_draft_keeps_named_options_and_their_targets() -> None:
+    draft = FlowDraft.model_validate(
+        {
+            "screens": [
+                {
+                    "name": "Start",
+                    "kind": "start",
+                    "features": [],
+                    "elements": [
+                        {"label": "Widok", "type": "tabs", "size": "M", "zone": "top", "options": 2, "target": "", "items": ["Dziś", "Historia"], "item_targets": ["", "Historia"]},
+                        {"label": "Powiadomienia", "type": "toggle", "size": "M", "zone": "center", "options": 1, "target": "", "items": ["Wł.", "Wył."], "item_targets": []},
+                        {"label": "Dalej", "type": "button", "size": "L", "zone": "bottom", "options": 1, "target": "Cel", "items": ["zbędne"], "item_targets": []},
+                    ],
+                },
+                {"name": "Historia", "kind": "step", "features": [], "elements": [{"label": "Wynik", "type": "button", "size": "L", "zone": "bottom", "options": 1, "target": "Cel"}]},
+                {"name": "Cel", "kind": "goal", "features": [], "elements": [{"label": "Zapisz", "type": "button", "size": "L", "zone": "bottom", "options": 1, "target": ""}]},
+            ]
+        }
+    )
+    flow = from_draft(draft, [])
+    tabs, toggle, button = flow.screens[0].elements
+    assert tabs.items == ["Dziś", "Historia"] and tabs.options == 2
+    assert tabs.item_targets == [None, flow.screens[1].id]
+    assert toggle.items == ["Wł.", "Wył."] and toggle.item_targets == []
+    assert button.items == []
+    report = audit(flow)
+    assert not report["unreachable"]
+
+
+def test_klm_walks_through_an_option_target() -> None:
+    flow = Flow.model_validate(
+        {
+            "screens": [
+                {"id": "a", "name": "Start", "kind": "start", "elements": [{"id": "t", "label": "Widok", "type": "tabs", "items": ["Nowe", "Historia"], "item_targets": [None, "b"]}]},
+                {"id": "b", "name": "Cel", "kind": "goal", "elements": []},
+            ]
+        }
+    )
+    klm = klm_time(flow, ["a", "b"])
+    assert klm is not None and klm["steps"][0]["element"] == "Widok: Historia"
+    assert audit(flow)["steps"]["value"] == 1

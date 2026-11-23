@@ -33,6 +33,7 @@ import { CaseStudyModal } from "./CaseStudyModal";
 import { TestsPanel } from "./TestsPanel";
 import {
   ScreenNode,
+  itemHandle,
   newElement,
   type ScreenActions,
   type ScreenFlowNode,
@@ -149,6 +150,7 @@ function Canvas({
   const nodes: ScreenFlowNode[] = useMemo(() => {
     const dead = new Set(audit.dead_ends.map((d) => d.screen_id));
     const lost = new Set(audit.unreachable.map((d) => d.screen_id));
+    const screenNames = Object.fromEntries(flow.screens.map((s) => [s.id, s.name]));
     return flow.screens.map((screen, index) => ({
       id: screen.id,
       type: "screen",
@@ -157,6 +159,7 @@ function Canvas({
       dragHandle: undefined,
       data: {
         screen,
+        screenNames,
         detailed,
         index,
         features: state.features,
@@ -194,7 +197,30 @@ function Canvas({
           },
           labelBgStyle: { fill: "#fdfcfe" },
           labelBgPadding: [4, 2] as [number, number],
-        })),
+        }))
+        .concat(
+          screen.elements.flatMap((element) =>
+            (element.item_targets ?? []).flatMap((target, i) =>
+              target && ids.has(target) && target !== screen.id
+                ? [
+                    {
+                      id: `${screen.id}:${itemHandle(element.id, i)}`,
+                      source: screen.id,
+                      sourceHandle: itemHandle(element.id, i),
+                      target,
+                      label: `${element.label}: ${element.items?.[i] ?? ""}`,
+                      type: "smoothstep",
+                      style: { stroke: "#b48cc6", strokeWidth: 1.4, strokeDasharray: "4 3" },
+                      markerEnd: { type: MarkerType.ArrowClosed, color: "#b48cc6", width: 12, height: 12 },
+                      labelStyle: { fontSize: 7.5, fill: "var(--color-muted)", fontFamily: "Montserrat" },
+                      labelBgStyle: { fill: "#fdfcfe" },
+                      labelBgPadding: [4, 2] as [number, number],
+                    },
+                  ]
+                : [],
+            ),
+          ),
+        ),
     );
   }, [flow]);
 
@@ -252,11 +278,13 @@ function Canvas({
       onChange((current) => ({
         screens: current.screens.map((screen) => ({
           ...screen,
-          elements: screen.elements.map((e) =>
-            removed.includes(`${screen.id}:${e.id}`)
-              ? { ...e, target: null }
-              : e,
-          ),
+          elements: screen.elements.map((e) => ({
+            ...e,
+            target: removed.includes(`${screen.id}:${e.id}`) ? null : e.target,
+            item_targets: e.item_targets?.map((target, i) =>
+              removed.includes(`${screen.id}:${itemHandle(e.id, i)}`) ? null : target,
+            ),
+          })),
         })),
       }));
     },
@@ -267,11 +295,20 @@ function Canvas({
     (connection: Connection) => {
       if (!connection.sourceHandle || connection.source === connection.target)
         return;
-      actions.updateElement(connection.source, connection.sourceHandle, {
-        target: connection.target,
-      });
+      const [elementId, index] = connection.sourceHandle.split("#");
+      if (index === undefined) {
+        actions.updateElement(connection.source, elementId, { target: connection.target });
+        return;
+      }
+      const element = flow.screens
+        .find((s) => s.id === connection.source)
+        ?.elements.find((e) => e.id === elementId);
+      if (!element) return;
+      const targets = (element.items ?? []).map((_, i) => element.item_targets?.[i] ?? null);
+      targets[Number(index)] = connection.target;
+      actions.updateElement(connection.source, elementId, { item_targets: targets });
     },
-    [actions],
+    [actions, flow],
   );
 
   useEffect(() => {

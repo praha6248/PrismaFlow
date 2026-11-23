@@ -49,6 +49,10 @@ Rules:
 - Labels are short verbs or nouns in 1-3 words, without exclamation marks or colons.
 - Keep 2-4 elements per screen. options is the number of alternatives inside that one control: 1 for buttons,
   links and inputs; the visible items, chips or filters for a list or select. Model each filter group as its own element.
+- items names every choice of a multi-choice control: tabs, radio, select and list list their 2-6 real options
+  (e.g. tab names, filter values); a toggle lists its two states (e.g. on and off). Buttons, links and inputs have no items.
+- item_targets is aligned with items: the exact screen name an option opens (e.g. a tab or list entry that opens
+  a detail screen) or an empty string when the option only changes the current screen.
 - Back navigation is provided by the system, do not add "back" elements.
 - Assign every Must-have feature to the screen where it lives using its exact title."""
 
@@ -69,6 +73,18 @@ def _id(prefix: str) -> str:
     return f"{prefix}{uuid.uuid4().hex[:6]}"
 
 
+def describe_items(flow: Flow, element: FlowElement) -> str:
+    """List an element's options with the screen each one opens."""
+    names = {s.id: s.name for s in flow.screens}
+    targets = element.item_targets or [None] * len(element.items)
+    return ", ".join(f"{item} → {names[t]}" if t in names else item for item, t in zip(element.items, targets))
+
+
+def leads_to(element: FlowElement, screen_id: str) -> bool:
+    """Whether the element itself or one of its options opens the screen."""
+    return element.target == screen_id or screen_id in element.item_targets
+
+
 def graph(flow: Flow) -> nx.DiGraph:
     """Build the directed screen graph; parallel transitions keep their labels."""
     g = nx.DiGraph()
@@ -77,15 +93,20 @@ def graph(flow: Flow) -> nx.DiGraph:
         g.add_node(screen.id, name=screen.name, kind=screen.kind)
     for screen in flow.screens:
         for element in screen.elements:
-            if element.target in ids and element.target != screen.id:
-                if g.has_edge(screen.id, element.target):
-                    g.edges[screen.id, element.target]["labels"].append(element.label)
-                else:
-                    g.add_edge(screen.id, element.target, labels=[element.label])
+            exits = [(element.target, element.label)] + [
+                (target, f"{element.label}: {item}") for item, target in zip(element.items, element.item_targets)
+            ]
+            for target, label in exits:
+                if target in ids and target != screen.id:
+                    if g.has_edge(screen.id, target):
+                        g.edges[screen.id, target]["labels"].append(label)
+                    else:
+                        g.add_edge(screen.id, target, labels=[label])
     return g
 
 
 CHOICE_TYPES = ("list", "select", "radio", "tabs")
+ITEM_TYPES = (*CHOICE_TYPES, "toggle")
 STATIC_TYPES = ("text",)
 ACTION_TYPES = ("button", "link")
 
@@ -146,11 +167,12 @@ def klm_time(flow: Flow, path: list[str]) -> dict[str, Any] | None:
     steps = []
     for current, following in zip(path, path[1:]):
         screen = by_id[current]
-        candidates = [e for e in screen.elements if e.target == following]
-        element = min(candidates, key=lambda e: movement_time(e.size, e.zone))
+        candidates = [e for e in screen.elements if leads_to(e, following)]
+        element = min(candidates, key=lambda e: (e.target != following, movement_time(e.size, e.zone)))
         seconds = KLM_MENTAL + hick_time(decision_options(screen, element)) + movement_time(element.size, element.zone)
         total += seconds
-        steps.append({"screen": screen.name, "element": element.label, "seconds": round(seconds, 2)})
+        label = element.label if element.target == following else f"{element.label}: {element.items[element.item_targets.index(following)]}"
+        steps.append({"screen": screen.name, "element": label, "seconds": round(seconds, 2)})
     return {"seconds": round(total, 1), "steps": steps}
 
 
@@ -165,7 +187,7 @@ def target_sizes(flow: Flow) -> dict[str, Any]:
             "element": e.label,
             "size": e.size,
             "pixels": TARGET_WIDTH[e.size],
-            "primary": bool(e.target),
+            "primary": bool(e.target or any(e.item_targets)),
         }
         for s, e in elements
         if TARGET_WIDTH[e.size] < WCAG_AAA
@@ -306,6 +328,7 @@ def from_draft(draft: FlowDraft, features: list[dict[str, Any]]) -> Flow:
         screen.feature_ids = list(dict.fromkeys(titles[k] for k in map(_key, item.features) if k in titles))
         for element in item.elements:
             target = names.get(_key(element.target)) if element.target else None
+            item_targets = [names.get(_key(t)) if t else None for t in element.item_targets]
             screen.elements.append(
                 FlowElement(
                     id=_id("e"),
@@ -315,6 +338,8 @@ def from_draft(draft: FlowDraft, features: list[dict[str, Any]]) -> Flow:
                     zone=element.zone,
                     options=element.options,
                     target=target if target != screen.id else None,
+                    items=element.items if element.type in ITEM_TYPES else [],
+                    item_targets=[t if t != screen.id else None for t in item_targets],
                 )
             )
     kinds = [s.kind for s in screens]
@@ -415,6 +440,7 @@ def apply_suggestion(flow: Flow, suggestion: dict[str, Any]) -> Flow:
     elif op == "group_options" and element is not None and element.options > 5:
         element.options = 5
         element.items = element.items[:5]
+        element.item_targets = element.item_targets[:5]
         screen.elements.append(FlowElement(id=_id("e"), label="Więcej", type="link", size="M", zone="center", options=1))
     elif op == "group_options":
         keep = [e for e in screen.elements if e.target or e.size == "L"]
@@ -495,6 +521,7 @@ class DeliverService:
             for element in screen.elements:
                 if element.target not in ids:
                     element.target = None
+                element.item_targets = [t if t in ids else None for t in element.item_targets]
         self.db.save_flow(project_id, flow.model_dump())
         return {"flow": flow.model_dump(), "audit": audit(flow)}
 
@@ -543,6 +570,7 @@ class DeliverService:
                 described.append(
                     f"  - \"{e.label}\" {e.type}, size {e.size}, zone {e.zone}, options {e.options}"
                     + (f" -> \"{target}\"" if target else "")
+                    + (f" items: {describe_items(flow, e)}" if e.items else "")
                 )
         findings = [
             f"Steps to goal: {report['steps']['value'] if report['steps']['value'] is not None else 'goal unreachable'}",
@@ -861,8 +889,9 @@ def handoff_documents(state: dict[str, Any], style: dict[str, Any] | None = None
             screen_lines.append(f"Funkcje: {', '.join(linked)}")
         for e in screen.elements:
             target = f" → {names[e.target]}" if e.target in names else ""
+            choices = f"; opcje: {describe_items(flow, e)}" if e.items else ""
             screen_lines.append(
-                f"- {e.label} ({e.type}, rozmiar {e.size} / {SIZE_NAMES[e.size]}, strefa {ZONE_NAMES[e.zone]}){target}"
+                f"- {e.label} ({e.type}, rozmiar {e.size} / {SIZE_NAMES[e.size]}, strefa {ZONE_NAMES[e.zone]}){target}{choices}"
             )
         screen_lines.append("")
     guidance = ux_guidance(flow, report, style)

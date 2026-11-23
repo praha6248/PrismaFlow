@@ -108,6 +108,15 @@ def summarize(flow: Flow, data: dict[str, Any]) -> dict[str, Any]:
             "extra_steps": round(mean(max(0, len(r["path"]) - len(optimal)) for r in done), 1) if done and optimal else 0,
             "detours": [{"screen": names.get(k, k), "count": v} for k, v in detours.most_common(3)],
             "misclicks": round(mean(len(r.get("misclicks", [])) for r in results), 1) if results else 0,
+            "choices": [
+                {"screen": names.get(screen, screen), "element": element, "item": item, "count": count}
+                for (screen, element, item), count in Counter(
+                    (tap["screen"], tap["element"], tap.get("item", ""))
+                    for r in results
+                    for tap in r.get("taps", [])
+                    if tap.get("item")
+                ).most_common(6)
+            ],
             "quotes": [{"participant": r["participant"], "quote": r["quote"], "success": r["success"]} for r in results if r["quote"]][:6],
         }
         tasks.append(summary)
@@ -238,6 +247,7 @@ class UsabilityService:
             | {
                 "path": [p for p in r["path"] if p in ids],
                 "misclicks": [m for m in r.get("misclicks", []) if m["screen"] in ids],
+                "taps": [tap for tap in r.get("taps", []) if tap["screen"] in ids],
                 "quote": r["quote"].strip(),
             }
             for r in results

@@ -382,7 +382,8 @@ class FlowElement(BaseModel):
     zone: ElementZone = "center"
     options: int = Field(default=1, ge=1, le=50)
     target: str | None = None
-    items: list[str] = Field(default_factory=list, description="Named choices of a list, select, radio group or tabs")
+    items: list[str] = Field(default_factory=list, description="Named choices of a list, select, radio group, tabs or toggle states")
+    item_targets: list[str | None] = Field(default_factory=list, description="Screen id each choice opens, aligned with items")
 
     @field_validator("items")
     @classmethod
@@ -393,6 +394,8 @@ class FlowElement(BaseModel):
     def _options_from_items(self) -> "FlowElement":
         if len(self.items) >= 2:
             self.options = len(self.items)
+        targets = [t or None for t in self.item_targets[: len(self.items)]]
+        self.item_targets = targets + [None] * (len(self.items) - len(targets)) if any(targets) else []
         return self
 
 
@@ -429,6 +432,13 @@ class ElementDraft(BaseModel):
     zone: ElementZone = Field(description="Where on a phone screen: bottom (thumb zone), center or top")
     options: int = Field(description="Alternatives inside this one control: 1 for buttons, links and inputs; the visible items or filters for a list or select")
     target: str = Field(description="Exact name of the screen this element opens, or an empty string")
+    items: list[str] = Field(default_factory=list, description="Visible choices of a list, select, radio, tabs or the two states of a toggle; empty for buttons, links and inputs")
+    item_targets: list[str] = Field(default_factory=list, description="For each item, the exact name of the screen it opens, or an empty string")
+
+    @field_validator("items")
+    @classmethod
+    def _draft_items(cls, value: list[str]) -> list[str]:
+        return [_sentence(item, 30).rstrip("!:") for item in value if item and item.strip()][:8]
 
     @field_validator("label")
     @classmethod
@@ -777,6 +787,15 @@ class Misclick(BaseModel):
     element: str
 
 
+class Tap(BaseModel):
+    """One tap in the prototype: the screen, the element and the chosen option."""
+
+    screen: str
+    element: str
+    item: str = ""
+    to: str | None = None
+
+
 class TestResult(BaseModel):
     """One participant's attempt at one task."""
 
@@ -785,6 +804,7 @@ class TestResult(BaseModel):
     seconds: float = Field(ge=0, le=3600)
     path: list[str] = Field(default_factory=list, max_length=200)
     misclicks: list[Misclick] = Field(default_factory=list, max_length=200)
+    taps: list[Tap] = Field(default_factory=list, max_length=400)
     quote: str = Field(default="", max_length=600)
 
 

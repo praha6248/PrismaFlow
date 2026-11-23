@@ -506,5 +506,16 @@
   "wczoraj": "yesterday",
   "{n} {unit} temu": "{n} {unit} ago",
   "dzień|dni|dni": "day|days",
-  "Pokaż mniej": "Show less"
+  "Pokaż mniej": "Show less",
+  "Włączone": "On",
+  "Wyłączone": "Off",
+  "zostaje na ekranie": "stays on screen",
+  "Odłącz opcję": "Disconnect option",
+  "Przeciągnij na ekran, który otwiera ta opcja": "Drag onto the screen this option opens",
+  "bez przejścia": "no transition",
+  "zmienia widok": "changes the view",
+  "Mapa prototypu: elementy, opcje i dokąd prowadzą": "Prototype map: elements, options and where they lead",
+  "Wybierane opcje:": "Chosen options:",
+  "element|elementy|elementów": "element|elements",
+  "przyciski i linki: {b}": "buttons and links: {b}"
 }

@@ -3,7 +3,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { api, waitForJob } from "../api";
 import { u } from "../components/ui";
 import { number, plural, t } from "../i18n";
-import type { Flow, FlowElement, TestIssue, TestResult, TestsState } from "../types";
+import type { Flow, FlowElement, Tap, TestIssue, TestResult, TestsState } from "../types";
+import { ElementMap } from "./ElementMap";
 
 export function issueText(issue: TestIssue): string {
   if (issue.kind === "success")
@@ -41,25 +42,46 @@ interface Props {
   notify: (message: string) => void;
 }
 
-const STATEFUL = new Set(["input", "toggle", "checkbox", "radio", "select", "tabs", "slider"]);
 
-function PrototypeElement({
-  element,
-  onTap,
-}: {
-  element: FlowElement;
-  onTap: (element: FlowElement) => void;
-}) {
-  const [on, setOn] = useState(false);
-  const [picked, setPicked] = useState(0);
-  const items = element.items?.length
+function Trail({ taps, start, names }: { taps: Tap[]; start: string | null; names: Record<string, string> }) {
+  return (
+    <span className="flex flex-wrap items-center" style={{ gap: u(1.5), fontSize: "var(--text-small)", lineHeight: 1.35 }}>
+      <span className="text-ink">{start ? names[start] : ""}</span>
+      {taps.map((tap, i) => (
+        <span key={i} className="flex items-center" style={{ gap: u(1.5) }}>
+          <span
+            className={tap.to || tap.item ? "rounded bg-[#f3ecfa] text-mauve" : "rounded bg-[#fdebf7] text-error"}
+            style={{ padding: `0 ${u(2)}` }}
+          >
+            {tap.item ? `${tap.element}: ${tap.item}` : tap.element}
+          </span>
+          {tap.to && <span className="text-ink">→ {names[tap.to] ?? ""}</span>}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+type TapHandler = (element: FlowElement, item?: number) => void;
+
+function choices(element: FlowElement): string[] {
+  return element.items?.length
     ? element.items
     : Array.from({ length: Math.max(1, element.options) }, (_, i) => `${element.label} ${i + 1}`);
+}
+
+export function destination(element: FlowElement, item?: number): string | null {
+  return (item !== undefined ? element.item_targets?.[item] : null) || element.target || null;
+}
+
+function PrototypeElement({ element, onTap }: { element: FlowElement; onTap: TapHandler }) {
+  const [on, setOn] = useState(false);
+  const [picked, setPicked] = useState(0);
+  const items = choices(element);
+  const states = element.type === "toggle" && (element.items ?? []).length >= 2 ? element.items! : null;
   const pad = `${u(element.size === "L" ? 5 : element.size === "M" ? 3.5 : 2)} ${u(4)}`;
   const small = { fontSize: "var(--text-small)" } as const;
-  const go = () => {
-    if (element.target || !STATEFUL.has(element.type)) onTap(element);
-  };
+  const go = (item?: number) => onTap(element, item);
 
   if (element.type === "text")
     return (
@@ -84,7 +106,7 @@ function PrototypeElement({
         type="button"
         onClick={() => {
           setOn((v) => !v);
-          go();
+          go(states ? (on ? 1 : 0) : undefined);
         }}
         className="flex items-center justify-between text-left text-ink"
         style={{ ...small, gap: u(3), padding: `${u(1.5)} 0` }}
@@ -104,6 +126,7 @@ function PrototypeElement({
           </span>
         )}
         <span className="flex-1">{element.label}</span>
+        {states && <span className="text-haze">{on ? states[0] : states[1]}</span>}
         {element.type === "toggle" && (
           <span
             className="relative shrink-0 rounded-full transition-colors"
@@ -121,7 +144,7 @@ function PrototypeElement({
     return (
       <label className="flex flex-col text-ink" style={{ ...small, gap: u(1) }}>
         {element.label}
-        <input type="range" onMouseUp={go} className="accent-pink-500" />
+        <input type="range" onMouseUp={() => go()} className="accent-pink-500" />
       </label>
     );
   if (element.type === "select")
@@ -132,7 +155,7 @@ function PrototypeElement({
           value={picked}
           onChange={(e) => {
             setPicked(Number(e.target.value));
-            go();
+            go(Number(e.target.value));
           }}
           className="rounded border border-[#e4d6ec] bg-white text-ink outline-none"
           style={{ ...small, padding: pad }}
@@ -155,7 +178,7 @@ function PrototypeElement({
             type="button"
             onClick={() => {
               setPicked(i);
-              go();
+              go(i);
             }}
             className="flex items-center text-left"
             style={{ gap: u(2.5) }}
@@ -182,7 +205,7 @@ function PrototypeElement({
             type="button"
             onClick={() => {
               setPicked(i);
-              go();
+              go(i);
             }}
             className="flex-1 truncate rounded-full"
             style={{
@@ -204,7 +227,7 @@ function PrototypeElement({
           <button
             key={i}
             type="button"
-            onClick={go}
+            onClick={() => go(i)}
             className="text-left text-ink hover:bg-[#ede4f4]"
             style={{ ...small, padding: pad, borderTop: i ? "1px solid #ffffff" : undefined }}
           >
@@ -217,7 +240,7 @@ function PrototypeElement({
   return (
     <button
       type="button"
-      onClick={go}
+      onClick={() => go()}
       className={
         element.type === "link"
           ? "text-left text-pink-text underline"
@@ -243,7 +266,7 @@ function Phone({
 }: {
   flow: Flow;
   screenId: string | null;
-  onTap: (element: FlowElement) => void;
+  onTap: TapHandler;
 }) {
   const screen = flow.screens.find((s) => s.id === screenId);
   return (
@@ -295,6 +318,7 @@ export function TestsPanel({ projectId, flow, onClose, onChanged, notify }: Prop
   const [screen, setScreen] = useState<string | null>(null);
   const [path, setPath] = useState<string[]>([]);
   const [misses, setMisses] = useState<{ screen: string; element: string }[]>([]);
+  const [taps, setTaps] = useState<Tap[]>([]);
   const [quote, setQuote] = useState("");
   const [outcome, setOutcome] = useState<boolean | null>(null);
   const [results, setResults] = useState<TestResult[]>([]);
@@ -339,12 +363,14 @@ export function TestsPanel({ projectId, flow, onClose, onChanged, notify }: Prop
 
   const tasks = state?.tasks ?? [];
   const task = index >= 0 ? tasks[index] : null;
+  const names = Object.fromEntries(flow.screens.map((s) => [s.id, s.name]));
 
   const beginTask = (next: number) => {
     setIndex(next);
     setScreen(state?.start ?? null);
     setPath(state?.start ? [state.start] : []);
     setMisses([]);
+    setTaps([]);
     setQuote("");
     setOutcome(null);
     started.current = performance.now();
@@ -355,15 +381,21 @@ export function TestsPanel({ projectId, flow, onClose, onChanged, notify }: Prop
     setOutcome(success);
   };
 
-  const tap = (element: FlowElement) => {
-    if (!task || outcome !== null) return;
-    if (!element.target || element.target === screen) {
-      if (screen) setMisses((current) => [...current, { screen, element: element.label }]);
+  const tap = (element: FlowElement, item?: number) => {
+    if (!task || outcome !== null || !screen) return;
+    const to = destination(element, item);
+    const moves = to !== null && to !== screen && flow.screens.some((s) => s.id === to);
+    setTaps((current) => [
+      ...current,
+      { screen, element: element.label, item: item !== undefined ? choices(element)[item] ?? "" : "", to: moves ? to : null },
+    ]);
+    if (!moves) {
+      if (element.type === "button" || element.type === "link") setMisses((current) => [...current, { screen, element: element.label }]);
       return;
     }
-    setScreen(element.target);
-    setPath((current) => [...current, element.target!]);
-    if (element.target === task.goal) finish(true);
+    setScreen(to);
+    setPath((current) => [...current, to]);
+    if (to === task.goal) finish(true);
   };
 
   const next = async () => {
@@ -376,6 +408,7 @@ export function TestsPanel({ projectId, flow, onClose, onChanged, notify }: Prop
         seconds: Math.round(elapsed.current * 10) / 10,
         path,
         misclicks: misses,
+        taps,
         quote: quote.trim(),
       },
     ];
@@ -507,6 +540,14 @@ export function TestsPanel({ projectId, flow, onClose, onChanged, notify }: Prop
                 />
               </label>
             ))}
+            {flow.screens.length > 0 && (
+              <>
+                <span className="text-haze" style={{ fontSize: "var(--text-small)" }}>
+                  {t("Mapa prototypu: elementy, opcje i dokąd prowadzą")}
+                </span>
+                <ElementMap flow={flow} />
+              </>
+            )}
             <div className="mt-auto flex items-center" style={{ gap: u(5) }}>
               <button
                 type="button"
@@ -572,6 +613,7 @@ export function TestsPanel({ projectId, flow, onClose, onChanged, notify }: Prop
                   >
                     {task.scenario}
                   </p>
+                  {taps.length > 0 && <Trail taps={taps} start={state?.start ?? null} names={names} />}
                   {misses.length > 0 && (
                     <span className="text-mauve" style={{ fontSize: "var(--text-small)" }}>
                       {t("Kliknięcia bez efektu: {n} ({last})", {
@@ -651,6 +693,26 @@ export function TestsPanel({ projectId, flow, onClose, onChanged, notify }: Prop
                       {item.misclicks > 0 && ` · ${t("pomyłki {n}", { n: number(item.misclicks, 1) })}`}
                     </span>
                   </div>
+                  {item.choices.length > 0 && (
+                    <div className="text-mauve" style={{ fontSize: "var(--text-small)", marginTop: u(2), lineHeight: 1.35 }}>
+                      {t("Wybierane opcje:")}{" "}
+                      {item.choices
+                        .map((c) => `${c.screen} · ${c.element}: ${c.item} (${c.count})`)
+                        .join(", ")}
+                    </div>
+                  )}
+                  {(state?.sessions ?? []).flatMap((session) =>
+                    session.results
+                      .filter((r) => r.task === item.id && (r.taps ?? []).length)
+                      .map((r, i) => (
+                        <div key={`${session.id}-${i}`} className="flex items-start" style={{ gap: u(3), marginTop: u(2) }}>
+                          <span className={r.success ? "shrink-0 text-success" : "shrink-0 text-error"} style={{ fontSize: "var(--text-small)" }}>
+                            {session.participant}
+                          </span>
+                          <Trail taps={r.taps ?? []} start={state?.start ?? null} names={names} />
+                        </div>
+                      )),
+                  )}
                   {item.quotes.map((q, i) => (
                     <div key={i} className="flex items-center" style={{ gap: u(4), marginTop: u(3) }}>
                       <span className="min-w-0 flex-1 font-serif italic text-ink" style={{ fontSize: "var(--text-small)" }}>
