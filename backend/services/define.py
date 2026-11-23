@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections import OrderedDict
 from dataclasses import dataclass
 from statistics import mean
+import re
 from typing import Any
 
 import httpx
@@ -34,7 +35,7 @@ They are conceptual hypotheses to validate later, not interview results.
 Rules:
 - Write in {language}; use typical first names for that language.
 - Create three clearly different people (age, life situation, motivation) who all experience the chosen problem.
-- Spread their ages at least 8 years apart; include the person who pays for or decides about a solution (for example a parent, carer or teacher) when the problem concerns someone else.
+- Spread their ages at least 8 years apart and keep every age realistic for the role (a parent of a teenager or student is at least 36); include the person who pays for or decides about a solution (for example a parent, carer or teacher) when the problem concerns someone else.
 - Base them on the target groups and evidence when available.
 - The quote sounds natural and personal, as if said in an interview, 1-2 short sentences.
 - Each persona has two concrete sub-problems (3-7 words each) that a product could address; avoid repeating them across personas."""
@@ -46,6 +47,60 @@ class DefineCollectors:
 
     interest: Any = trends.interest
     suggestions: Any = autocomplete.suggestions
+
+
+PARENT = re.compile(r"rodzic|matk|mama|ojc|tata|tat\b|opiekun|parent|mother|father|mom\b|dad\b|carer|guardian", re.IGNORECASE)
+YOUNG = re.compile(r"uczeń|uczen|uczenni|licealist|nastolat|maturzyst|student|pupil|teen|high school|pierwszoklasist", re.IGNORECASE)
+AGE_RULES: tuple[tuple[re.Pattern[str], int, int], ...] = (
+    (re.compile(r"emeryt|senior|retire", re.IGNORECASE), 58, 95),
+    (re.compile(r"dziadek|babci|grandparent|grandmother|grandfather", re.IGNORECASE), 45, 95),
+    (re.compile(r"dyrektor|kierownik|manager|właściciel|wlasciciel|owner|prezes", re.IGNORECASE), 25, 75),
+    (re.compile(r"nauczyciel|doradc|doradzk|lekarz|terapeut|psycholog|counsel|teacher|doctor|therapist|pedagog|wykładowc|lecturer", re.IGNORECASE), 24, 75),
+    (re.compile(r"uczeń|uczen|uczenni|pupil|pierwszoklasist", re.IGNORECASE), 7, 19),
+    (re.compile(r"licealist|maturzyst|high school|nastolat|teen", re.IGNORECASE), 14, 20),
+    (re.compile(r"student", re.IGNORECASE), 18, 35),
+)
+
+
+def age_range(persona: dict[str, Any], others: list[dict[str, Any]]) -> tuple[int, int]:
+    """Return the plausible age range for a persona from its role and the other personas.
+
+    A parent or carer must be at least 25, and at least 18 years older than the oldest
+    pupil or student among the other personas, since that is whose problem they share.
+    """
+    role = persona["role"]
+    low, high = 16, 85
+    if PARENT.search(role):
+        young = [o["age"] for o in others if YOUNG.search(o["role"]) and not PARENT.search(o["role"])]
+        low = max(25, max(young, default=0) + 18)
+        return low, 85
+    for pattern, minimum, maximum in AGE_RULES:
+        if pattern.search(role):
+            return minimum, maximum
+    return low, high
+
+
+def age_issues(personas: list[dict[str, Any]]) -> list[str]:
+    """List the personas whose age does not fit their role."""
+    issues = []
+    for index, persona in enumerate(personas):
+        others = personas[:index] + personas[index + 1 :]
+        low, high = age_range(persona, others)
+        if not low <= persona["age"] <= high:
+            issues.append(f'{persona["name"]} ({persona["role"]}) is {persona["age"]}, but should be {low}-{high}')
+    return issues
+
+
+def fix_ages(personas: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Move every implausible age into its role's range, a few years above the minimum."""
+    fixed = [dict(p) for p in personas]
+    for index, persona in enumerate(fixed):
+        low, high = age_range(persona, fixed[:index] + fixed[index + 1 :])
+        if persona["age"] < low:
+            persona["age"] = min(high, low + 4)
+        elif persona["age"] > high:
+            persona["age"] = high
+    return fixed
 
 
 def monthly(dates: list[str], values: list[float], months: int = 12) -> list[dict[str, Any]]:
@@ -247,6 +302,17 @@ class DefineService:
                 warn(f"trends: {exc}")
         return data, ratios
 
+    async def _draft_personas(self, system: str, prompt: str) -> list[dict[str, Any]]:
+        result: PersonaSet = await self.llm.structured(PersonaSet, system, prompt, temperature=0.7)
+        personas = [
+            {"name": p.name, "age": p.age, "role": p.role, "quote": p.quote, "options": p.problems}
+            for p in result.personas[:3]
+            if len(p.problems) == 2
+        ]
+        if len(personas) < 3:
+            raise ValueError("the model returned incomplete personas")
+        return personas
+
     async def generate_personas(self, project_id: int, progress: ProgressFn, warn: WarnFn) -> dict[str, Any]:
         """Create three conceptual personas for the chosen problem."""
         project = self.db.get_project(project_id)
@@ -276,19 +342,17 @@ class DefineService:
         )
 
         progress(0.25, "personas")
-        result: PersonaSet = await self.llm.structured(
-            PersonaSet,
-            PERSONA_SYSTEM.format(language=LANGUAGE_NAMES.get(language, "the niche's language")),
-            prompt,
-            temperature=0.7,
-        )
-        personas = [
-            {"name": p.name, "age": p.age, "role": p.role, "quote": p.quote, "options": p.problems}
-            for p in result.personas[:3]
-            if len(p.problems) == 2
-        ]
-        if len(personas) < 3:
-            raise ValueError("the model returned incomplete personas")
+        system = PERSONA_SYSTEM.format(language=LANGUAGE_NAMES.get(language, "the niche's language"))
+        personas = await self._draft_personas(system, prompt)
+        issues = age_issues(personas)
+        if issues:
+            progress(0.6, "personas")
+            retry = prompt + "\n\nYour previous personas had implausible ages: " + "; ".join(issues) + ". Fix them; a parent must be old enough to have the child described."
+            try:
+                personas = await self._draft_personas(system, retry)
+            except ValueError:
+                pass
+            personas = fix_ages(personas)
 
         progress(0.95, "saving")
         self.db.replace_personas(project_id, problem["id"], personas)

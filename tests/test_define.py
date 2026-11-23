@@ -195,3 +195,19 @@ def test_inline_schema_keeps_fields_named_title() -> None:
     assert "title" in item["properties"]
     assert "title" in item["required"]
     assert "title" not in item
+
+
+def test_persona_ages_must_fit_their_roles() -> None:
+    from backend.services.define import age_issues, fix_ages
+
+    personas = [
+        {"name": "Ania", "age": 18, "role": "Studentka pierwszego roku"},
+        {"name": "Piotr", "age": 26, "role": "Rodzic, wspierający córkę"},
+        {"name": "Magda", "age": 41, "role": "Doradczyni zawodowa w liceum"},
+    ]
+    issues = age_issues(personas)
+    assert len(issues) == 1 and issues[0].startswith("Piotr")
+    fixed = fix_ages(personas)
+    assert fixed[1]["age"] >= 36 and fixed[0]["age"] == 18 and fixed[2]["age"] == 41
+    assert age_issues(fixed) == []
+    assert age_issues([{"name": "Ola", "age": 20, "role": "Nauczycielka"}, {"name": "Jan", "age": 12, "role": "Emeryt"}]) != []
