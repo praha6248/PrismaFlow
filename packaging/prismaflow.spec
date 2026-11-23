@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 from PyInstaller.utils.hooks import collect_data_files, collect_submodules
@@ -7,11 +8,12 @@ dist = root / "frontend" / "dist"
 if not (dist / "index.html").is_file():
     raise SystemExit("frontend/dist is missing: run `npm run build` in frontend/ first")
 
-hiddenimports = (
-    collect_submodules("uvicorn")
-    + collect_submodules("webview.platforms")
-    + ["trendspy", "networkx", "gi", "gi.repository.Gtk", "gi.repository.WebKit2"]
-)
+linux = sys.platform.startswith("linux")
+icon = root / "packaging" / ("prismaflow.ico" if sys.platform == "win32" else "prismaflow.png")
+
+hiddenimports = collect_submodules("uvicorn") + collect_submodules("webview.platforms") + ["trendspy", "networkx"]
+if linux:
+    hiddenimports += ["gi", "gi.repository.Gtk", "gi.repository.WebKit2"]
 
 a = Analysis(
     [str(root / "main.py")],
@@ -38,7 +40,9 @@ a = Analysis(
             "languages": ["pl", "en_US"],
             "module-versions": {"Gtk": "3.0", "WebKit2": "4.1"},
         }
-    },
+    }
+    if linux
+    else {},
     noarchive=False,
 )
 pyz = PYZ(a.pure)
@@ -47,7 +51,8 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name="prismaflow",
+    name="prismaflow" if linux else "PrismaFlow",
+    icon=str(icon),
     console=False,
     strip=False,
     upx=False,

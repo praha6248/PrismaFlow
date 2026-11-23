@@ -1,4 +1,4 @@
-"""PrismaFlow desktop entry point: starts the local API and opens a GTK WebKit window."""
+"""PrismaFlow desktop entry point: starts the local API and opens a native web view window."""
 
 from __future__ import annotations
 
@@ -6,8 +6,10 @@ import argparse
 import os
 import sys
 
-os.environ.setdefault("WEBKIT_DISABLE_COMPOSITING_MODE", "1")
-os.environ.setdefault("PYWEBVIEW_GUI", "gtk")
+GUI = "gtk" if sys.platform.startswith("linux") else None
+if GUI == "gtk":
+    os.environ.setdefault("WEBKIT_DISABLE_COMPOSITING_MODE", "1")
+    os.environ.setdefault("PYWEBVIEW_GUI", "gtk")
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
@@ -48,7 +50,7 @@ def main(argv: list[str] | None = None) -> int:
         text_select=False,
     )
     try:
-        webview.start(gui="gtk", debug=args.debug, private_mode=False)
+        webview.start(gui=GUI, debug=args.debug, private_mode=False)
     finally:
         server.stop()
     return 0

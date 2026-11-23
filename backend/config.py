@@ -18,15 +18,33 @@ def adopt_legacy(path: Path) -> None:
         legacy.rename(path)
 
 
+def config_base() -> str:
+    """Return the per-user configuration root: XDG on Linux, %APPDATA% on Windows."""
+    if os.environ.get("XDG_CONFIG_HOME"):
+        return os.environ["XDG_CONFIG_HOME"]
+    if sys.platform == "win32" and os.environ.get("APPDATA"):
+        return os.environ["APPDATA"]
+    return str(Path.home() / ".config")
+
+
+def data_base() -> str:
+    """Return the per-user data root: XDG on Linux, %LOCALAPPDATA% on Windows."""
+    if os.environ.get("XDG_DATA_HOME"):
+        return os.environ["XDG_DATA_HOME"]
+    if sys.platform == "win32" and os.environ.get("LOCALAPPDATA"):
+        return os.environ["LOCALAPPDATA"]
+    return str(Path.home() / ".local" / "share")
+
+
 def user_env_path() -> Path:
     """Location of the user's settings file, ~/.config/PrismaFlow/prismaflow.env."""
-    base = os.environ.get("XDG_CONFIG_HOME") or str(Path.home() / ".config")
+    base = config_base()
     return Path(base) / APP_NAME / "prismaflow.env"
 
 
 def load_user_env() -> None:
     """Load KEY=VALUE pairs from ~/.config/PrismaFlow/prismaflow.env without overriding the environment."""
-    base = os.environ.get("XDG_CONFIG_HOME") or str(Path.home() / ".config")
+    base = config_base()
     adopt_legacy(Path(base) / APP_NAME)
     path = Path(base) / APP_NAME / "prismaflow.env"
     legacy = path.with_name("prismflow.env")
@@ -60,7 +78,7 @@ def data_dir() -> Path:
     if override:
         path = Path(override).expanduser()
     else:
-        base = os.environ.get("XDG_DATA_HOME") or str(Path.home() / ".local" / "share")
+        base = data_base()
         path = Path(base) / APP_NAME
         adopt_legacy(path)
     path.mkdir(parents=True, exist_ok=True)

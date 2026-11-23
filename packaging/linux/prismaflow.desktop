@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=PrismaFlow
+Comment=Local-first product discovery studio
+Comment[pl]=Lokalne studio odkrywania nisz produktowych
+Exec=prismaflow
+Icon=prismaflow
+Categories=Office;Development;
+Terminal=false
+StartupWMClass=prismaflow

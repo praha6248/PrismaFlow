@@ -16,7 +16,7 @@ jobs:
       - name: System packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-gi python3-venv gir1.2-webkit2-4.1 libwebkit2gtk-4.1-0
+          sudo apt-get install -y python3-gi python3-venv gir1.2-webkit2-4.1 libwebkit2gtk-4.1-0 desktop-file-utils
       - uses: actions/setup-node@v5
         with:
           node-version: "25"
@@ -36,12 +36,80 @@ jobs:
         run: ../.venv/bin/pyinstaller --noconfirm --distpath ../dist --workpath ../build prismaflow.spec
       - name: Archive
         run: tar -C dist -czf PrismaFlow-linux-x86_64.tar.gz PrismaFlow
+      - name: AppImage
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          [ "$GITHUB_REF_TYPE" = "tag" ] || VERSION="dev"
+          mkdir -p AppDir/usr/lib
+          cp -r dist/PrismaFlow AppDir/usr/lib/PrismaFlow
+          cp packaging/linux/AppRun AppDir/AppRun
+          cp packaging/linux/prismaflow.desktop AppDir/prismaflow.desktop
+          cp packaging/prismaflow.png AppDir/prismaflow.png
+          desktop-file-validate AppDir/prismaflow.desktop
+          curl -fsSL -o appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool
+          ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN=1 ./appimagetool AppDir "PrismaFlow-$VERSION-x86_64.AppImage"
       - uses: actions/upload-artifact@v6
         with:
-          name: PrismaFlow-linux-x86_64
-          path: PrismaFlow-linux-x86_64.tar.gz
+          name: linux
+          path: |
+            PrismaFlow-linux-x86_64.tar.gz
+            PrismaFlow-*-x86_64.AppImage
+
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "25"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Frontend
+        working-directory: frontend
+        run: npm ci && npm run build
+      - name: Python environment
+        run: pip install -r requirements-dev.txt
+      - name: PyInstaller
+        working-directory: packaging
+        run: pyinstaller --noconfirm --distpath ../dist --workpath ../build prismaflow.spec
+      - name: Installer
+        shell: pwsh
+        run: |
+          $version = if ($env:GITHUB_REF_TYPE -eq "tag") { $env:GITHUB_REF_NAME.TrimStart("v") } else { "dev" }
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DAppVersion=$version" packaging\windows\prismaflow.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v6
+        with:
+          name: windows
+          path: dist/PrismaFlow-*-windows-x64-setup.exe
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [linux, windows]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
+        with:
+          path: out
+          merge-multiple: true
+      - name: Release notes
+        env:
+          UX_MODEL_REPO: ${{ vars.UX_MODEL_REPO }}
+        run: |
+          if [ -n "$UX_MODEL_REPO" ]; then
+            ROW="| [PrismaFlow UX (Gemma 3 4B)](https://huggingface.co/$UX_MODEL_REPO) | 3.3 GB | optional, better flows and fixes in Deliver | \`ollama pull hf.co/$UX_MODEL_REPO && ollama cp hf.co/$UX_MODEL_REPO local/gemma3-4b-ux\` |"
+          else
+            ROW=""
+          fi
+          awk -v row="$ROW" '{ if ($0 == "UX_MODEL_ROW") { if (row != "") print row } else print }' packaging/release-notes.md > notes.md
       - name: GitHub release
-        if: startsWith(github.ref, 'refs/tags/')
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" PrismaFlow-linux-x86_64.tar.gz --generate-notes --title "PrismaFlow $GITHUB_REF_NAME"
+        run: gh release create "$GITHUB_REF_NAME" out/* --notes-file notes.md --generate-notes --title "PrismaFlow $GITHUB_REF_NAME"
