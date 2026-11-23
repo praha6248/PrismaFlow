@@ -66,11 +66,14 @@ def _clean(text: str, limit: int) -> str:
 
 def terms(query: str) -> list[str]:
     """Return 5-character stems of the meaningful words of a query."""
-    words = re.findall(r"\w+", query.casefold())
-    return [w[:5] for w in words if len(w) >= 3] or [w for w in words if w]
+    words = re.findall(r"[^\W_]+", query.casefold())
+    return list(dict.fromkeys(w[:5] for w in words if w not in STOPWORDS and (len(w) >= 3 or w in SHORT_TERMS)))
 
 
-STOPWORDS = {"for", "the", "and", "with", "how", "what", "when", "your", "you", "from", "into", "about", "best", "app", "apps"}
+SHORT_TERMS = {"ai", "vr", "ar", "ux", "ui", "3d"}
+STOPWORDS = {"for", "the", "and", "with", "how", "what", "when", "your", "you", "from", "into", "about", "best", "app", "apps",
+             "dla", "jak", "oraz", "się", "jest", "czy", "które", "który", "przez", "jako", "przy", "nad", "pod", "bez"}
+
 GENERIC = {"motiv", "train", "worko", "child", "kids", "peopl", "probl", "help", "learn", "plann", "sport", "famil", "home", "work", "daily", "tips", "ideas", "start"}
 
 
@@ -80,7 +83,7 @@ def _matches(stem: str, key: str) -> bool:
 
 def keywords(query: str) -> list[str]:
     """Return the query's words without stop words, as Stack Exchange matches every word."""
-    words = [w for w in re.findall(r"\w+", query.casefold()) if len(w) >= 3 and w not in STOPWORDS]
+    words = [w for w in re.findall(r"\w+", query.casefold()) if (len(w) >= 3 or w in SHORT_TERMS) and w not in STOPWORDS]
     return words or re.findall(r"\w+", query.casefold())
 
 
@@ -132,9 +135,14 @@ def timestamp(value: Any) -> float:
 def relevant(text: str, stems: list[str], minimum: float) -> bool:
     """Tell whether enough query stems occur in a text."""
     if not stems:
-        return True
-    folded = text.casefold()
-    return sum(1 for stem in stems if stem in folded) >= max(1, math.ceil(len(stems) * minimum))
+        return False
+    words = re.findall(r"[^\W_]+", text.casefold())
+    tokens = {word[:5] for word in words}
+    if "ai" in stems and re.search(r"artificial intelligence|sztuczn\w* inteligenc", text, re.I):
+        tokens.add("ai")
+    if any(stem not in tokens for stem in stems if stem in SHORT_TERMS):
+        return False
+    return len(tokens.intersection(stems)) >= max(1, math.ceil(len(stems) * minimum))
 
 
 async def _paced(name: str, call: Callable[[], Awaitable[Any]]) -> Any:
@@ -302,4 +310,6 @@ async def search(db: Database, client: httpx.AsyncClient, query: str, language: 
             errors.append(f"reddit: {exc}")
     if len(errors) == sources:
         raise CollectorUnavailable("; ".join(errors))
-    return _rank(results, limit)
+    stems = terms(query)
+    matched = [p for p in results if relevant(f"{p['title']} {p.get('body') or ''}", stems, 0.6)]
+    return _rank(matched, limit)

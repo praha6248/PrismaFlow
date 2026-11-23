@@ -148,9 +148,12 @@ def create_app(
         return discover.graph(database, node["project_id"])
 
     @api.get("/nodes/{node_id}/evidence")
-    def node_evidence(node_id: int) -> dict:
+    async def node_evidence(node_id: int, locale: str | None = None) -> dict:
         """Return collected evidence for a node."""
-        return discover.node_evidence(database, node_id)
+        evidence = discover.node_evidence(database, node_id)
+        if locale == "en":
+            await discover.english_discussions(database, ollama, evidence)
+        return evidence
 
     @api.get("/projects/{project_id}/search")
     def search(project_id: int, q: str) -> list[dict]:

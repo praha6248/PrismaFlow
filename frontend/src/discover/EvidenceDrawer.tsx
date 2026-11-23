@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { api } from "../api";
 import type { Evidence, MapNode } from "../types";
 import { styleFor } from "./kinds";
-import { t } from "../i18n";
+import { locale, plural, t } from "../i18n";
 
 interface Props {
   node: MapNode;
@@ -329,7 +329,8 @@ export function EvidenceDrawer({
                             : undefined
                         }
                       >
-                        „{quote.title}”{quote.meta.lang === "en" && <EnTag />}
+                        {locale === "en" ? "“" : "„"}{quote.title}”{quote.meta.lang === "en" && <EnTag />}
+                        {quote.meta.translation_unavailable === true && <small> · {t("Oryginał")}</small>}
                       </p>
                       <a
                         href={quote.url ?? undefined}
@@ -344,8 +345,8 @@ export function EvidenceDrawer({
                         {sourceLabel(quote.meta)} ·{" "}
                         {String(quote.meta.comments ?? 0)}{" "}
                         {quote.meta.platform === "stackexchange"
-                          ? "odpowiedzi"
-                          : "komentarzy"}
+                          ? plural(Number(quote.meta.comments ?? 0), "odpowiedź", "odpowiedzi", "odpowiedzi")
+                          : plural(Number(quote.meta.comments ?? 0), "komentarz", "komentarze", "komentarzy")}
                         <ExternalLink style={{ width: "calc(var(--u) * 5)" }} />
                       </a>
                     </li>

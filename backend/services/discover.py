@@ -121,6 +121,34 @@ def node_evidence(db: Database, node_id: int) -> dict[str, Any]:
     }
 
 
+async def english_discussions(db: Database, llm: Any, evidence: dict[str, Any]) -> None:
+    """Localize display titles without modifying the source records."""
+    from ..collectors.base import cache_key
+
+    project = db.get_project(evidence["node"]["project_id"])
+    pending = []
+    for quote in evidence["quotes"][:5]:
+        meta = quote["meta"]
+        if meta.get("lang") == "en" and meta.get("original"):
+            quote["title"] = meta["original"]
+        elif project and project["language"] != "en":
+            key = cache_key("english-discussion", quote["title"])
+            hit = db.cache_get(key, settings.cache_ttl_seconds, settings.negative_cache_ttl_seconds)
+            if hit:
+                quote["title"] = hit[1]
+            else:
+                pending.append((quote, key))
+    if pending:
+        titles = [quote["title"] for quote, _ in pending]
+        translated = await translate(llm, titles, "English", fallback=False)
+        for (quote, key), title in zip(pending, translated):
+            if title:
+                db.cache_put(key, "english-discussion", quote["title"], "ok", title)
+                quote["title"] = title
+            else:
+                quote["meta"]["translation_unavailable"] = True
+
+
 def build_prompt(
     project: dict[str, Any],
     nodes: list[dict[str, Any]],

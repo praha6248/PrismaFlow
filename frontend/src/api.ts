@@ -1,3 +1,4 @@
+import { locale } from "./i18n";
 import type {
   DefineState,
   DeliverState,
@@ -113,7 +114,7 @@ export const api = {
   ) => request<MapNode>(`/nodes/${id}`, { method: "PATCH", body: json(patch) }),
   deleteNode: (id: number) =>
     request<Graph>(`/nodes/${id}`, { method: "DELETE" }),
-  evidence: (id: number) => request<Evidence>(`/nodes/${id}/evidence`),
+  evidence: (id: number) => request<Evidence>(`/nodes/${id}/evidence?locale=${locale}`),
   expand: (projectId: number, nodeId?: number, count = 3) =>
     request<Job>("/discover/expand", {
       method: "POST",

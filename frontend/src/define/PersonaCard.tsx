@@ -6,6 +6,16 @@ import type { Persona } from "../types";
 import { EvidenceBadge } from "./EvidenceBadge";
 import { t } from "../i18n";
 
+const profileFields = {
+  situation: "Miejsce i moment użycia",
+  device: "Urządzenie i warunki",
+  goal: "Cel użytkownika",
+  workaround: "Jak radzi sobie dziś",
+  barrier: "Główna bariera",
+  success: "Po czym pozna sukces",
+  question: "Pytanie do wywiadu",
+} as const;
+
 const AVATAR_COLORS = ["#e6dcf7", "#fbdcf3", "#dbe7f9"];
 
 export function yearsLabel(age: number): string {
@@ -67,7 +77,7 @@ export function PersonaCard({
         </div>
       </div>
 
-      <button type="button" aria-label={t("Rozwiń cytat")} title={t("Rozwiń cytat")}
+      <button type="button" aria-label={t("Rozwiń profil persony")} title={t("Rozwiń profil persony")}
         className="absolute rounded-full p-1 text-mauve hover:bg-purple-50"
         style={{ right: u(8), top: u(12) }}
         onKeyDown={event => event.stopPropagation()}
@@ -77,7 +87,17 @@ export function PersonaCard({
       {expanded && (
         <CardDialog title={persona.name} onClose={() => setExpanded(false)}>
           <p className="mb-4 text-haze">{persona.role}</p>
+          <p className="mb-2 text-sm font-medium text-mauve">{t("Hipoteza do sprawdzenia w badaniu")}</p>
           <blockquote className="whitespace-pre-wrap break-words font-serif text-2xl leading-snug">„{persona.quote}”</blockquote>
+          <dl className="mt-5 grid gap-4">
+            {(Object.keys(profileFields) as (keyof typeof profileFields)[]).map(key =>
+              persona.profile?.[key] && <div key={key}>
+                <dt className="text-sm font-semibold text-mauve">{t(profileFields[key])}</dt>
+                <dd className="mt-1 break-words text-ink">{persona.profile[key]}</dd>
+              </div>
+            )}
+          </dl>
+          {!persona.profile?.situation && <p className="mt-4 text-sm text-haze">{t("Wygeneruj persony ponownie, aby dodać kontekst użycia.")}</p>}
         </CardDialog>
       )}
 

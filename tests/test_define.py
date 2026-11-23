@@ -8,7 +8,7 @@ from backend.api import create_app
 from backend.collectors import CollectorUnavailable
 from backend.database import Database
 from backend.services import discover
-from backend.services.define import DefineCollectors, DefineService, monthly, summarize_trend
+from backend.services.define import DefineCollectors, DefineService, define_state, monthly, summarize_trend
 
 from .conftest import FakeLLM, offline_collectors
 
@@ -38,11 +38,21 @@ PROBLEMS = {
     ]
 }
 
+PROFILE = {
+    "situation": "W drodze na trening po pracy.",
+    "device": "Telefon, w autobusie tylko jedna ręka jest wolna.",
+    "goal": "Wybrać zestaw na dzisiejszy trening.",
+    "workaround": "Szuka zdjęcia planu w galerii telefonu.",
+    "barrier": "Ma tylko kilka minut przed przesiadką.",
+    "success": "Otwiera gotowy plan przed wejściem na salę.",
+    "question": "Jak wyglądało przygotowanie do ostatniego treningu?",
+}
+
 PERSONAS = {
     "personas": [
-        {"name": "marta", "age": 28, "role": "koordynatorka projektów", "quote": "Zaczynam z zapałem.", "problems": ["Trudno wrócić", "Sztywny plan"]},
-        {"name": "Karolina", "age": 34, "role": "Pracująca mama", "quote": "Mam mało czasu.", "problems": ["Obowiązki", "Za długie treningi"]},
-        {"name": "Julia", "age": 23, "role": "Studentka", "quote": "Nie wiem, od czego zacząć.", "problems": ["Sprzeczne porady", "Brak postępów"]},
+        {"profile": PROFILE, "name": "marta", "age": 28, "role": "koordynatorka projektów", "quote": "Zaczynam z zapałem.", "problems": ["Trudno wrócić", "Sztywny plan"]},
+        {"profile": PROFILE, "name": "Karolina", "age": 34, "role": "Pracująca mama", "quote": "Mam mało czasu.", "problems": ["Obowiązki", "Za długie treningi"]},
+        {"profile": PROFILE, "name": "Julia", "age": 23, "role": "Studentka", "quote": "Nie wiem, od czego zacząć.", "problems": ["Sprzeczne porady", "Brak postępów"]},
     ]
 }
 
@@ -138,6 +148,7 @@ async def test_personas_follow_the_chosen_problem(db: Database) -> None:
     assert chosen["chosen"] is True
 
     state = await service.generate_personas(project_id, _noop, _noop)
+    assert state["personas"][0]["profile"] == PROFILE
     assert [p["name"] for p in state["personas"]] == ["Marta", "Karolina", "Julia"]
     assert state["chosen_problem_id"] == chosen["id"]
 
@@ -238,3 +249,24 @@ async def test_problems_and_personas_cite_real_evidence(db: Database) -> None:
     state = await service.generate_personas(project_id, _noop, _noop)
     assert "cites no evidence" in llm.prompts[-1]
     assert [len(p["evidence"]) for p in state["personas"]] == [0, 1, 1]
+
+
+def test_saved_persona_excludes_unrelated_news_and_search_suggestions(db: Database) -> None:
+    project = discover.create_project(db, "i")["project"]["id"]
+    node = db.root_node(project)["id"]
+    db.replace_problems(project, [dict(title="Dzieci otrzymują nieodpowiednie treści AI", description="", keyword="dzieci", node_ids=[], evidence_ids=[])])
+    problem = db.list_problems(project)[0]
+    db.choose_problem(problem["id"])
+    titles = [
+        ("community", "Minister nazywa broń zabawkami dla dzieci"),
+        ("community", "Łódź z zabawkami dla głodujących dzieci"),
+        ("autocomplete", "Zabawki AI dla dzieci"),
+        ("community", "Jak chronić dzieci przed nieodpowiednimi treściami AI w zabawkach?"),
+    ]
+    for source, title in titles:
+        db.add_evidence(project, node, source, title)
+    ids = [e["id"] for e in db.list_evidence(node)]
+    db.replace_personas(project, problem["id"], [dict(name="Marcin", age=46, role="Tata", quote="Co usłyszy moje dziecko?", options=["A", "B"], evidence_ids=ids)])
+    persona = define_state(db, project)["personas"][0]
+    assert [e["title"] for e in persona["evidence"]] == [titles[-1][1]]
+    assert persona["evidence_ids"] == [persona["evidence"][0]["id"]]

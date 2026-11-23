@@ -183,9 +183,22 @@ class ProblemSet(BaseModel):
     problems: list[ProblemDraft] = Field(json_schema_extra={"minItems": 3, "maxItems": 3})
 
 
+class PersonaProfile(BaseModel):
+    """Research hypotheses to validate in interviews or observation."""
+
+    situation: str = Field(min_length=1, description="Where and when usage starts, and what triggers it")
+    device: str = Field(min_length=1, description="Device and environmental or accessibility constraints")
+    goal: str = Field(min_length=1, description="The practical outcome sought in this situation")
+    workaround: str = Field(min_length=1, description="How the person handles the task today")
+    barrier: str = Field(min_length=1, description="A concrete obstacle or concern")
+    success: str = Field(min_length=1, description="Observable sign that the task was completed successfully")
+    question: str = Field(min_length=1, description="One open interview question about the last real occurrence")
+
+
 class PersonaDraft(BaseModel):
     """A conceptual persona affected by the chosen problem."""
 
+    profile: PersonaProfile
     name: str = Field(description="Typical first name in the project's language")
     age: int = Field(description="Age in years between 16 and 75")
     role: str = Field(description="Life situation or job in 2-4 words, sentence case, no names or parentheses")
@@ -205,7 +218,7 @@ class PersonaDraft(BaseModel):
     @field_validator("quote")
     @classmethod
     def _quote(cls, value: str) -> str:
-        return _sentence(value, 160)
+        return " ".join(value.split())
 
     @field_validator("age")
     @classmethod

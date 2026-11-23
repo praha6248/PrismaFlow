@@ -137,6 +137,7 @@ export interface Problem {
 }
 
 export interface Persona {
+  profile?: Partial<Record<"situation" | "device" | "goal" | "workaround" | "barrier" | "success" | "question", string>>;
   id: number;
   project_id: number;
   problem_id: number;

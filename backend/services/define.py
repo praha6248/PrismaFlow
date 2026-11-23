@@ -10,7 +10,7 @@ from typing import Any
 
 import httpx
 
-from ..collectors import CollectorUnavailable, autocomplete, trends
+from ..collectors import CollectorUnavailable, autocomplete, community, trends
 from ..config import settings
 from ..database import Database
 from ..models import PersonaSet, ProblemSet
@@ -43,6 +43,9 @@ Rules:
   and evidence_ids lists 1-4 ids of the lines each persona is based on. Use only ids from the list.
 - Avoid generic personas: give each a specific context (where, when, with what tools) visible in the evidence.
 - The quote sounds natural and personal, as if said in an interview, 1-2 short sentences.
+- Write each profile field in the project language in one concise sentence. Anchor the scenario in the chosen task.
+  Treat inferred device, setting and behaviour as hypotheses. Do not invent interview findings or statistics.
+  Ask about a recent real event in the interview question.
 - Each persona has two concrete sub-problems (3-7 words each) that a product could address; avoid repeating them across personas."""
 
 
@@ -132,6 +135,19 @@ def summarize_trend(dates: list[str], series: list[float], anchor: str, anchor_r
     }
 
 
+def supports_persona(item: dict[str, Any], problem: dict[str, Any]) -> bool:
+    """Require a discussion related to the selected problem before citing it for a persona."""
+    if item["source"] not in ("community", "reddit"):
+        return False
+    text = " ".join((item["title"], item.get("body") or "", (item.get("meta") or {}).get("original") or ""))
+    title_terms = community.terms(problem["title"])
+    keyword_terms = community.terms(problem.get("keyword") or "")
+    qualifiers = [term for term in title_terms if term in community.SHORT_TERMS]
+    if qualifiers and not community.relevant(text, qualifiers, 1):
+        return False
+    return community.relevant(text, title_terms, 0.4) or community.relevant(text, keyword_terms, 0.5)
+
+
 def define_state(db: Database, project_id: int) -> dict[str, Any]:
     """Return everything the Define screens need."""
     project = db.get_project(project_id)
@@ -144,12 +160,15 @@ def define_state(db: Database, project_id: int) -> dict[str, Any]:
         seen: set[str] = set()
         item["evidence"] = []
         for e in db.evidence_by_ids(item["evidence_ids"]):
+            if "role" in item and chosen and not supports_persona(e, chosen):
+                continue
             key = e["title"].casefold()
             if key not in seen:
                 seen.add(key)
                 item["evidence"].append(
                     {"id": e["id"], "source": e["source"], "title": e["title"], "url": e["url"] or e["meta"].get("url"), "place": e["meta"].get("place")}
                 )
+        item["evidence_ids"] = [e["id"] for e in item["evidence"]]
     return {"project": project, "problems": problems, "personas": personas, "chosen_problem_id": chosen["id"] if chosen else None}
 
 
@@ -345,7 +364,7 @@ class DefineService:
     async def _draft_personas(self, system: str, prompt: str, pool: dict[int, Any]) -> list[dict[str, Any]]:
         result: PersonaSet = await self.llm.structured(PersonaSet, system, prompt, temperature=0.7)
         personas = [
-            {"name": p.name, "age": p.age, "role": p.role, "quote": p.quote, "options": p.problems, "evidence_ids": cited(p.evidence_ids, pool, 4)}
+            {"name": p.name, "age": p.age, "role": p.role, "quote": p.quote, "options": p.problems, "profile": p.profile.model_dump(), "evidence_ids": cited(p.evidence_ids, pool, 4)}
             for p in result.personas[:3]
             if len(p.problems) == 2
         ]
@@ -368,7 +387,8 @@ class DefineService:
         groups = [n["label"] for n in nodes if n["kind"] == "target_group"]
         await self._prepare(project_id, warn)
         _, _, evidence = self._context(project_id)
-        pool = dict(list(evidence.items())[:24])
+        relevant = [(key, item) for key, item in evidence.items() if supports_persona(item, problem)]
+        pool = dict(relevant[:24])
         lines = [f"[{item['id']}] ({item['source']}) {item['title']}" for item in pool.values()]
         prompt = "\n".join(
             [

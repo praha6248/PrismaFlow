@@ -114,3 +114,18 @@ def test_llm_schema_requires_new_nodes() -> None:
     schema = inline_schema(ExpansionPlan)
     assert schema["properties"]["new_nodes"]["minItems"] == 1
     assert "$ref" not in str(schema)
+
+
+async def test_english_discussions_reuse_original_and_cache_translation(db: Database) -> None:
+    project = db.create_project("sport", "pl", "PL")
+    node = db.root_node(project["id"])
+    db.add_evidence(project["id"], node["id"], "community", "Montaż kamery",
+                    meta={"lang": "en", "original": "Installing a camera"})
+    db.add_evidence(project["id"], node["id"], "reddit", "Taniec dla dzieci")
+    llm = FakeLLM()
+    for _ in range(2):
+        result = discover.node_evidence(db, node["id"])
+        await discover.english_discussions(db, llm, result)
+        assert {q["title"] for q in result["quotes"]} == {"Installing a camera", "[en] Taniec dla dzieci"}
+    assert len(llm.prompts) == 1
+    assert {q["title"] for q in discover.node_evidence(db, node["id"])["quotes"]} == {"Montaż kamery", "Taniec dla dzieci"}

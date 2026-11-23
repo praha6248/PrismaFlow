@@ -143,6 +143,7 @@ CREATE TABLE IF NOT EXISTS personas (
     quote TEXT NOT NULL DEFAULT '',
     options TEXT NOT NULL DEFAULT '[]',
     evidence_ids TEXT NOT NULL DEFAULT '[]',
+    profile TEXT NOT NULL DEFAULT '{}',
     chosen_option INTEGER,
     created_at REAL NOT NULL
 );
@@ -256,6 +257,8 @@ class Database:
                 conn.execute("ALTER TABLE evidence RENAME TO evidence_old")
             conn.executescript(SCHEMA)
             persona_columns = {r["name"] for r in conn.execute("PRAGMA table_info(personas)")}
+            if "profile" not in persona_columns:
+                conn.execute("ALTER TABLE personas ADD COLUMN profile TEXT NOT NULL DEFAULT '{}'")
             if "evidence_ids" not in persona_columns:
                 conn.execute("ALTER TABLE personas ADD COLUMN evidence_ids TEXT NOT NULL DEFAULT '[]'")
             if rebuild:
@@ -585,8 +588,8 @@ class Database:
             conn.execute("DELETE FROM personas WHERE problem_id = ?", (problem_id,))
             for position, item in enumerate(personas):
                 conn.execute(
-                    "INSERT INTO personas(project_id, problem_id, position, name, age, role, quote, options, evidence_ids, created_at) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO personas(project_id, problem_id, position, name, age, role, quote, options, evidence_ids, profile, created_at) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         project_id,
                         problem_id,
@@ -597,6 +600,7 @@ class Database:
                         item.get("quote", ""),
                         json.dumps(item.get("options", []), ensure_ascii=False),
                         json.dumps(item.get("evidence_ids", [])),
+                        json.dumps(item.get("profile", {}), ensure_ascii=False),
                         now,
                     ),
                 )
@@ -611,6 +615,7 @@ class Database:
         items = []
         for row in rows:
             item = dict(row)
+            item["profile"] = json.loads(item["profile"])
             item["options"] = json.loads(item["options"])
             item["evidence_ids"] = json.loads(item["evidence_ids"])
             items.append(item)
@@ -834,5 +839,6 @@ class Database:
             return None
         item = dict(row)
         item["options"] = json.loads(item["options"])
+        item["profile"] = json.loads(item["profile"])
         item["focus"] = item["options"][item["chosen_option"]] if item["chosen_option"] < len(item["options"]) else ""
         return item
