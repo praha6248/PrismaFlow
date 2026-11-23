@@ -127,6 +127,7 @@ class Settings:
     model: str | None = field(default_factory=lambda: os.environ.get("PRISMAFLOW_MODEL") or None)
     embed_model: str = field(default_factory=lambda: os.environ.get("PRISMAFLOW_EMBED_MODEL", "bge-m3"))
     trend_anchor: str = field(default_factory=lambda: os.environ.get("PRISMAFLOW_TREND_ANCHOR", "calendar"))
+    discussion_max_age_days: int = field(default_factory=lambda: int(os.environ.get("PRISMAFLOW_DISCUSSION_MAX_AGE_DAYS") or 365 * 3))
     cache_ttl_seconds: int = 60 * 60 * 24 * 3
     negative_cache_ttl_seconds: int = 60 * 30
     http_timeout: float = 12.0

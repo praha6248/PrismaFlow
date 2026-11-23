@@ -33,6 +33,7 @@ def _transport(calls: list[str]) -> httpx.MockTransport:
                 "posts": [
                     {"post": {"name": "Sport for autistic children ideas", "ap_id": "https://lemmy.world/post/1"}, "community": {"name": "autism"}, "counts": {"score": 50, "comments": 9}},
                     {"post": {"name": "Autistic children sport nsfw", "nsfw": True}, "community": {"name": "x"}, "counts": {"score": 99, "comments": 1}},
+                    {"post": {"name": "Sport for autistic children in 2013", "published": "2013-05-01T00:00:00Z"}, "community": {"name": "autism"}, "counts": {"score": 900, "comments": 90}},
                     {"post": {"name": "Cats"}, "community": {"name": "cats"}, "counts": {"score": 500, "comments": 50}},
                 ]
             },
@@ -62,6 +63,8 @@ async def test_search_merges_sources_and_filters_noise(db: Database) -> None:
     assert "Autistic teen at camp" not in titles
     assert {p["platform"] for p in posts} == {"lemmy", "stackexchange"}
     assert posts[0]["place"] == "autism"
+    assert "Sport for autistic children in 2013" not in titles
+    assert all("fromdate=" in c for c in calls if "stackexchange" in c)
     assert any("q=autistic&" in c or "q=autistic" in c.split("&")[-1] or "q=autistic" in c for c in calls)
 
     calls.clear()
@@ -103,3 +106,10 @@ def test_evidence_table_is_migrated(tmp_path) -> None:
     assert db.search_evidence(1, "treningi")[0]["title"] == "Stare treningi"
     db.add_evidence(1, None, "community", "Nowy wątek", meta=json.loads('{"platform": "lemmy"}'))
     assert len(db.search_evidence(1, "wątek")) == 1
+
+
+def test_cutoff_and_timestamps() -> None:
+    assert community.cutoff(365, now=400 * 86400) == 35 * 86400
+    assert community.timestamp("2024-01-01T00:00:00Z") == 1704067200
+    assert community.timestamp("2024-01-01T00:00:00.123456") > 0
+    assert community.timestamp(None) == 0.0 and community.timestamp("bad") == 0.0

@@ -12,6 +12,7 @@ import html
 import math
 import re
 import time
+from datetime import datetime
 from typing import Any, Awaitable, Callable
 
 import httpx
@@ -110,6 +111,24 @@ def pick_sites(query: str, limit: int = 2) -> list[str]:
     return chosen
 
 
+def cutoff(max_age_days: int | None = None, now: float | None = None) -> float:
+    """Return the Unix time before which discussions are too old to count as current evidence."""
+    days = settings.discussion_max_age_days if max_age_days is None else max_age_days
+    return (time.time() if now is None else now) - days * 86400
+
+
+def timestamp(value: Any) -> float:
+    """Parse an ISO 8601 date or a Unix time into a Unix time, or 0 when unknown."""
+    if isinstance(value, (int, float)):
+        return float(value)
+    if isinstance(value, str) and value:
+        try:
+            return datetime.fromisoformat(value.replace("Z", "+00:00")).timestamp()
+        except ValueError:
+            return 0.0
+    return 0.0
+
+
 def relevant(text: str, stems: list[str], minimum: float) -> bool:
     """Tell whether enough query stems occur in a text."""
     if not stems:
@@ -161,7 +180,7 @@ async def fetch_stackexchange(
 
 
 async def _stackexchange_query(client: httpx.AsyncClient, q: str, site: str, stems: list[str], minimum: float) -> list[dict[str, Any]]:
-    params = {"order": "desc", "sort": "relevance", "q": q, "site": site, "pagesize": 20, "filter": "withbody"}
+    params = {"order": "desc", "sort": "relevance", "q": q, "site": site, "pagesize": 20, "filter": "withbody", "fromdate": int(cutoff())}
     data = await _paced("stackexchange", lambda: _get(client, STACKEXCHANGE_ENDPOINT, params))
     if not isinstance(data, dict) or not isinstance(data.get("items"), list):
         raise CollectorUnavailable("stack exchange returned an unexpected payload")
@@ -199,6 +218,7 @@ async def fetch_lemmy(client: httpx.AsyncClient, query: str, limit: int) -> list
     if not isinstance(data, dict) or not isinstance(data.get("posts"), list):
         raise CollectorUnavailable("lemmy returned an unexpected payload")
     stems = terms(query)
+    oldest = cutoff()
     posts = []
     for item in data["posts"]:
         post, community, counts = item.get("post", {}), item.get("community", {}), item.get("counts", {})
@@ -206,6 +226,9 @@ async def fetch_lemmy(client: httpx.AsyncClient, query: str, limit: int) -> list
             continue
         name = community.get("name") or ""
         if NSFW.search(name):
+            continue
+        created = timestamp(post.get("published"))
+        if created and created < oldest:
             continue
         title = _clean(post.get("name", ""), 240)
         if not title or not relevant(title, stems, 0.6):
@@ -219,7 +242,7 @@ async def fetch_lemmy(client: httpx.AsyncClient, query: str, limit: int) -> list
                 "score": int(counts.get("score") or 0),
                 "comments": int(counts.get("comments") or 0),
                 "url": post.get("ap_id") or post.get("url"),
-                "created": 0.0,
+                "created": created,
             }
         )
     return posts[:limit]
@@ -240,7 +263,8 @@ def _rank(posts: list[dict[str, Any]], limit: int) -> list[dict[str, Any]]:
 async def search(db: Database, client: httpx.AsyncClient, query: str, language: str = "en", limit: int = 8) -> list[dict[str, Any]]:
     """Return popular community discussions for a query from every available source.
 
-    Stack Exchange is English-only, so it is queried only for English queries; Lemmy is
+    Discussions older than ``settings.discussion_max_age_days`` (three years by default) are
+    skipped, as old threads describe products and habits that no longer exist. Stack Exchange is English-only, so it is queried only for English queries; Lemmy is
     queried in every language. A source that fails is skipped; the collector raises only
     when every source failed.
     """
@@ -261,13 +285,16 @@ async def search(db: Database, client: httpx.AsyncClient, query: str, language: 
     for source, cache_query, fetch in jobs:
         try:
             results.extend(
-                await cached(db, source, cache_query, {"limit": limit}, fetch, settings.cache_ttl_seconds, settings.negative_cache_ttl_seconds)
+                await cached(db, source, cache_query, {"limit": limit, "max_age_days": settings.discussion_max_age_days}, fetch, settings.cache_ttl_seconds, settings.negative_cache_ttl_seconds)
             )
         except CollectorUnavailable as exc:
             errors.append(f"{source.split(':', 1)[1]}: {exc}")
     if reddit.credentials_configured():
         try:
+            oldest = cutoff()
             for post in await reddit.search(db, client, query, limit):
+                if post.get("created") and post["created"] < oldest:
+                    continue
                 results.append({**post, "platform": "reddit", "place": post.get("subreddit", "")})
         except CollectorUnavailable as exc:
             errors.append(f"reddit: {exc}")

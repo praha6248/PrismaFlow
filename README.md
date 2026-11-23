@@ -63,6 +63,7 @@ Environment variables, or `KEY=value` lines in `~/.config/PrismaFlow/prismaflow.
 | `PRISMAFLOW_LOCALE` | Default content locale, e.g. `pl_PL` or `en_US` |
 | `PRISMAFLOW_TREND_ANCHOR` | Google Trends calibration keyword |
 | `PRISMAFLOW_REDDIT_CLIENT_ID` / `PRISMAFLOW_REDDIT_CLIENT_SECRET` | Optional Reddit OAuth app credentials |
+| `PRISMAFLOW_DISCUSSION_MAX_AGE_DAYS` | Oldest community discussion still used as evidence, in days (default 1095, three years) |
 | `PRISMAFLOW_DATA_DIR` | Workspace location (default `~/.local/share/PrismaFlow`) |
 
 Community evidence comes from two documented, keyless public APIs: Stack Exchange questions
