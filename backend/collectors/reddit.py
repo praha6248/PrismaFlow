@@ -6,6 +6,7 @@ import asyncio
 import html
 import os
 import re
+import subprocess
 import time
 import uuid
 from datetime import datetime
@@ -161,6 +162,46 @@ async def _fetch_oauth(client: httpx.AsyncClient, query: str, limit: int) -> lis
     return _rank([p for c in children if (p := _post(c.get("data", {})))], limit)
 
 
+_install_lock = asyncio.Lock()
+_chromium_ready = False
+
+
+def _install_chromium() -> None:
+    """Download the Chromium headless shell with Playwright's own driver."""
+    from playwright._impl._driver import compute_driver_executable, get_driver_env
+
+    node, cli = compute_driver_executable()
+    result = subprocess.run(
+        [node, cli, "install", "--only-shell", "chromium"],
+        env=get_driver_env(),
+        capture_output=True,
+        text=True,
+        timeout=600,
+    )
+    if result.returncode != 0:
+        detail = (result.stderr or result.stdout or "unknown error").strip().splitlines()[-1]
+        raise CollectorUnavailable(f"chromium download failed: {detail}")
+
+
+async def ensure_chromium() -> None:
+    """Install Chromium once when the user opted in to browser search and it is missing."""
+    from playwright.async_api import Error, async_playwright
+
+    global _chromium_ready
+    async with _install_lock:
+        if _chromium_ready:
+            return
+        try:
+            async with async_playwright() as playwright:
+                browser = await playwright.chromium.launch(timeout=10_000)
+                await browser.close()
+        except Error as exc:
+            if "Executable doesn't exist" not in (exc.message or ""):
+                raise
+            await asyncio.to_thread(_install_chromium)
+        _chromium_ready = True
+
+
 async def _fetch_browser(query: str, limit: int) -> list[dict[str, Any]]:
     try:
         from playwright.async_api import Error, async_playwright
@@ -169,6 +210,7 @@ async def _fetch_browser(query: str, limit: int) -> list[dict[str, Any]]:
 
     url = WEB_ENDPOINT + "?" + urlencode({"q": query, "type": "posts", "sort": "relevance", "t": "year"})
     try:
+        await ensure_chromium()
         async with async_playwright() as playwright:
             browser = await playwright.chromium.launch(timeout=10_000)
             try:

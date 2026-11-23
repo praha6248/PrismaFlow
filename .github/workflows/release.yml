@@ -31,10 +31,6 @@ jobs:
           .venv/bin/pip install -r requirements-dev.txt
       - name: Tests
         run: .venv/bin/python -m pytest -q
-      - name: Bundled Chromium
-        env:
-          PLAYWRIGHT_BROWSERS_PATH: "0"
-        run: .venv/bin/python -m playwright install --only-shell chromium
       - name: PyInstaller
         working-directory: packaging
         run: ../.venv/bin/pyinstaller --noconfirm --distpath ../dist --workpath ../build prismaflow.spec
@@ -79,22 +75,9 @@ jobs:
         run: npm ci && npm run build
       - name: Python environment
         run: pip install -r requirements-dev.txt
-      - name: Bundled Chromium
-        env:
-          PLAYWRIGHT_BROWSERS_PATH: "0"
-        run: python -m playwright install --only-shell chromium
       - name: PyInstaller
         working-directory: packaging
         run: pyinstaller --noconfirm --distpath ../dist --workpath ../build prismaflow.spec
-      - name: Verify bundled Chromium
-        shell: python
-        run: |
-          from pathlib import Path
-          browsers = Path("dist/PrismaFlow/_internal/playwright/driver/package/.local-browsers")
-          binaries = list(browsers.glob("chromium_headless_shell-*/**/*shell.exe"))
-          if not binaries:
-              raise SystemExit(f"Missing Chromium headless shell under {browsers}")
-          print(binaries)
       - name: Installer
         shell: pwsh
         run: |

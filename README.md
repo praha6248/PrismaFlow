@@ -151,7 +151,7 @@ Environment variables, or `KEY=value` lines in `~/.config/PrismaFlow/prismaflow.
 | `PRISMAFLOW_EMBED_MODEL` | Ollama embedding model for semantic evidence retrieval (default `bge-m3`; without it retrieval falls back to full-text and graph neighbours) |
 | `PRISMAFLOW_LOCALE` | Default content locale, e.g. `pl_PL` or `en_US` |
 | `PRISMAFLOW_TREND_ANCHOR` | Google Trends calibration keyword |
-| `PRISMAFLOW_RSS_FEEDS_PL` / `PRISMAFLOW_RSS_FEEDS_EN` | Comma-separated URLs of Polish or English forum RSS/Atom feeds. An empty value disables that language’s feeds. |
+| `PRISMAFLOW_RSS_FEEDS_PL` / `PRISMAFLOW_RSS_FEEDS_EN` | Comma-separated URLs of Polish or English forum RSS/Atom feeds for your niche. Empty by default, so no forum is searched until you add one. |
 | `PRISMAFLOW_YOUTUBE_API_KEY` | Optional key for YouTube Data API v3. Enables public comments on review and tutorial videos. |
 | `PRISMAFLOW_REDDIT_CLIENT_ID` / `PRISMAFLOW_REDDIT_CLIENT_SECRET` | Optional Reddit OAuth app credentials |
 | `PRISMAFLOW_REDDIT_PLAYWRIGHT` | Set to `1` to prefer Chromium even when OAuth credentials are configured |
@@ -239,9 +239,18 @@ modified version as a network service, you must offer its source code to the use
 
 ```bash
 cd frontend && npm run build && cd ..
-PLAYWRIGHT_BROWSERS_PATH=0 .venv/bin/python -m playwright install --only-shell chromium
 cd packaging && ../.venv/bin/pyinstaller --noconfirm --distpath ../dist --workpath ../build prismaflow.spec
 ./dist/PrismaFlow/prismaflow
+```
+
+Release installers do not ship Chromium. When you opt in to Reddit browser search
+(`PRISMAFLOW_REDDIT_PLAYWRIGHT=1`), the app downloads the Chromium headless shell once into
+`~/.local/share/PrismaFlow/browsers` (`%LOCALAPPDATA%\PrismaFlow\browsers` on Windows). To bundle it
+in a local build instead:
+
+```bash
+PLAYWRIGHT_BROWSERS_PATH=0 .venv/bin/python -m playwright install --only-shell chromium
+cd packaging && PRISMAFLOW_BUNDLE_CHROMIUM=1 ../.venv/bin/pyinstaller --noconfirm --distpath ../dist --workpath ../build prismaflow.spec
 ```
 
 ## CI/CD

@@ -11,7 +11,15 @@ if GUI == "gtk":
     os.environ.setdefault("WEBKIT_DISABLE_COMPOSITING_MODE", "1")
     os.environ.setdefault("PYWEBVIEW_GUI", "gtk")
 if getattr(sys, "frozen", False):
-    os.environ.setdefault("PLAYWRIGHT_BROWSERS_PATH", "0")
+    from pathlib import Path
+
+    bundled = Path(getattr(sys, "_MEIPASS", "")) / "playwright" / "driver" / "package" / ".local-browsers"
+    if bundled.is_dir():
+        os.environ.setdefault("PLAYWRIGHT_BROWSERS_PATH", "0")
+    else:
+        from backend.config import APP_NAME, data_base
+
+        os.environ.setdefault("PLAYWRIGHT_BROWSERS_PATH", str(Path(data_base()) / APP_NAME / "browsers"))
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:

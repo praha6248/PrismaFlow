@@ -1,3 +1,4 @@
+import os
 import sys
 from pathlib import Path
 
@@ -10,8 +11,10 @@ if not (dist / "index.html").is_file():
 
 _, playwright_path = get_package_paths("playwright")
 browser_dir = Path(playwright_path) / "driver" / "package" / ".local-browsers"
-if not any(browser_dir.glob("chromium_headless_shell-*/INSTALLATION_COMPLETE")):
+bundle_chromium = os.environ.get("PRISMAFLOW_BUNDLE_CHROMIUM") == "1"
+if bundle_chromium and not any(browser_dir.glob("chromium_headless_shell-*/INSTALLATION_COMPLETE")):
     raise SystemExit("Chromium is missing: run `PLAYWRIGHT_BROWSERS_PATH=0 python -m playwright install --only-shell chromium` first")
+browser_data = [(str(browser_dir), "playwright/driver/package/.local-browsers")] if bundle_chromium else []
 
 linux = sys.platform.startswith("linux")
 icon = root / "packaging" / ("prismaflow.ico" if sys.platform == "win32" else "prismaflow.png")
@@ -25,7 +28,7 @@ a = Analysis(
     pathex=[str(root)],
     datas=[
         (str(dist), "frontend/dist"),
-        (str(browser_dir), "playwright/driver/package/.local-browsers"),
+        *browser_data,
         *collect_data_files("webview"),
     ],
     hiddenimports=hiddenimports,
