@@ -14,6 +14,7 @@ from .models import (
     DefineRequest,
     ExpandRequest,
     FeatureCreate,
+    InterviewCreate,
     FeatureOrder,
     FeatureUpdate,
     FlowUpdate,
@@ -30,6 +31,7 @@ from .claude_client import HybridLLM, QualityConfig
 from .ollama_client import OllamaClient
 from .services import discover
 from .services.define import DefineService, define_state
+from .services.validate import ValidateService
 from .services.deliver import DeliverService
 from .services.develop import DevelopService, develop_state
 from .services.discover import DiscoverService
@@ -51,6 +53,7 @@ def create_app(
     ollama = llm or HybridLLM(OllamaClient(), quality)
     discover_service = service or DiscoverService(database, ollama)
     define = define_service or DefineService(database, ollama)
+    validate = ValidateService(database, ollama)
     develop = develop_service or DevelopService(database, ollama)
     deliver = deliver_service or DeliverService(database, ollama)
     jobs = JobRegistry()
@@ -162,6 +165,36 @@ def create_app(
                 raise
 
         return jobs.start("discover.expand", run)
+
+    @api.get("/projects/{project_id}/validate")
+    def get_validate(project_id: int) -> dict:
+        """Return the validation plan, logged interviews and hypothesis statuses."""
+        try:
+            return validate.state(project_id)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+
+    @api.post("/projects/{project_id}/validate/plan", status_code=202)
+    async def plan_validation(project_id: int) -> Job:
+        """Draft hypotheses and a Mom Test interview script in the background."""
+        try:
+            validate.state(project_id)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        return jobs.start("validate.plan", lambda progress, warn: validate.plan(project_id, progress, warn))
+
+    @api.post("/projects/{project_id}/interviews")
+    async def add_interview(project_id: int, body: InterviewCreate) -> dict:
+        """Log an interview and score every hypothesis against its notes."""
+        try:
+            return await validate.add_interview(project_id, body.person, body.notes)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+
+    @api.delete("/projects/{project_id}/interviews/{interview_id}")
+    def remove_interview(project_id: int, interview_id: str) -> dict:
+        """Delete a logged interview."""
+        return validate.remove_interview(project_id, interview_id)
 
     @api.get("/projects/{project_id}/define")
     def get_define(project_id: int) -> dict:

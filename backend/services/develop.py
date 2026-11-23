@@ -12,6 +12,7 @@ from ..models import FeatureSet
 from ..retrieval import Retriever, graph_boost
 from .discover import LANGUAGE_NAMES, StructuredLLM
 from .jobs import ProgressFn, WarnFn
+from .validate import validated_insights
 
 POOL_SIZE = 50
 
@@ -147,6 +148,7 @@ class DevelopService:
         await self.retriever.prepare(project_id, self._queries(project_id), warn)
         pool = self.pool(project_id)
         evidence_lines = [f"[{item_id}] ({item['source']}) {item['title']}" for item_id, item in pool.items()]
+        insights = validated_insights(self.db, project_id)
         prompt = "\n".join(
             [
                 f'Niche: "{project["seed"]}"',
@@ -157,6 +159,7 @@ class DevelopService:
                 "",
                 "Evidence from search suggestions and community threads:",
                 *(evidence_lines or ["(none collected)"]),
+                *(["", "Results of customer interviews (weigh these above the other evidence):", *insights] if insights else []),
             ]
         )
 

@@ -19,7 +19,7 @@ def reddit_queries(monkeypatch):
         return []
 
     monkeypatch.delenv("PRISMAFLOW_REDDIT_CLIENT_ID", raising=False)
-    monkeypatch.delenv("PRISMAFLOW_REDDIT_PLAYWRIGHT", raising=False)
+    monkeypatch.setenv("PRISMAFLOW_REDDIT_PLAYWRIGHT", "1")
     monkeypatch.setattr(reddit, "_fetch_browser", fetch_browser)
     monkeypatch.setattr(reddit, "_throttle_lock", None)
     monkeypatch.setattr(reddit, "MIN_INTERVAL", 0)
@@ -132,3 +132,13 @@ def test_cutoff_and_timestamps() -> None:
     assert community.timestamp("2024-01-01T00:00:00Z") == 1704067200
     assert community.timestamp("2024-01-01T00:00:00.123456") > 0
     assert community.timestamp(None) == 0.0 and community.timestamp("bad") == 0.0
+
+
+async def test_reddit_is_disabled_by_default(db: Database, monkeypatch, reddit_queries) -> None:
+    community.MIN_INTERVAL = 0
+    monkeypatch.delenv("PRISMAFLOW_REDDIT_PLAYWRIGHT", raising=False)
+    calls: list[str] = []
+    async with httpx.AsyncClient(transport=_transport(calls)) as client:
+        posts = await community.search(db, client, "sport for autistic children", "en")
+    assert reddit_queries == []
+    assert all(p["platform"] != "reddit" for p in posts)

@@ -19,6 +19,7 @@ from ..models import Flow, FlowDraft, FlowElement, FlowScreen, StyleDraft, Sugge
 from ..ollama_client import OllamaError
 from .discover import LANGUAGE_NAMES, StructuredLLM
 from .jobs import ProgressFn, WarnFn
+from .validate import validated_insights
 
 HICK_A = 0.25
 HICK_B = 0.15
@@ -471,6 +472,7 @@ class DeliverService:
             "flow": flow.model_dump(),
             "audit": audit(flow),
             "suggestions": stored["suggestions"] if stored else [],
+            "insights": validated_insights(self.db, project_id),
         }
 
     def save(self, project_id: int, flow: Flow) -> dict[str, Any]:
@@ -854,6 +856,9 @@ def handoff_documents(state: dict[str, Any], style: dict[str, Any] | None = None
             "## Problem i persona",
             f"- Problem: {problem['title'] + ' — ' + problem['description'] if problem else '—'}",
             f"- Persona: {who}",
+            "",
+            "## Walidacja (wywiady z użytkownikami)",
+            *([f"- {line}" for line in state.get("insights", [])] or ["- Brak potwierdzonych hipotez — zakres opiera się na dowodach z internetu, nie na rozmowach."]),
             "",
             "## Zakres (MoSCoW)",
             *backlog,

@@ -1,6 +1,6 @@
 export type NodeKind = "niche" | "idea" | "target_group" | "pain_point" | "competitor";
 
-export type Stage = "compose" | "expanding" | "select" | "problems" | "personas" | "done";
+export type Stage = "compose" | "expanding" | "select" | "problems" | "personas" | "validate" | "done" | "board" | "flow";
 
 export type DiscoverStage = "compose" | "expanding" | "select";
 
@@ -252,4 +252,37 @@ export interface QualityState {
   enabled: boolean;
   has_key: boolean;
   model: string;
+}
+
+export type HypothesisStatus = "open" | "confirmed" | "rejected";
+
+export interface Hypothesis {
+  kind: "problem" | "frequency" | "workaround" | "willingness";
+  text: string;
+  signal: string;
+  supports: number;
+  contradicts: number;
+  status: HypothesisStatus;
+  quotes: { person: string; verdict: "supports" | "contradicts"; quote: string }[];
+}
+
+export interface Interview {
+  id: string;
+  person: string;
+  notes: string;
+  summary: string;
+  verdicts: { hypothesis: number; verdict: "supports" | "contradicts" | "no_data"; quote: string }[];
+  created_at: number;
+}
+
+export interface ValidateState {
+  project: Project;
+  problem: Problem;
+  persona: Persona & { focus: string };
+  hypotheses: Hypothesis[];
+  screener: string[];
+  questions: string[];
+  interviews: Interview[];
+  target: number;
+  progress: { interviews: number; confirmed: number; rejected: number };
 }

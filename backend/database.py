@@ -10,7 +10,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Iterator
 
-SCHEMA_VERSION = 6
+SCHEMA_VERSION = 7
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS meta (
@@ -171,6 +171,12 @@ CREATE TABLE IF NOT EXISTS flows (
     project_id INTEGER PRIMARY KEY REFERENCES projects(id) ON DELETE CASCADE,
     data TEXT NOT NULL,
     suggestions TEXT NOT NULL DEFAULT '[]',
+    updated_at REAL NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS validations (
+    project_id INTEGER PRIMARY KEY REFERENCES projects(id) ON DELETE CASCADE,
+    data TEXT NOT NULL,
     updated_at REAL NOT NULL
 );
 
@@ -798,6 +804,22 @@ class Database:
                     "updated_at = excluded.updated_at",
                     (project_id, json.dumps(flow, ensure_ascii=False), json.dumps(suggestions, ensure_ascii=False), now),
                 )
+            self.touch_project(conn, project_id)
+
+    def get_validation(self, project_id: int) -> dict[str, Any] | None:
+        """Return the stored validation plan, interviews and verdicts of a project."""
+        with self.connect() as conn:
+            row = conn.execute("SELECT data FROM validations WHERE project_id = ?", (project_id,)).fetchone()
+        return json.loads(row["data"]) if row else None
+
+    def save_validation(self, project_id: int, data: dict[str, Any]) -> None:
+        """Store the validation document of a project."""
+        with self.connect() as conn:
+            conn.execute(
+                "INSERT INTO validations(project_id, data, updated_at) VALUES (?, ?, ?) "
+                "ON CONFLICT(project_id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at",
+                (project_id, json.dumps(data, ensure_ascii=False), time.time()),
+            )
             self.touch_project(conn, project_id)
 
     def chosen_persona(self, project_id: int) -> dict[str, Any] | None:

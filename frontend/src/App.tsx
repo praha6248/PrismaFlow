@@ -4,6 +4,7 @@ import { api } from "./api";
 import { Header } from "./components/Header";
 import { Toast } from "./components/Toast";
 import { DefineView } from "./define/DefineView";
+import { ValidateView } from "./validate/ValidateView";
 import { DeliverView } from "./deliver/DeliverView";
 import { DevelopView } from "./develop/DevelopView";
 import { DiscoverView } from "./discover/DiscoverView";
@@ -12,16 +13,19 @@ import { PHASES, type Phase } from "./types";
 interface Route {
   projectId: number | null;
   phase: Phase;
+  validate?: boolean;
 }
 
 function parseHash(): Route {
-  const match = window.location.hash.match(/^#\/p\/(\d+)(?:\/(define|develop|deliver))?/);
+  const match = window.location.hash.match(/^#\/p\/(\d+)(?:\/(define|validate|develop|deliver))?/);
   if (!match) return { projectId: null, phase: "discover" };
+  if (match[2] === "validate") return { projectId: Number(match[1]), phase: "define", validate: true };
   return { projectId: Number(match[1]), phase: (match[2] as Phase | undefined) ?? "discover" };
 }
 
 function hashFor(route: Route): string {
   if (route.projectId === null) return "";
+  if (route.validate) return `#/p/${route.projectId}/validate`;
   return route.phase === "discover" ? `#/p/${route.projectId}` : `#/p/${route.projectId}/${route.phase}`;
 }
 
@@ -103,12 +107,21 @@ export function App() {
         )}
         {route.phase !== "discover" && (
           <div className="stage">
-        {route.phase === "define" && projectId !== null && (
+        {route.phase === "define" && route.validate && projectId !== null && (
+          <ValidateView
+            key={projectId}
+            projectId={projectId}
+            onBack={() => navigate({ projectId, phase: "define" })}
+            onDone={() => advance("develop")}
+            notify={notify}
+          />
+        )}
+        {route.phase === "define" && !route.validate && projectId !== null && (
           <DefineView
             key={projectId}
             projectId={projectId}
             onBack={() => navigate({ projectId, phase: "discover" })}
-            onDone={() => advance("develop")}
+            onDone={() => navigate({ projectId, phase: "define", validate: true })}
             notify={notify}
           />
         )}

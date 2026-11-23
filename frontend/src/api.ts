@@ -1,4 +1,4 @@
-import type { DefineState, DeliverState, DevelopState, Flow, FlowAudit, Handoff, Evidence, Feature, Priority, Graph, Health, Job, MapNode, Phase, Project, QualityState, Stage } from "./types";
+import type { DefineState, DeliverState, DevelopState, Flow, FlowAudit, Handoff, Evidence, Feature, Priority, Graph, Health, Job, MapNode, Phase, Project, QualityState, Stage, ValidateState } from "./types";
 
 export class ApiError extends Error {
   constructor(
@@ -33,6 +33,12 @@ const json = (body: unknown) => JSON.stringify(body);
 export const api = {
   health: () => request<Health>("/health"),
   quality: () => request<QualityState>("/settings/quality"),
+  getValidate: (projectId: number) => request<ValidateState>(`/projects/${projectId}/validate`),
+  planValidation: (projectId: number) => request<Job>(`/projects/${projectId}/validate/plan`, { method: "POST" }),
+  addInterview: (projectId: number, person: string, notes: string) =>
+    request<ValidateState>(`/projects/${projectId}/interviews`, { method: "POST", body: JSON.stringify({ person, notes }) }),
+  removeInterview: (projectId: number, interviewId: string) =>
+    request<ValidateState>(`/projects/${projectId}/interviews/${interviewId}`, { method: "DELETE" }),
   updateQuality: (body: { enabled?: boolean; key?: string }) =>
     request<QualityState>("/settings/quality", { method: "PUT", body: JSON.stringify(body) }),
   createProject: (seed: string) => request<Graph>("/projects", { method: "POST", body: json({ seed }) }),

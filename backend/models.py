@@ -80,7 +80,7 @@ class ProjectUpdate(BaseModel):
     """Request body for updating project metadata."""
 
     name: str | None = None
-    stage: Literal["compose", "expanding", "select", "problems", "personas", "done", "board", "flow"] | None = None
+    stage: Literal["compose", "expanding", "select", "problems", "personas", "validate", "done", "board", "flow"] | None = None
     phase: Literal["discover", "define", "develop", "deliver"] | None = None
 
 
@@ -488,3 +488,66 @@ class QualityUpdate(BaseModel):
 
     enabled: bool | None = None
     key: str | None = Field(default=None, max_length=300)
+
+
+HypothesisKind = Literal["problem", "frequency", "workaround", "willingness"]
+
+
+class HypothesisDraft(BaseModel):
+    """A falsifiable assumption behind the chosen problem and persona."""
+
+    kind: HypothesisKind = Field(description="problem: the pain exists; frequency: it happens often; workaround: what people do today; willingness: they would pay or switch")
+    text: str = Field(description="The assumption about the segment as a short, falsifiable statement, at most 15 words")
+    signal: str = Field(description="A past fact the interviewee reports that confirms it, at most 15 words")
+
+    @field_validator("text", "signal")
+    @classmethod
+    def _short(cls, value: str) -> str:
+        return _sentence(value, 180)
+
+
+class ValidationPlanDraft(BaseModel):
+    """Hypotheses plus a Mom Test interview script for the chosen problem."""
+
+    hypotheses: list[HypothesisDraft] = Field(json_schema_extra={"minItems": 3, "maxItems": 5})
+    screener: list[str] = Field(description="3 short questions to check that a candidate really belongs to the persona", json_schema_extra={"minItems": 3, "maxItems": 3})
+    questions: list[str] = Field(
+        description="6-8 Mom Test interview questions about past behaviour and real situations; no hypothetical, leading or future questions, never pitch the idea",
+        json_schema_extra={"minItems": 6, "maxItems": 8},
+    )
+
+    @field_validator("screener", "questions")
+    @classmethod
+    def _questions(cls, value: list[str]) -> list[str]:
+        return [_sentence(v, 200) for v in value if v.strip()]
+
+
+Verdict = Literal["supports", "contradicts", "no_data"]
+
+
+class HypothesisVerdict(BaseModel):
+    """How one interview bears on one hypothesis."""
+
+    hypothesis: int = Field(description="Number of the hypothesis, starting at 1")
+    verdict: Verdict
+    quote: str = Field(description="Exact words copied from the notes that justify the verdict; empty when no_data")
+
+
+class InterviewAnalysis(BaseModel):
+    """Verdicts of one interview for every hypothesis."""
+
+    verdicts: list[HypothesisVerdict]
+    summary: str = Field(description="One sentence with the most important thing learnt, at most 25 words")
+
+    @field_validator("summary")
+    @classmethod
+    def _summary(cls, value: str) -> str:
+        first = re.split(r"(?<=[.!?])\s+", " ".join(value.split()))[0]
+        return _sentence(first, 220)
+
+
+class InterviewCreate(BaseModel):
+    """Request body for logging an interview."""
+
+    person: str = Field(min_length=1, max_length=80)
+    notes: str = Field(min_length=20, max_length=20000)

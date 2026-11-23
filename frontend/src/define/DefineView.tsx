@@ -96,7 +96,7 @@ export function DefineView({ projectId, onBack, onDone, notify }: Props) {
         setProblemId(data.chosen_problem_id);
         const chosenPersona = data.personas.find((p) => p.chosen_option !== null);
         if (chosenPersona) setPersonaChoice({ id: chosenPersona.id, option: chosenPersona.chosen_option as number });
-        if (data.project.stage === "personas" || data.project.stage === "done") {
+        if (data.project.stage === "personas" || data.project.stage === "validate" || data.project.stage === "done") {
           if (data.personas.length) setScreen("personas");
         }
         if (!data.problems.length && !started.current) {

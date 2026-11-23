@@ -2,7 +2,7 @@
 
 Both sources expose documented, keyless public APIs. Stack Exchange questions are phrased as
 problems people have, which makes them strong pain-point evidence; Lemmy is a federated,
-Reddit-like forum. Reddit threads are collected through Playwright or OAuth.
+Reddit-like forum. Reddit threads are collected only with OAuth credentials or an explicit Playwright opt-in.
 """
 
 from __future__ import annotations
@@ -289,14 +289,17 @@ async def search(db: Database, client: httpx.AsyncClient, query: str, language: 
             )
         except CollectorUnavailable as exc:
             errors.append(f"{source.split(':', 1)[1]}: {exc}")
-    try:
-        oldest = cutoff()
-        for post in await reddit.search(db, client, query, limit):
-            if post.get("created") and post["created"] < oldest:
-                continue
-            results.append({**post, "platform": "reddit", "place": post.get("subreddit", "")})
-    except CollectorUnavailable as exc:
-        errors.append(f"reddit: {exc}")
-    if len(errors) == len(jobs) + 1:
+    sources = len(jobs)
+    if reddit.enabled():
+        sources += 1
+        try:
+            oldest = cutoff()
+            for post in await reddit.search(db, client, query, limit):
+                if post.get("created") and post["created"] < oldest:
+                    continue
+                results.append({**post, "platform": "reddit", "place": post.get("subreddit", "")})
+        except CollectorUnavailable as exc:
+            errors.append(f"reddit: {exc}")
+    if len(errors) == sources:
         raise CollectorUnavailable("; ".join(errors))
     return _rank(results, limit)

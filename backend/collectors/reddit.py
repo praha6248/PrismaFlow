@@ -55,6 +55,16 @@ async def _throttled(call, attempts: int = 3):
                 await asyncio.sleep(3 * (attempt + 1))
 
 
+def browser_enabled() -> bool:
+    """Tell whether the user explicitly opted in to Playwright scraping of Reddit."""
+    return os.environ.get("PRISMAFLOW_REDDIT_PLAYWRIGHT") == "1"
+
+
+def enabled() -> bool:
+    """Reddit is queried only with API credentials or after an explicit browser opt-in."""
+    return credentials_configured() or browser_enabled()
+
+
 def credentials_configured() -> bool:
     """Tell whether the user supplied Reddit API credentials."""
     return bool(os.environ.get("PRISMAFLOW_REDDIT_CLIENT_ID"))
@@ -231,7 +241,9 @@ async def search(db: Database, client: httpx.AsyncClient, query: str, limit: int
     After a provider fails the collector stays closed for the negative-cache window
     instead of hammering it with every remaining query.
     """
-    use_browser = os.environ.get("PRISMAFLOW_REDDIT_PLAYWRIGHT") == "1" or not credentials_configured()
+    if not enabled():
+        raise CollectorUnavailable("reddit is disabled; configure OAuth credentials to enable it")
+    use_browser = browser_enabled() or not credentials_configured()
     name = "playwright" if use_browser else "oauth"
 
     async def fetch_source() -> list[dict[str, Any]]:
