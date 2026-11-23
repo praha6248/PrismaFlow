@@ -308,9 +308,9 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
         onDragLeave={() => setOver(false)}
         style={{
           width: 200, padding: "12px 16px", borderRadius: terminal ? 28 : 8,
-          background: terminal ? "var(--color-plum)" : "#f3ecfa",
-          color: terminal ? "white" : "var(--color-ink)",
-          border: `2px solid ${over || selected ? "var(--color-pink)" : terminal ? "var(--color-plum)" : "#d9c6ec"}`,
+          background: screen.kind === "goal" ? "#dff3e4" : screen.kind === "start" ? "#f3ecfa" : "#fdfcfe",
+          color: "var(--color-ink)",
+          border: `2px solid ${over || selected ? "var(--color-pink)" : screen.kind === "goal" ? "#b4d9bd" : "#d9c6ec"}`,
         }}>
         <Handle type="target" position={Position.Left} style={{ opacity: 0 }} />
         {terminal && <div className="mb-1 text-xs tracking-wider">{tag}</div>}

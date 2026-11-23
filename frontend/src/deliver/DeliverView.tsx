@@ -632,7 +632,7 @@ function Studio({ projectId, notify, onRestart }: Props) {
 
       <div
         className="pf-fade-up absolute overflow-hidden"
-        style={{ ...panelStyle(129.3, detailed ? 362.2 : 512.6), animationDelay: "60ms" }}
+        style={{ ...panelStyle(129.3, 362.2), animationDelay: "60ms" }}
       >
         <div
           className="absolute z-10 flex items-start justify-between"
@@ -658,8 +658,6 @@ function Studio({ projectId, notify, onRestart }: Props) {
           <div className="flex items-center gap-2 text-mauve" style={{fontSize: "var(--text-small)"}}>
             <button type="button" aria-pressed={detailed} className="rounded-full bg-[#f3ecfa] px-3 py-1"
               onClick={() => setDetailed(value => !value)}>{detailed ? t("Schemat") : t("Edytuj schemat")}</button>
-            {!detailed && flow.screens.length > 0 && <button type="button" disabled={handoffBusy} onClick={generateHandoff}
-              className="rounded-full bg-[#f3ecfa] px-3 py-1">{t("Eksportuj")}</button>}
             <ZoomControl />
           </div>
         </div>
@@ -724,7 +722,6 @@ function Studio({ projectId, notify, onRestart }: Props) {
         )}
       </div>
 
-      {detailed && <>
       <div
         className="pf-fade-up absolute"
         style={{ ...panelStyle(498.6, 143.3), animationDelay: "120ms" }}
@@ -752,7 +749,6 @@ function Studio({ projectId, notify, onRestart }: Props) {
         {t("sugestie i projekt z lokalnego modelu do weryfikacji")}
       </p>
 
-      </>}
 
       {handoff && (
         <HandoffModal
