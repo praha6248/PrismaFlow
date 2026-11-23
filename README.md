@@ -32,6 +32,10 @@ Develop, Deliver) and runs entirely on your machine: no account, no cloud, your 
   participant's path and time, and results compared with the KLM prediction (success rate, slow tasks,
   where people left the shortest path). Any observation or quote can go back to the Define board as a
   note or to the Develop backlog as a feature.
+- **UX case study** – a portfolio-style case study written from the project's own data, in the section
+  order used by public UX case studies. Numbers, quotes and lists are copied from the project, the local
+  model only writes short narrative, sentences with numbers that are not in the data are dropped, and
+  missing facts are marked as gaps. Exported as `case-study.md`, `case-study.html` and `case-study.pdf`.
 - **Handoff** – `figma-prompt.md`, `CLAUDE.md`, a research report (`raport.md`, `raport.html` and
   `raport.pdf` when Chromium is available) and `prototyp-figma.svg`, which Figma imports as editable
   layers, saved to `~/Documents/PrismaFlow/<project>/`.

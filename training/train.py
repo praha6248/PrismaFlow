@@ -15,8 +15,9 @@ import time
 from pathlib import Path
 
 import torch
-from peft import LoraConfig, get_peft_model
-from transformers import AutoTokenizer, Gemma3ForConditionalGeneration, get_cosine_schedule_with_warmup
+from peft import LoraConfig, PeftModel, get_peft_model
+from torch.nn import functional as F
+from transformers import AutoTokenizer, BitsAndBytesConfig, Gemma3ForConditionalGeneration, get_cosine_schedule_with_warmup
 
 from distill_mc import near_quiz
 
@@ -62,9 +63,18 @@ def batches(items: list[dict], size: int, pad: int):
         yield ids, labels, mask
 
 
+class Output:
+    def __init__(self, loss):
+        self.loss = loss
+
+
 def forward(model, ids, labels, mask):
+    """Answer-token loss with logits computed only where an answer token is predicted (batch size 1)."""
     ids, labels, mask = ids.cuda(), labels.cuda(), mask.cuda()
-    return model(input_ids=ids, attention_mask=mask, labels=labels, token_type_ids=torch.zeros_like(ids))
+    keep = (labels[0, 1:] != -100).nonzero().squeeze(-1)
+    out = model(input_ids=ids, attention_mask=mask, token_type_ids=torch.zeros_like(ids), logits_to_keep=keep)
+    logits = out.logits[0].float()
+    return Output(F.cross_entropy(logits, labels[0, keep + 1]))
 
 
 @torch.no_grad()
@@ -94,6 +104,9 @@ def main() -> None:
     parser.add_argument("--mc-share", type=float, default=0.0, help="share of the knowledge slots given to multiple-choice items")
     parser.add_argument("--base", default="gemma-3-4b-it")
     parser.add_argument("--name", default="")
+    parser.add_argument("--train-file", default="train.jsonl")
+    parser.add_argument("--qlora", action="store_true", help="4-bit base weights for training when the GPU is shared; merged into bf16 on the CPU")
+    parser.add_argument("--test-files", nargs="+", default=["test.jsonl", "knowledge_test.jsonl"])
     args = parser.parse_args()
     base = ROOT / "weights" / args.base
     out = OUT / args.name if args.name else OUT
@@ -102,7 +115,7 @@ def main() -> None:
     torch.manual_seed(0)
     tokenizer = AutoTokenizer.from_pretrained(base)
     pad = tokenizer.pad_token_id
-    tasks = load("train.jsonl")
+    tasks = load(args.train_file)
     extra = load("knowledge_mc_train.jsonl") if args.mc_share else []
     knowledge = load("knowledge_train.jsonl") + [x for x in extra if x["task"] == "knowledge"]
     if args.mc_share:
@@ -114,11 +127,15 @@ def main() -> None:
     mc_cap = min(len(choices), int(cap * args.mc_share))
     train_raw = tasks + choices[:mc_cap] + knowledge[: cap - mc_cap]
     train = [e for e in (encode(tokenizer, x, args.max_len) for x in train_raw) if e]
-    test = [e for e in (encode(tokenizer, x, args.max_len) for x in load("test.jsonl") + load("knowledge_test.jsonl")) if e]
+    test = [e for e in (encode(tokenizer, x, args.max_len) for name in args.test_files for x in load(name)) if e]
     print(f"train {len(train)} (tasks {len(tasks)}, multiple choice {mc_cap}, knowledge {min(cap - mc_cap, len(knowledge))}), test {len(test)}, "
           f"longest {max(len(e['input_ids']) for e in train)} tokens", flush=True)
 
-    model = Gemma3ForConditionalGeneration.from_pretrained(base, dtype=torch.bfloat16, attn_implementation="eager").cuda()
+    if args.qlora:
+        quant = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_compute_dtype=torch.bfloat16, bnb_4bit_use_double_quant=True)
+        model = Gemma3ForConditionalGeneration.from_pretrained(base, dtype=torch.bfloat16, attn_implementation="eager", quantization_config=quant, device_map={"": 0})
+    else:
+        model = Gemma3ForConditionalGeneration.from_pretrained(base, dtype=torch.bfloat16, attn_implementation="eager").cuda()
     model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
     model.enable_input_require_grads()
     model.config.use_cache = False
@@ -177,7 +194,13 @@ def main() -> None:
         "log": log,
     }, indent=1), encoding="utf-8")
 
-    merged = model.merge_and_unload()
+    if args.qlora:
+        del model, optimizer
+        torch.cuda.empty_cache()
+        full = Gemma3ForConditionalGeneration.from_pretrained(base, dtype=torch.bfloat16, low_cpu_mem_usage=True)
+        merged = PeftModel.from_pretrained(full, out / "adapter").merge_and_unload()
+    else:
+        merged = model.merge_and_unload()
     target = out / "merged"
     if target.exists():
         shutil.rmtree(target)
