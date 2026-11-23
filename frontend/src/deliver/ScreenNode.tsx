@@ -277,8 +277,8 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
     screen.kind === "goal"
       ? { background: "#dff3e4", color: "#3d7a50" }
       : screen.kind === "start"
-        ? { background: "#f3ecfa", color: "#7c6d88" }
-        : { background: "#f3ecfa", color: "#7c6d88" };
+        ? { background: "#f3ecfa", color: "var(--color-muted)" }
+        : { background: "#f3ecfa", color: "var(--color-muted)" };
 
   const onDrop = (event: DragEvent) => {
     setOver(false);

@@ -9,9 +9,9 @@ export const SHADOW = `0 ${u(2)} ${u(10)} rgba(196, 160, 232, 0.28)`;
 export function PageTitle({
   title,
   subtitle,
-  top = 114,
-  size = 18.8,
-  gap = 20,
+  top = 101,
+  size = 16.5,
+  gap = 23,
 }: {
   title: string;
   subtitle?: ReactNode;
@@ -35,7 +35,7 @@ export function PageTitle({
             width: u(480),
             fontSize: u(7.5),
             lineHeight: 1.2,
-            color: "#7c6d88",
+            color: "var(--color-muted)",
           }}
         >
           {subtitle}
@@ -58,7 +58,7 @@ export function Radio({
       style={{
         width: u(size),
         height: u(size),
-        border: `${u(0.9)} solid ${checked ? "#f783e9" : "#e4d6ec"}`,
+        border: `${u(0.9)} solid ${checked ? "var(--color-pink)" : "#e4d6ec"}`,
         background: "#ffffff",
       }}
     >
@@ -68,7 +68,7 @@ export function Radio({
           style={{
             width: u(size * 0.52),
             height: u(size * 0.52),
-            background: "#f783e9",
+            background: "var(--color-pink)",
           }}
         />
       )}
@@ -226,7 +226,7 @@ export function ChoiceBar({
 }: ChoiceBarProps) {
   const active =
     tone === "pink"
-      ? { background: "#f783e9", color: "#ffffff" }
+      ? { background: "var(--color-pink)", color: "#ffffff" }
       : { background: "#e6d8f7", color: "#573476" };
   return (
     <div className="pf-fade-up absolute" style={barStyle(frame)}>
@@ -247,7 +247,7 @@ export function ChoiceBar({
             marginTop: u(4.5),
             fontSize: u(8),
             lineHeight: 1.15,
-            color: value ? "#573476" : "#9b8fa6",
+            color: value ? "#573476" : "var(--color-haze)",
           }}
         >
           {value ?? placeholder}
@@ -272,7 +272,7 @@ export function ChoiceBar({
             : `0 ${u(1.5)} ${u(6)} rgba(240, 110, 220, 0.35)`,
         }}
       >
-        {busy ? t("Chwileczkę...") : action}
+        {busy ? t("Chwileczkę…") : action}
       </button>
     </div>
   );

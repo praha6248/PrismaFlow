@@ -217,8 +217,8 @@ export function DefineView({ projectId, onBack, onDone, notify }: Props) {
   const busy = job !== null;
   const progressTitle =
     job?.kind === "personas"
-      ? t("Tworzę persony...")
-      : t("Definiuję problemy...");
+      ? t("Tworzę persony…")
+      : t("Definiuję problemy…");
 
   if (screen === "personas") {
     const personas = state?.personas ?? [];

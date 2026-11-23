@@ -31,13 +31,13 @@ const STATUS: Record<
   Hypothesis["status"],
   { label: string; background: string; color: string }
 > = {
-  open: { label: t("do sprawdzenia"), background: "#f3ecfa", color: "#674e78" },
+  open: { label: t("do sprawdzenia"), background: "#f3ecfa", color: "var(--color-mauve)" },
   confirmed: {
     label: t("potwierdzona"),
     background: "#e3f4ea",
-    color: "#2b6a45",
+    color: "var(--color-success)",
   },
-  rejected: { label: t("obalona"), background: "#fbe4e4", color: "#9b2c2c" },
+  rejected: { label: t("obalona"), background: "#fbe4e4", color: "var(--color-error)" },
 };
 
 const panel = (left: number, top: number, width: number, height: number) => ({
@@ -283,7 +283,7 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
                         style={{
                           marginTop: u(3),
                           color:
-                            q.verdict === "supports" ? "#2b6a45" : "#9b2c2c",
+                            q.verdict === "supports" ? "var(--color-success)" : "var(--color-error)",
                         }}
                       >
                         {q.person}: „{q.quote}”
@@ -372,7 +372,7 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
             fontSize: u(6.2),
             height: u(17),
             gap: u(3),
-            background: "#f783e9",
+            background: "var(--color-pink)",
           }}
         >
           <MessageSquareQuote style={{ width: u(6.5), height: u(6.5) }} />
@@ -410,7 +410,7 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
 
       {busy ? (
         <BarProgress
-          title={t("Przygotowuję plan wywiadów...")}
+          title={t("Przygotowuję plan wywiadów…")}
           text={t("Formułuję hipotezy i pytania według Mom Test")}
           stage={stage ?? "plan"}
         />

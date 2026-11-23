@@ -230,7 +230,7 @@ function AddFeatureForm({ onSubmit, onClose }: AddFormProps) {
         maxLength={60}
         onChange={(e) => setTitle(e.target.value)}
         placeholder={t("Nazwa funkcji")}
-        className="rounded bg-[#f7f3fb] text-ink outline-none placeholder:text-[#9b8fa6]"
+        className="rounded bg-[#f7f3fb] text-ink outline-none placeholder:text-haze"
         style={{ height: u(17), padding: `0 ${u(6)}`, fontSize: u(7.4) }}
       />
       <input
@@ -238,7 +238,7 @@ function AddFeatureForm({ onSubmit, onClose }: AddFormProps) {
         maxLength={140}
         onChange={(e) => setDescription(e.target.value)}
         placeholder={t("Co daje użytkownikowi?")}
-        className="rounded bg-[#f7f3fb] text-mauve outline-none placeholder:text-[#9b8fa6]"
+        className="rounded bg-[#f7f3fb] text-mauve outline-none placeholder:text-haze"
         style={{ height: u(15), padding: `0 ${u(6)}`, fontSize: u(6.4) }}
       />
       <div className="flex items-center" style={{ gap: u(4) }}>
@@ -279,7 +279,7 @@ function AddFeatureForm({ onSubmit, onClose }: AddFormProps) {
             padding: `0 ${u(8)}`,
             borderRadius: u(5),
             fontSize: u(6.6),
-            background: "#f783e9",
+            background: "var(--color-pink)",
           }}
         >
           {t("Dodaj")}
@@ -481,9 +481,6 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
       <PageTitle
         title={t("Zamień potrzeby w priorytety")}
         subtitle={subtitle}
-        top={101}
-        size={16.5}
-        gap={23}
       />
 
       <div className="pf-fade absolute" style={{ left: u(25.2), top: u(143) }}>
@@ -577,7 +574,7 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
 
       {busy ? (
         <BarProgress
-          title={t("Układam tablicę MoSCoW...")}
+          title={t("Układam tablicę MoSCoW…")}
           text={STAGE_TEXT[jobStage] ?? STAGE_TEXT.thinking}
           stage={jobStage}
           frame={BAR}

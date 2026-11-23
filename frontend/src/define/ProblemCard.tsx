@@ -17,7 +17,7 @@ function growthStyle(growth: number) {
     return { background: "#efe6fb", color: "#6d4f8e", Icon: ArrowUpRight };
   if (growth <= -5)
     return { background: "#f4f0f8", color: "#8a7d96", Icon: ArrowDownRight };
-  return { background: "#f2edf8", color: "#7c6d88", Icon: ArrowRight };
+  return { background: "#f2edf8", color: "var(--color-muted)", Icon: ArrowRight };
 }
 
 export function ProblemCard({
@@ -74,7 +74,7 @@ export function ProblemCard({
           top: u(65),
           fontSize: u(6.4),
           lineHeight: u(8.4),
-          color: "#7c6d88",
+          color: "var(--color-muted)",
         }}
         title={problem.description}
       >

@@ -59,7 +59,7 @@ export function StartScreen({ leaving, busy, onSubmit }: Props) {
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder={t("Wpisz myśl przewodnią...")}
+          placeholder={t("Wpisz myśl przewodnią…")}
           maxLength={80}
           autoFocus
           className="h-full w-full bg-transparent text-mauve outline-none placeholder:text-[#c5c5c5]"

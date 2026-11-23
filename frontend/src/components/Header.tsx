@@ -65,7 +65,7 @@ export function Header({ active, reached, onHome, onNavigate }: Props) {
               width: `calc(var(--u) * ${STEP_X[reached] - STEP_X[0]})`,
               top: "calc(var(--u) * 80.4)",
               height: "calc(var(--u) * 1.2)",
-              background: "#f783e9",
+              background: "var(--color-pink)",
             }}
           />
         )}
@@ -114,7 +114,7 @@ export function Header({ active, reached, onHome, onNavigate }: Props) {
                     style={{
                       width: "calc(var(--u) * 7.6)",
                       height: "calc(var(--u) * 7.6)",
-                      background: "#f783e9",
+                      background: "var(--color-pink)",
                     }}
                   />
                 )}

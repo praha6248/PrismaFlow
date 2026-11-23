@@ -65,7 +65,7 @@ function Metric({
           style={{
             fontSize: u(4.6),
             lineHeight: 1.45,
-            color: "#7c6d88",
+            color: "var(--color-muted)",
             marginTop: u(1.5),
           }}
         >
@@ -245,7 +245,7 @@ export function AuditPanel({
               marginTop: u(2.5),
               fontSize: u(4.8),
               lineHeight: 1.4,
-              color: "#7c6d88",
+              color: "var(--color-muted)",
             }}
           >
             {issues.length === 0 && (
@@ -464,7 +464,7 @@ export function AuditPanel({
           }}
         >
           <Sparkles style={{ width: u(6.5), height: u(6.5) }} />
-          {optimizing ? t("Analizuję flow...") : t("Optymalizuj flow przez AI")}
+          {optimizing ? t("Analizuję flow…") : t("Optymalizuj flow przez AI")}
         </button>
         {suggestions.map((s) => (
           <div
@@ -500,7 +500,7 @@ export function AuditPanel({
                 fontSize: u(5),
                 padding: `${u(2.5)} ${u(4)}`,
                 gap: u(1.5),
-                background: "#f783e9",
+                background: "var(--color-pink)",
               }}
             >
               <Check style={{ width: u(5), height: u(5) }} />
@@ -527,12 +527,12 @@ export function AuditPanel({
           marginTop: u(6),
           height: u(30),
           borderRadius: u(7),
-          background: "#f783e9",
+          background: "var(--color-pink)",
           boxShadow: `0 ${u(1.5)} ${u(6)} rgba(240, 110, 220, 0.35)`,
         }}
       >
         <span style={{ fontSize: u(8.4), lineHeight: 1.1 }}>
-          {handoffBusy ? t("Generuję...") : t("Generuj Handoff")}
+          {handoffBusy ? t("Generuję…") : t("Generuj Handoff")}
         </span>
         <span style={{ fontSize: u(4.8), opacity: 0.9, marginTop: u(1.5) }}>
           Figma + Claude

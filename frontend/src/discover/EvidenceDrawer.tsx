@@ -172,7 +172,7 @@ export function EvidenceDrawer({
             padding: "calc(var(--u) * 3) calc(var(--u) * 8)",
             gap: "calc(var(--u) * 4)",
             background: node.starred ? "#fed3f9" : "#f8f4fc",
-            color: node.starred ? "#853c77" : "#674e78",
+            color: node.starred ? "#853c77" : "var(--color-mauve)",
           }}
         >
           <Star
@@ -191,9 +191,9 @@ export function EvidenceDrawer({
         className="min-h-0 flex-1 overflow-y-auto"
         style={{ padding: "0 calc(var(--u) * 12) calc(var(--u) * 10)" }}
       >
-        {error && <p className="text-[#fc4aa1]">{error}</p>}
+        {error && <p className="text-error">{error}</p>}
         {!evidence && !error && (
-          <p className="text-haze">{t("Wczytuję dowody...")}</p>
+          <p className="text-haze">{t("Wczytuję dowody…")}</p>
         )}
         {evidence && !enriched && (
           <p className="text-haze" style={{ lineHeight: 1.5 }}>

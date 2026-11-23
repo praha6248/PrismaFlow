@@ -54,7 +54,7 @@ export function QualityButton({ onShowSetup }: { onShowSetup: () => void }) {
             padding: `${u(3)} ${u(7)}`,
             fontSize: u(5.6),
             background: state?.enabled ? "#f783e9" : "#f3ecfa",
-            color: state?.enabled ? "#ffffff" : "#674e78",
+            color: state?.enabled ? "#ffffff" : "var(--color-mauve)",
           }}
           title={t("Tryb jakości: Claude zamiast lokalnego modelu")}
         >
@@ -228,7 +228,7 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
                 style={{
                   fontSize: u(6.4),
                   padding: `${u(5)} ${u(12)}`,
-                  background: "#f783e9",
+                  background: "var(--color-pink)",
                 }}
               >
                 {t("Włącz tryb jakości")}

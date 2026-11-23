@@ -234,7 +234,7 @@ export function SetupGuide({ state, onRefresh, onClose }: Props) {
               fontSize: u(6.4),
               padding: `${u(5)} ${u(10)}`,
               gap: u(3),
-              background: "#f783e9",
+              background: "var(--color-pink)",
             }}
           >
             <RefreshCw

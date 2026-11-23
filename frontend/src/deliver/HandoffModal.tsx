@@ -70,7 +70,7 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
                   fontSize: u(6.2),
                   padding: `${u(3)} ${u(9)}`,
                   background: tab === key ? "#f783e9" : "transparent",
-                  color: tab === key ? "#ffffff" : "#674e78",
+                  color: tab === key ? "#ffffff" : "var(--color-mauve)",
                 }}
               >
                 {label}
@@ -137,7 +137,7 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
               padding: `${u(5)} ${u(12)}`,
               borderRadius: u(6),
               gap: u(3),
-              background: "#f783e9",
+              background: "var(--color-pink)",
             }}
           >
             {copied ? (

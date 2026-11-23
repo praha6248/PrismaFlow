@@ -13,6 +13,9 @@
   --color-pink-soft: #fed3f9;
   --color-pink-line: #fcdbfb;
   --color-lilac-card: #f8f4ff;
+  --color-muted: #7c6d88;
+  --color-error: #9b2c2c;
+  --color-success: #2b6a45;
 }
 
 :root {

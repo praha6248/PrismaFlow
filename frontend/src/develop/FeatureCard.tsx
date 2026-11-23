@@ -162,7 +162,7 @@ export function FeatureCardView({
           top: u(28),
           fontSize: u(5.8),
           lineHeight: 1.2,
-          color: "#7c6d88",
+          color: "var(--color-muted)",
         }}
         title={feature.description}
       >

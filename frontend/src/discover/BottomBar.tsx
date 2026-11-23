@@ -67,10 +67,10 @@ export function ComposerBar({ onAdd, onDone, disabled }: ComposerProps) {
           <input
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            placeholder={t("Wpisz skojarzenie...")}
+            placeholder={t("Wpisz skojarzenie…")}
             maxLength={48}
             autoFocus
-            className="h-full w-full bg-transparent text-mauve outline-none placeholder:text-[#9b8fa6]"
+            className="h-full w-full bg-transparent text-mauve outline-none placeholder:text-haze"
             style={{
               paddingLeft: "calc(var(--u) * 9)",
               paddingRight: "calc(var(--u) * 30)",
@@ -113,7 +113,7 @@ export function ExpandProgress({ stage }: { stage: string }) {
   return (
     <Panel>
       <ProgressContent
-        title={t("Rozbudowuję mapę...")}
+        title={t("Rozbudowuję mapę…")}
         text={STAGE_TEXT[stage] ?? STAGE_TEXT.placing}
         stage={stage}
       />
@@ -143,7 +143,7 @@ export function ProgressContent({ title, text, stage }: ProgressContentProps) {
           style={{
             width: "calc(var(--u) * 4.6)",
             height: "calc(var(--u) * 4.6)",
-            background: "#f783e9",
+            background: "var(--color-pink)",
             animation: "pf-pulse 1.4s ease-in-out infinite",
           }}
         />

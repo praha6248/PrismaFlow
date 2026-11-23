@@ -182,7 +182,7 @@ function Canvas({
           },
           labelStyle: {
             fontSize: 7.5,
-            fill: "#7c6d88",
+            fill: "var(--color-muted)",
             fontFamily: "Montserrat",
           },
           labelBgStyle: { fill: "#fdfcfe" },
@@ -304,7 +304,7 @@ function Canvas({
         forceColorMode="light"
         style={{ background: "transparent" }}
         deleteKeyCode={["Delete"]}
-        connectionLineStyle={{ stroke: "#f783e9", strokeWidth: 1.2 }}
+        connectionLineStyle={{ stroke: "var(--color-pink)", strokeWidth: 1.2 }}
       >
         <Background
           variant={BackgroundVariant.Dots}
@@ -323,7 +323,7 @@ function Canvas({
             padding: `${u(6)} ${u(11)}`,
             borderRadius: u(20),
             fontSize: u(6.2),
-            background: "#f783e9",
+            background: "var(--color-pink)",
             boxShadow: SHADOW,
           }}
         >
@@ -609,11 +609,8 @@ function Studio({ projectId, notify, onRestart }: Props) {
   return (
     <>
       <PageTitle
-        title="Studio User Flow"
+        title={t("Studio User Flow")}
         subtitle={subtitle}
-        top={99.5}
-        size={14.2}
-        gap={19}
       />
 
       <div className="pf-fade-up absolute" style={panelStyle(8.3, 113)}>
@@ -682,7 +679,7 @@ function Studio({ projectId, notify, onRestart }: Props) {
             }}
           >
             <ProgressContent
-              title={t("Projektuję przepływ...")}
+              title={t("Projektuję przepływ…")}
               text={STAGE_TEXT[job.stage] ?? STAGE_TEXT.thinking}
               stage={job.stage}
             />
@@ -706,7 +703,7 @@ function Studio({ projectId, notify, onRestart }: Props) {
                 style={{
                   fontSize: u(6.4),
                   padding: `${u(4)} ${u(10)}`,
-                  background: "#f783e9",
+                  background: "var(--color-pink)",
                 }}
               >
                 {t("Zaprojektuj przepływ z AI")}

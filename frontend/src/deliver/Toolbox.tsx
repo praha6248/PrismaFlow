@@ -143,7 +143,7 @@ export function Toolbox({
             className="shrink-0 text-left transition-colors hover:text-plum"
             style={{
               fontSize: u(5.6),
-              color: selectedId === screen.id ? "#e04fcf" : "#674e78",
+              color: selectedId === screen.id ? "#e04fcf" : "var(--color-mauve)",
             }}
           >
             <span className="text-haze" style={{ marginRight: u(4) }}>
