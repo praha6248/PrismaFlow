@@ -13,10 +13,10 @@ from .discover import LANGUAGE_NAMES
 from .jobs import ProgressFn, WarnFn
 
 GUIDE_NOTES = (
-    "Studied 27 case studies from designers' own portfolios and 12 from public-sector digital teams (sources below).",
-    "Portfolio case studies run 1260-2550 words (median 1630) with about 34 images.",
-    "22 of 27 open with an overview of role, timeline and tools; 26 show research, 26 a persona, 25 usability testing, 22 a reflection.",
-    "Only 12 of 27 back findings with numbers, and those state a denominator: 5 of 7 users, 6 participants.",
+    "Studied 26 case studies of mobile and web apps from UX/UI designers' own portfolios (sources below).",
+    "They run 1260-2210 words (median 1540) with about 33 images.",
+    "21 of 26 open with an overview of role, timeline and tools; 25 show research, 25 a persona, 24 usability testing, 21 a reflection.",
+    "Only 11 of 26 back findings with numbers, and those state a denominator: 5 of 7 users, 6 participants.",
 )
 
 GUIDE = (
@@ -48,7 +48,6 @@ GUIDE_SOURCES = (
     "https://josephpanux.webflow.io/case-study-spotify",
     "https://brianfoong.webflow.io/case-study/cloudcast",
     "https://daniheryanto.webflow.io/portfolio-edcuration",
-    "https://divyakanchanbaras.webflow.io/work/nonprofit-website-redesign-ux-ui-case-study",
     "https://devikakool.webflow.io/project/app-store-case-study",
     "https://paulinabryla.webflow.io/ui/designing-an-intuitive-travel-app-for-every-generation",
     "https://guspaludeti.webflow.io/starbucks-case-study",
@@ -59,18 +58,6 @@ GUIDE_SOURCES = (
     "https://sreeja-ux-ui-portfolio.webflow.io/projects/urban-farming-app",
     "https://portfolio-814c89.webflow.io/revo-case-study",
     "https://leander-designs.webflow.io/climate-case-study",
-    "https://services.blog.gov.uk/2021/03/05/showing-the-rewards-of-user-centred-service-design-at-scale/",
-    "https://mojdigital.blog.gov.uk/2026/03/18/what-we-learned-from-revisiting-a-live-service",
-    "https://dwpdigital.blog.gov.uk/2018/04/20/how-we-designed-for-users-without-having-a-user-interface-to-test/",
-    "https://userresearch.blog.gov.uk/6-case-studies-using-research-and-data-to-improve-a-live-service/",
-    "https://digital.gov/2014/04/21/usability-case-study-gsa-acquisition-portal",
-    "https://digital.gov/2026/09/29/online-passport-renewal-customer-experience",
-    "https://digital.gov/2024/10/30/enhancing-the-customer-centricity-of-gsa-websites",
-    "https://digital.gov/2024/10/11/making-targeted-improvements-to-nps-gov-a-case-study-from-the-national-park-service",
-    "https://gds.blog.gov.uk/2024/09/19/gov-uk-one-login-designing-for-inclusion-at-scale/",
-    "https://gds.blog.gov.uk/2023/07/18/what-do-first-time-users-think-of-the-gov-uk-prototype-kit/",
-    "https://gds.blog.gov.uk/2022/11/09/understanding-user-satisfaction-on-gov-uk-notify/",
-    "https://gds.blog.gov.uk/2021/10/19/single-sign-on-what-we-learned-during-our-identity-alpha/",
 )
 
 TEXT = {

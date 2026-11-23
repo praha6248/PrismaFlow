@@ -108,7 +108,7 @@ def test_guide_follows_the_researched_order() -> None:
     assert keys[0] == "summary" and keys[-1] == "reflection"
     assert keys.index("research") < keys.index("synthesis") < keys.index("design") < keys.index("testing") < keys.index("outcomes")
     assert all(url.startswith("https://") for url in GUIDE_SOURCES) and len(set(GUIDE_SOURCES)) == len(GUIDE_SOURCES)
-    assert sum(1 for url in GUIDE_SOURCES if "gov" not in url) >= 20
+    assert len(GUIDE_SOURCES) >= 20 and not any("gov" in url for url in GUIDE_SOURCES)
     assert not any(guide in url for url in GUIDE_SOURCES for guide in ("hubspot", "guvi", "thetailorcv", "uxcel", "logrocket"))
 
 
