@@ -5,6 +5,14 @@ Local-first desktop studio for discovering product niches with the Double Diamon
 a SQLite workspace with FTS5, market-data collectors and a local LLM served by Ollama,
 displayed in a GTK WebKit window through pywebview.
 
+## Screenshots
+
+| Discover | Define |
+| --- | --- |
+| ![Discover: mind map of topics grown from Google Autocomplete](docs/screenshots/discover.png) | ![Define: proto-personas and the problem to solve](docs/screenshots/define.png) |
+| **Develop** | **Deliver** |
+| ![Develop: MoSCoW backlog with evidence-based demand](docs/screenshots/develop.png) | ![Deliver: user flow studio with a live UX audit](docs/screenshots/deliver.png) |
+
 ## Requirements
 
 - Linux with WebKit2GTK 4.1 and PyGObject (`gir1.2-webkit2-4.1`, `python3-gi`)
