@@ -89,6 +89,15 @@ cd packaging && ../.venv/bin/pyinstaller --noconfirm --distpath ../dist --workpa
 ./dist/PrismFlow/prismflow
 ```
 
+## CI/CD
+
+- `.github/workflows/ci.yml` runs on every push to `main` and on pull requests: backend tests (`pytest`) and the frontend type check and build.
+- `.github/workflows/release.yml` runs on a `v*` tag (or by hand): it builds the frontend, runs the tests, packages the app with PyInstaller on Ubuntu 24.04 and attaches `PrismFlow-linux-x86_64.tar.gz` to a GitHub release.
+
+```bash
+git tag v0.1.0 && git push origin v0.1.0
+```
+
 ## Layout
 
 ```
