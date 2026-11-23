@@ -13,6 +13,19 @@ displayed in a GTK WebKit window through pywebview.
 | **Develop** | **Deliver** |
 | ![Develop: MoSCoW backlog with evidence-based demand](docs/screenshots/develop.png) | ![Deliver: user flow studio with a live UX audit](docs/screenshots/deliver.png) |
 
+## Use it in a browser (no WebKit needed)
+
+The desktop window is optional. The backend serves the full UI over HTTP, so on any system with Python 3.11+,
+Node.js 20+ and Ollama you can run:
+
+```bash
+python -m venv .venv && .venv/bin/pip install -r requirements.txt
+cd frontend && npm install && npm run build && cd ..
+.venv/bin/python main.py --server-only --port 8765
+```
+
+Then open <http://127.0.0.1:8765> in your browser. Only the desktop window needs WebKit2GTK and PyGObject.
+
 ## Requirements
 
 - Linux with WebKit2GTK 4.1 and PyGObject (`gir1.2-webkit2-4.1`, `python3-gi`)
@@ -25,6 +38,7 @@ displayed in a GTK WebKit window through pywebview.
 ```bash
 uv venv .venv --python /usr/bin/python3 --system-site-packages
 uv pip install -r requirements-dev.txt
+.venv/bin/python -m playwright install --only-shell chromium
 cd frontend && npm install && npm run build && cd ..
 .venv/bin/python main.py
 ```
@@ -63,14 +77,21 @@ Environment variables, or `KEY=value` lines in `~/.config/PrismaFlow/prismaflow.
 | `PRISMAFLOW_LOCALE` | Default content locale, e.g. `pl_PL` or `en_US` |
 | `PRISMAFLOW_TREND_ANCHOR` | Google Trends calibration keyword |
 | `PRISMAFLOW_REDDIT_CLIENT_ID` / `PRISMAFLOW_REDDIT_CLIENT_SECRET` | Optional Reddit OAuth app credentials |
+| `PRISMAFLOW_REDDIT_PLAYWRIGHT` | Set to `1` to prefer Chromium even when OAuth credentials are configured |
 | `PRISMAFLOW_DISCUSSION_MAX_AGE_DAYS` | Oldest community discussion still used as evidence, in days (default 1095, three years) |
 | `PRISMAFLOW_DATA_DIR` | Workspace location (default `~/.local/share/PrismaFlow`) |
 
 Community evidence comes from two documented, keyless public APIs: Stack Exchange questions
 (sites such as fitness, parenting or cooking are picked from the query's topic; about 300 requests
 per day per IP, cached for three days) and Lemmy, a federated Reddit-like forum, searched through
-lemmy.world. With an approved Reddit API app set `PRISMAFLOW_REDDIT_CLIENT_ID` to add Reddit threads
-from the official OAuth API.
+lemmy.world.
+
+Reddit is **disabled by default**. To enable it, create a Reddit API app and set
+`PRISMAFLOW_REDDIT_CLIENT_ID` and `PRISMAFLOW_REDDIT_CLIENT_SECRET` (OAuth). Browser scraping with
+Playwright is an explicit opt-in (`PRISMAFLOW_REDDIT_PLAYWRIGHT=1`) and requires
+[Reddit's written permission](https://redditinc.com/policies/user-agreement); you are responsible
+for complying with it. Discover caches the results and continues with its other sources if Reddit is
+unavailable.
 
 ## Phases
 
@@ -91,10 +112,21 @@ Evidence is collected bilingually: queries are translated to English by the loca
 suggestions and threads are fetched alongside local ones and translated back into the project
 language, keeping the original text in the evidence metadata.
 
+## Contributing
+
+Contributions are welcome, see [CONTRIBUTING.md](CONTRIBUTING.md) and the
+[good first issues](docs/good-first-issues.md).
+
+## License
+
+PrismaFlow is released under the [GNU Affero General Public License v3.0](LICENSE). If you run a
+modified version as a network service, you must offer its source code to the users of that service.
+
 ## Packaging
 
 ```bash
 cd frontend && npm run build && cd ..
+PLAYWRIGHT_BROWSERS_PATH=0 .venv/bin/python -m playwright install --only-shell chromium
 cd packaging && ../.venv/bin/pyinstaller --noconfirm --distpath ../dist --workpath ../build prismaflow.spec
 ./dist/PrismaFlow/prismaflow
 ```
@@ -114,7 +146,7 @@ git tag v0.1.0 && git push origin v0.1.0
 main.py                  desktop entry point (pywebview + background Uvicorn)
 backend/config.py        settings, paths, locale
 backend/database.py      SQLite schema and data access
-backend/collectors/      Google Autocomplete, Google Trends, Stack Exchange + Lemmy, optional Reddit
+backend/collectors/      Google Autocomplete, Google Trends, Stack Exchange, Lemmy and Reddit
 backend/ollama_client.py structured outputs validated by Pydantic
 backend/services/        Discover, Define, Develop and Deliver services, translation, background jobs
 backend/api.py           HTTP API and static frontend
