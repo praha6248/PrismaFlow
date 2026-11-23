@@ -8,7 +8,7 @@ The interface is available in Polish and English.
 
 ## Install
 
-Download the installer from the [latest release](https://github.com/praha6248/PrismaFlow/releases/latest):
+Download the Windows installer or Linux build, including the current beta, from the [PrismaFlow download page](https://praha6248.github.io/PrismaFlow/).
 
 | System | File |
 | --- | --- |

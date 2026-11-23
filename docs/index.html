@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Pobierz PrismaFlow na Windows lub Linux. Lokalne studio do badania potrzeb, planowania funkcji i projektowania przepływów aplikacji.">
+  <title>PrismaFlow — pobierz aplikację</title>
+  <link rel="icon" href="prismaflow.svg">
+  <link rel="stylesheet" href="download.css">
+  <script defer src="download.js"></script>
+</head>
+<body>
+  <header><a class="brand" href="./"><img src="prismaflow.svg" alt="">PrismaFlow</a>
+    <nav aria-label="Nawigacja"><a href="#pobierz">Pobierz</a><a href="https://github.com/praha6248/PrismaFlow">GitHub</a></nav>
+  </header>
+  <main>
+    <section class="intro">
+      <div class="pitch">
+        <h1>Od pomysłu<br>do <em>prototypu.</em></h1>
+        <p>Zbierz sygnały z rynku, poznaj potrzeby użytkowników i zaplanuj ekrany aplikacji. PrismaFlow prowadzi cały projekt w jednym lokalnym studiu.</p>
+        <a class="action" href="#pobierz">Pobierz aplikację</a>
+      </div>
+      <figure><img src="screenshots/discover.png" alt="Mapa tematów i powiązań w widoku Discover aplikacji PrismaFlow"></figure>
+    </section>
+    <section id="pobierz">
+      <div class="section-title"><h2>Pobierz PrismaFlow</h2><a id="release" href="https://github.com/praha6248/PrismaFlow/releases/tag/v0.1.0-beta.4">v0.1.0-beta.4</a></div>
+      <div class="platforms">
+        <article><h3>Windows</h3><p>Windows 10 lub 11 · x64</p><a class="download" id="windows" href="https://github.com/praha6248/PrismaFlow/releases/download/v0.1.0-beta.4/PrismaFlow-0.1.0-beta.4-windows-x64-setup.exe">Pobierz instalator .exe</a></article>
+        <article><h3>Linux</h3><p>x86_64 · glibc 2.39 lub nowsza</p><a class="download" id="linux" href="https://github.com/praha6248/PrismaFlow/releases/download/v0.1.0-beta.4/PrismaFlow-0.1.0-beta.4-x86_64.AppImage">Pobierz AppImage</a><a class="archive" id="archive" href="https://github.com/praha6248/PrismaFlow/releases/download/v0.1.0-beta.4/PrismaFlow-linux-x86_64.tar.gz">Archiwum .tar.gz</a></article>
+      </div>
+      <details><summary>Pierwsze uruchomienie</summary>
+        <p>Zainstaluj <a href="https://ollama.com/download">Ollamę</a> i pobierz model poleceniem <code>ollama pull gemma3:4b</code>. Uruchom PrismaFlow i wpisz temat pierwszego projektu.</p>
+        <p>Na Linuksie aplikacja korzysta z WebKit2GTK 4.1, a AppImage wymaga również FUSE 2. Możesz też uruchomić PrismaFlow w przeglądarce przez <a href="https://github.com/praha6248/PrismaFlow#run-with-docker-compose">Docker Compose</a>.</p>
+      </details>
+    </section>
+  </main>
+  <footer><span>PrismaFlow</span><a href="https://github.com/praha6248/PrismaFlow/releases">Wszystkie wydania</a></footer>
+</body>
+</html>
