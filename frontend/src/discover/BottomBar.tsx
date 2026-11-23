@@ -1,16 +1,17 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { SendButton } from "../components/SendButton";
+import { t } from "../i18n";
 
 export const STAGE_TEXT: Record<string, string> = {
-  queued: "Przygotowuję rozbudowę",
-  suggestions: "Sprawdzam podpowiedzi Google",
-  thinking: "Model analizuje mapę",
-  placing: "Dodaję kolejne węzły",
-  evidence: "Zbieram dowody z sieci",
-  translating: "Tłumaczę wyniki z angielskiego",
-  trends: "Sprawdzam trendy Google",
-  scoring: "Liczę popyt",
-  done: "Gotowe",
+  queued: t("Przygotowuję rozbudowę"),
+  suggestions: t("Sprawdzam podpowiedzi Google"),
+  thinking: t("Model analizuje mapę"),
+  placing: t("Dodaję kolejne węzły"),
+  evidence: t("Zbieram dowody z sieci"),
+  translating: t("Tłumaczę wyniki z angielskiego"),
+  trends: t("Sprawdzam trendy Google"),
+  scoring: t("Liczę popyt"),
+  done: t("Gotowe"),
 };
 
 function Panel({ children }: { children: ReactNode }) {
@@ -23,7 +24,8 @@ function Panel({ children }: { children: ReactNode }) {
         height: "calc(var(--u) * 44)",
         borderRadius: "calc(var(--u) * 12)",
         background: "#fdfcfe",
-        boxShadow: "0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(196, 160, 232, 0.28)",
+        boxShadow:
+          "0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(196, 160, 232, 0.28)",
       }}
     >
       {children}
@@ -65,7 +67,7 @@ export function ComposerBar({ onAdd, onDone, disabled }: ComposerProps) {
           <input
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            placeholder="Wpisz skojarzenie..."
+            placeholder={t("Wpisz skojarzenie...")}
             maxLength={48}
             autoFocus
             className="h-full w-full bg-transparent text-mauve outline-none placeholder:text-[#9b8fa6]"
@@ -75,7 +77,10 @@ export function ComposerBar({ onAdd, onDone, disabled }: ComposerProps) {
               fontSize: "calc(var(--u) * 7.4)",
             }}
           />
-          <div className="absolute" style={{ right: "calc(var(--u) * 2)", top: "calc(var(--u) * 2)" }}>
+          <div
+            className="absolute"
+            style={{ right: "calc(var(--u) * 2)", top: "calc(var(--u) * 2)" }}
+          >
             <SendButton size={20} disabled={!value.trim()} />
           </div>
         </div>
@@ -93,10 +98,11 @@ export function ComposerBar({ onAdd, onDone, disabled }: ComposerProps) {
             background: "#fed3f9",
             color: "#853c77",
             fontSize: "calc(var(--u) * 9.6)",
-            boxShadow: "0 calc(var(--u) * 1) calc(var(--u) * 4) rgba(237, 150, 225, 0.25)",
+            boxShadow:
+              "0 calc(var(--u) * 1) calc(var(--u) * 4) rgba(237, 150, 225, 0.25)",
           }}
         >
-          Gotowe
+          {t("Gotowe")}
         </button>
       </form>
     </Panel>
@@ -106,7 +112,11 @@ export function ComposerBar({ onAdd, onDone, disabled }: ComposerProps) {
 export function ExpandProgress({ stage }: { stage: string }) {
   return (
     <Panel>
-      <ProgressContent title="Rozbudowuję mapę..." text={STAGE_TEXT[stage] ?? STAGE_TEXT.placing} stage={stage} />
+      <ProgressContent
+        title={t("Rozbudowuję mapę...")}
+        text={STAGE_TEXT[stage] ?? STAGE_TEXT.placing}
+        stage={stage}
+      />
     </Panel>
   );
 }
@@ -122,7 +132,11 @@ export function ProgressContent({ title, text, stage }: ProgressContentProps) {
     <>
       <div
         className="absolute flex items-center"
-        style={{ left: "calc(var(--u) * 10)", right: "calc(var(--u) * 12)", top: "calc(var(--u) * 9)" }}
+        style={{
+          left: "calc(var(--u) * 10)",
+          right: "calc(var(--u) * 12)",
+          top: "calc(var(--u) * 9)",
+        }}
       >
         <span
           className="rounded-full"
@@ -133,10 +147,20 @@ export function ProgressContent({ title, text, stage }: ProgressContentProps) {
             animation: "pf-pulse 1.4s ease-in-out infinite",
           }}
         />
-        <span className="text-mauve" style={{ marginLeft: "calc(var(--u) * 6)", fontSize: "calc(var(--u) * 8.3)" }}>
+        <span
+          className="text-mauve"
+          style={{
+            marginLeft: "calc(var(--u) * 6)",
+            fontSize: "calc(var(--u) * 8.3)",
+          }}
+        >
           {title}
         </span>
-        <span key={stage} className="pf-fade ml-auto text-haze" style={{ fontSize: "calc(var(--u) * 6.8)" }}>
+        <span
+          key={stage}
+          className="pf-fade ml-auto text-haze"
+          style={{ fontSize: "calc(var(--u) * 6.8)" }}
+        >
           {text}
         </span>
       </div>

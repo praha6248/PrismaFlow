@@ -8,12 +8,29 @@ import { EvidenceDrawer } from "./EvidenceDrawer";
 import { composeSlot } from "./layout";
 import { MindMap } from "./MindMap";
 import { StartScreen } from "./StartScreen";
+import { t } from "../i18n";
 
 const WARNINGS: [string, string][] = [
-  ["llm:", "Lokalny model jest niedostępny — mapę rozbudowano na podstawie podpowiedzi Google."],
-  ["community:", "Stack Exchange i Lemmy chwilowo nie odpowiadają — pomijam dyskusje."],
-  ["trends:", "Google Trends chwilowo nie odpowiada — trendy uzupełnię przy kolejnej rozbudowie."],
-  ["autocomplete:", "Google Autocomplete nie odpowiada — pomijam podpowiedzi."],
+  [
+    "llm:",
+    t(
+      "Lokalny model jest niedostępny — mapę rozbudowano na podstawie podpowiedzi Google.",
+    ),
+  ],
+  [
+    "community:",
+    t("Stack Exchange i Lemmy chwilowo nie odpowiadają — pomijam dyskusje."),
+  ],
+  [
+    "trends:",
+    t(
+      "Google Trends chwilowo nie odpowiada — trendy uzupełnię przy kolejnej rozbudowie.",
+    ),
+  ],
+  [
+    "autocomplete:",
+    t("Google Autocomplete nie odpowiada — pomijam podpowiedzi."),
+  ],
 ];
 
 const DISCOVER_STAGES: Stage[] = ["compose", "expanding", "select"];
@@ -25,7 +42,12 @@ interface Props {
   notify: (message: string) => void;
 }
 
-export function DiscoverView({ projectId, onCreated, onOpenDefine, notify }: Props) {
+export function DiscoverView({
+  projectId,
+  onCreated,
+  onOpenDefine,
+  notify,
+}: Props) {
   const [graph, setGraph] = useState<Graph | null>(null);
   const [leaving, setLeaving] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -48,27 +70,51 @@ export function DiscoverView({ projectId, onCreated, onOpenDefine, notify }: Pro
       .getProject(projectId)
       .then((data) => {
         const enriched = data.nodes.some((n) => n.enriched_at !== null);
-        if (!DISCOVER_STAGES.includes(data.project.stage) || data.project.stage === "expanding") {
-          data = { ...data, project: { ...data.project, stage: enriched ? "select" : "compose" } };
+        if (
+          !DISCOVER_STAGES.includes(data.project.stage) ||
+          data.project.stage === "expanding"
+        ) {
+          data = {
+            ...data,
+            project: {
+              ...data.project,
+              stage: enriched ? "select" : "compose",
+            },
+          };
         }
         setGraph(data);
       })
-      .catch((error: Error) => notify(`Nie udało się wczytać projektu: ${error.message}`));
+      .catch((error: Error) =>
+        notify(
+          t("Nie udało się wczytać projektu: {error}", {
+            error: error.message,
+          }),
+        ),
+      );
   }, [projectId, loadedId, notify]);
 
-  const stage = (localStage ?? graph?.project.stage ?? "compose") as DiscoverStage;
+  const stage = (localStage ??
+    graph?.project.stage ??
+    "compose") as DiscoverStage;
   const busy = stage === "expanding";
 
   const start = async (seed: string) => {
     setCreating(true);
     setLeaving(true);
     try {
-      const [data] = await Promise.all([api.createProject(seed), new Promise((r) => setTimeout(r, 380))]);
+      const [data] = await Promise.all([
+        api.createProject(seed),
+        new Promise((r) => setTimeout(r, 380)),
+      ]);
       setGraph(data);
       onCreated(data.project.id);
     } catch (error) {
       setLeaving(false);
-      notify(`Nie udało się utworzyć projektu: ${(error as Error).message}`);
+      notify(
+        t("Nie udało się utworzyć projektu: {error}", {
+          error: (error as Error).message,
+        }),
+      );
     } finally {
       setCreating(false);
     }
@@ -78,7 +124,9 @@ export function DiscoverView({ projectId, onCreated, onOpenDefine, notify }: Pro
     if (!graph) return;
     const slot = composeSlot(graph.nodes.filter((n) => !n.is_root).length);
     try {
-      setGraph(await api.addNode(graph.project.id, label, undefined, slot.x, slot.y));
+      setGraph(
+        await api.addNode(graph.project.id, label, undefined, slot.x, slot.y),
+      );
     } catch (error) {
       notify((error as Error).message);
     }
@@ -90,7 +138,11 @@ export function DiscoverView({ projectId, onCreated, onOpenDefine, notify }: Pro
     setLocalStage("expanding");
     setJobStage("queued");
     try {
-      const job = await api.expand(graph.project.id, node?.is_root ? undefined : node?.id, 3);
+      const job = await api.expand(
+        graph.project.id,
+        node?.is_root ? undefined : node?.id,
+        3,
+      );
       const finished = await waitForJob(job.id, (j) => setJobStage(j.stage));
       for (const warning of finished.warnings) {
         const match = WARNINGS.find(([prefix]) => warning.startsWith(prefix));
@@ -100,7 +152,11 @@ export function DiscoverView({ projectId, onCreated, onOpenDefine, notify }: Pro
         }
       }
       if (finished.status === "error" || !finished.result) {
-        notify(`Rozbudowa nie powiodła się: ${finished.error ?? "nieznany błąd"}`);
+        notify(
+          t("Rozbudowa nie powiodła się: {error}", {
+            error: finished.error ?? t("nieznany błąd"),
+          }),
+        );
         setGraph(await api.getProject(graph.project.id));
         setLocalStage(previous);
         return;
@@ -116,11 +172,27 @@ export function DiscoverView({ projectId, onCreated, onOpenDefine, notify }: Pro
   const toggleStar = useCallback(
     async (node: MapNode) => {
       const starred = !node.starred;
-      setGraph((g) => g && { ...g, nodes: g.nodes.map((n) => (n.id === node.id ? { ...n, starred } : n)) });
+      setGraph(
+        (g) =>
+          g && {
+            ...g,
+            nodes: g.nodes.map((n) =>
+              n.id === node.id ? { ...n, starred } : n,
+            ),
+          },
+      );
       try {
         await api.updateNode(node.id, { starred });
       } catch (error) {
-        setGraph((g) => g && { ...g, nodes: g.nodes.map((n) => (n.id === node.id ? { ...n, starred: !starred } : n)) });
+        setGraph(
+          (g) =>
+            g && {
+              ...g,
+              nodes: g.nodes.map((n) =>
+                n.id === node.id ? { ...n, starred: !starred } : n,
+              ),
+            },
+        );
         notify((error as Error).message);
       }
     },
@@ -138,18 +210,27 @@ export function DiscoverView({ projectId, onCreated, onOpenDefine, notify }: Pro
 
   const savePositions = useCallback(
     (positions: { id: number; x: number; y: number }[]) => {
-      if (loadedId) api.savePositions(loadedId, positions).catch(() => undefined);
+      if (loadedId)
+        api.savePositions(loadedId, positions).catch(() => undefined);
     },
     [loadedId],
   );
 
-  const focused = useMemo(() => graph?.nodes.find((n) => n.id === focusedId) ?? null, [graph, focusedId]);
+  const focused = useMemo(
+    () => graph?.nodes.find((n) => n.id === focusedId) ?? null,
+    [graph, focusedId],
+  );
   const starredCount = graph?.nodes.filter((n) => n.starred).length ?? 0;
-  const mapStage: DiscoverStage = stage === "expanding" && graph?.project.stage === "select" ? "select" : stage;
+  const mapStage: DiscoverStage =
+    stage === "expanding" && graph?.project.stage === "select"
+      ? "select"
+      : stage;
 
   return (
     <>
-      {!graph && <StartScreen leaving={leaving} busy={creating} onSubmit={start} />}
+      {!graph && (
+        <StartScreen leaving={leaving} busy={creating} onSubmit={start} />
+      )}
 
       {graph && (
         <ReactFlowProvider>
@@ -170,13 +251,19 @@ export function DiscoverView({ projectId, onCreated, onOpenDefine, notify }: Pro
       {graph && mapStage === "select" && (
         <h2
           className="pf-fade pointer-events-none absolute inset-x-0 z-10 text-center font-serif font-normal text-plum"
-          style={{ top: "calc(var(--u) * 104.2)", fontSize: "calc(var(--u) * 15)", lineHeight: 1 }}
+          style={{
+            top: "calc(var(--u) * 104.2)",
+            fontSize: "calc(var(--u) * 15)",
+            lineHeight: 1,
+          }}
         >
-          Wybierz tematy, które Cię interesują
+          {t("Wybierz tematy, które Cię interesują")}
         </h2>
       )}
 
-      {graph && stage === "compose" && <ComposerBar onAdd={addNode} onDone={() => expand()} />}
+      {graph && stage === "compose" && (
+        <ComposerBar onAdd={addNode} onDone={() => expand()} />
+      )}
       {graph && stage === "expanding" && <ExpandProgress stage={jobStage} />}
 
       {graph && stage === "select" && starredCount > 0 && !focused && (
@@ -191,11 +278,15 @@ export function DiscoverView({ projectId, onCreated, onOpenDefine, notify }: Pro
             background: "#fdfcfe",
             color: "#853c77",
             fontSize: "calc(var(--u) * 7)",
-            boxShadow: "0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(196, 160, 232, 0.28)",
+            boxShadow:
+              "0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(196, 160, 232, 0.28)",
           }}
         >
-          Przejdź do Define
-          <span className="rounded-full bg-[#fed3f9]" style={{ padding: "0 calc(var(--u) * 5)" }}>
+          {t("Przejdź do Define")}
+          <span
+            className="rounded-full bg-[#fed3f9]"
+            style={{ padding: "0 calc(var(--u) * 5)" }}
+          >
             {starredCount}
           </span>
           <ArrowRight style={{ width: "calc(var(--u) * 7)" }} />
@@ -212,7 +303,6 @@ export function DiscoverView({ projectId, onCreated, onOpenDefine, notify }: Pro
           onDelete={removeNode}
         />
       )}
-
     </>
   );
 }

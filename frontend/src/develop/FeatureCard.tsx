@@ -4,23 +4,43 @@ import { GripVertical, X } from "lucide-react";
 import { useState, type KeyboardEvent } from "react";
 import { u } from "../components/ui";
 import type { Feature, Priority } from "../types";
+import { plural, t } from "../i18n";
 
-export const PRIORITY_STYLES: Record<Priority, { label: string; hint: string; background: string; color: string }> = {
-  must: { label: "Must", hint: "Niezbędne w MVP", background: "#fcd6f6", color: "#a0388f" },
-  should: { label: "Should", hint: "Ważne, w kolejnym kroku", background: "#ead9fa", color: "#6c3f9c" },
-  could: { label: "Could", hint: "Dodatkowa wartość", background: "#d9e7fb", color: "#3f65a0" },
-  wont: { label: "Won't", hint: "Poza zakresem tej wersji", background: "#ebe8ef", color: "#6f6878" },
+export const PRIORITY_STYLES: Record<
+  Priority,
+  { label: string; hint: string; background: string; color: string }
+> = {
+  must: {
+    label: "Must",
+    hint: t("Niezbędne w MVP"),
+    background: "#fcd6f6",
+    color: "#a0388f",
+  },
+  should: {
+    label: "Should",
+    hint: t("Ważne, w kolejnym kroku"),
+    background: "#ead9fa",
+    color: "#6c3f9c",
+  },
+  could: {
+    label: "Could",
+    hint: t("Dodatkowa wartość"),
+    background: "#d9e7fb",
+    color: "#3f65a0",
+  },
+  wont: {
+    label: "Won't",
+    hint: t("Poza zakresem tej wersji"),
+    background: "#ebe8ef",
+    color: "#6f6878",
+  },
 };
 
 export const CARD_HEIGHT = 57;
 export const CARD_GAP = 8.2;
 
 function evidenceLabel(count: number): string {
-  const lastTwo = count % 100;
-  const last = count % 10;
-  if (count === 1) return "dowód";
-  if (last >= 2 && last <= 4 && (lastTwo < 12 || lastTwo > 14)) return "dowody";
-  return "dowodów";
+  return plural(count, "dowód", "dowody", "dowodów");
 }
 
 interface ViewProps {
@@ -32,7 +52,14 @@ interface ViewProps {
   handleProps?: Record<string, unknown>;
 }
 
-export function FeatureCardView({ feature, dragging, overlay, onRename, onDelete, handleProps }: ViewProps) {
+export function FeatureCardView({
+  feature,
+  dragging,
+  overlay,
+  onRename,
+  onDelete,
+  handleProps,
+}: ViewProps) {
   const style = PRIORITY_STYLES[feature.priority];
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(feature.title);
@@ -67,7 +94,13 @@ export function FeatureCardView({ feature, dragging, overlay, onRename, onDelete
         transform: overlay ? "rotate(1.5deg)" : undefined,
         cursor: overlay ? "grabbing" : "grab",
       }}
-      title={feature.keywords.length ? `Słowa dopasowane do dowodów: ${feature.keywords.join(", ")}` : undefined}
+      title={
+        feature.keywords.length
+          ? t("Słowa dopasowane do dowodów: {words}", {
+              words: feature.keywords.join(", "),
+            })
+          : undefined
+      }
       {...handleProps}
     >
       {editing ? (
@@ -80,12 +113,25 @@ export function FeatureCardView({ feature, dragging, overlay, onRename, onDelete
           onKeyDown={onKey}
           onPointerDown={(e) => e.stopPropagation()}
           className="absolute rounded bg-[#f7f3fb] text-ink outline-none"
-          style={{ left: u(6), right: u(16), top: u(5.5), height: u(12), fontSize: u(8.2), padding: `0 ${u(2)}` }}
+          style={{
+            left: u(6),
+            right: u(16),
+            top: u(5.5),
+            height: u(12),
+            fontSize: u(8.2),
+            padding: `0 ${u(2)}`,
+          }}
         />
       ) : (
         <div
           className="absolute line-clamp-2 text-ink"
-          style={{ left: u(8), right: u(18), top: u(5.6), fontSize: u(8.6), lineHeight: u(10.3) }}
+          style={{
+            left: u(8),
+            right: u(18),
+            top: u(5.6),
+            fontSize: u(8.6),
+            lineHeight: u(10.3),
+          }}
           onDoubleClick={() => onRename && setEditing(true)}
         >
           {feature.title}
@@ -98,8 +144,8 @@ export function FeatureCardView({ feature, dragging, overlay, onRename, onDelete
       {onDelete && (
         <button
           type="button"
-          aria-label="Usuń funkcję"
-          title="Usuń funkcję"
+          aria-label={t("Usuń funkcję")}
+          title={t("Usuń funkcję")}
           onPointerDown={(e) => e.stopPropagation()}
           onClick={onDelete}
           className="absolute flex items-center justify-center rounded-full text-haze opacity-0 transition-opacity hover:bg-[#f7f0fb] hover:text-plum group-hover:opacity-100"
@@ -110,12 +156,22 @@ export function FeatureCardView({ feature, dragging, overlay, onRename, onDelete
       )}
       <div
         className="absolute truncate"
-        style={{ left: u(8), right: u(8), top: u(28), fontSize: u(5.8), lineHeight: 1.2, color: "#7c6d88" }}
+        style={{
+          left: u(8),
+          right: u(8),
+          top: u(28),
+          fontSize: u(5.8),
+          lineHeight: 1.2,
+          color: "#7c6d88",
+        }}
         title={feature.description}
       >
         {feature.description}
       </div>
-      <div className="absolute flex items-center" style={{ left: u(5.5), top: u(40.5), gap: u(7) }}>
+      <div
+        className="absolute flex items-center"
+        style={{ left: u(5.5), top: u(40.5), gap: u(7) }}
+      >
         <span
           className="flex items-center justify-center"
           style={{
@@ -144,15 +200,30 @@ interface SortableProps {
   onDelete: (feature: Feature) => void;
 }
 
-export function SortableFeatureCard({ feature, onRename, onDelete }: SortableProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+export function SortableFeatureCard({
+  feature,
+  onRename,
+  onDelete,
+}: SortableProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: feature.id,
     data: { priority: feature.priority },
   });
   return (
     <div
       ref={setNodeRef}
-      style={{ transform: CSS.Translate.toString(transform), transition, marginBottom: u(CARD_GAP) }}
+      style={{
+        transform: CSS.Translate.toString(transform),
+        transition,
+        marginBottom: u(CARD_GAP),
+      }}
     >
       <FeatureCardView
         feature={feature}

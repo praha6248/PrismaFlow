@@ -18,16 +18,24 @@ interface Route {
 }
 
 function parseHash(): Route {
-  const match = window.location.hash.match(/^#\/p\/(\d+)(?:\/(define|validate|develop|deliver))?/);
+  const match = window.location.hash.match(
+    /^#\/p\/(\d+)(?:\/(define|validate|develop|deliver))?/,
+  );
   if (!match) return { projectId: null, phase: "discover" };
-  if (match[2] === "validate") return { projectId: Number(match[1]), phase: "define", validate: true };
-  return { projectId: Number(match[1]), phase: (match[2] as Phase | undefined) ?? "discover" };
+  if (match[2] === "validate")
+    return { projectId: Number(match[1]), phase: "define", validate: true };
+  return {
+    projectId: Number(match[1]),
+    phase: (match[2] as Phase | undefined) ?? "discover",
+  };
 }
 
 function hashFor(route: Route): string {
   if (route.projectId === null) return "";
   if (route.validate) return `#/p/${route.projectId}/validate`;
-  return route.phase === "discover" ? `#/p/${route.projectId}` : `#/p/${route.projectId}/${route.phase}`;
+  return route.phase === "discover"
+    ? `#/p/${route.projectId}`
+    : `#/p/${route.projectId}/${route.phase}`;
 }
 
 export function App() {
@@ -51,7 +59,8 @@ export function App() {
   const navigate = useCallback((next: Route) => {
     setRoute(next);
     const hash = hashFor(next);
-    if (window.location.hash !== hash) window.history.pushState(null, "", hash || window.location.pathname);
+    if (window.location.hash !== hash)
+      window.history.pushState(null, "", hash || window.location.pathname);
   }, []);
 
   useEffect(() => {
@@ -64,7 +73,8 @@ export function App() {
       .then((graph) => {
         const phase = graph.project.phase;
         setReached(phase);
-        if (PHASES.indexOf(route.phase) > PHASES.indexOf(phase)) navigate({ projectId: route.projectId, phase });
+        if (PHASES.indexOf(route.phase) > PHASES.indexOf(phase))
+          navigate({ projectId: route.projectId, phase });
       })
       .catch(() => navigate({ projectId: null, phase: "discover" }));
   }, [route.projectId, route.phase, navigate]);
@@ -96,10 +106,18 @@ export function App() {
           active={PHASES.indexOf(route.phase)}
           reached={PHASES.indexOf(reached)}
           onHome={() => navigate({ projectId: null, phase: "discover" })}
-          onNavigate={(index) => projectId !== null && navigate({ projectId, phase: PHASES[index] })}
+          onNavigate={(index) =>
+            projectId !== null && navigate({ projectId, phase: PHASES[index] })
+          }
         />
         <QualityButton onShowSetup={() => setup.setOpen(true)} />
-        {setup.open && <SetupGuide state={setup.state} onRefresh={setup.refresh} onClose={() => setup.setOpen(false)} />}
+        {setup.open && (
+          <SetupGuide
+            state={setup.state}
+            onRefresh={setup.refresh}
+            onClose={() => setup.setOpen(false)}
+          />
+        )}
         {route.phase === "discover" && (
           <DiscoverView
             projectId={projectId}
@@ -110,28 +128,48 @@ export function App() {
         )}
         {route.phase !== "discover" && (
           <div className="stage">
-        {route.phase === "define" && route.validate && projectId !== null && (
-          <ValidateView
-            key={projectId}
-            projectId={projectId}
-            onBack={() => navigate({ projectId, phase: "define" })}
-            onDone={() => advance("develop")}
-            notify={notify}
-          />
-        )}
-        {route.phase === "define" && !route.validate && projectId !== null && (
-          <DefineView
-            key={projectId}
-            projectId={projectId}
-            onBack={() => navigate({ projectId, phase: "discover" })}
-            onDone={() => navigate({ projectId, phase: "define", validate: true })}
-            notify={notify}
-          />
-        )}
-        {route.phase === "develop" && projectId !== null && (
-          <DevelopView key={projectId} projectId={projectId} onDone={() => advance("deliver")} notify={notify} />
-        )}
-        {route.phase === "deliver" && projectId !== null && <DeliverView key={projectId} projectId={projectId} notify={notify} onRestart={() => navigate({ projectId: null, phase: "discover" })} />}
+            {route.phase === "define" &&
+              route.validate &&
+              projectId !== null && (
+                <ValidateView
+                  key={projectId}
+                  projectId={projectId}
+                  onBack={() => navigate({ projectId, phase: "define" })}
+                  onDone={() => advance("develop")}
+                  notify={notify}
+                />
+              )}
+            {route.phase === "define" &&
+              !route.validate &&
+              projectId !== null && (
+                <DefineView
+                  key={projectId}
+                  projectId={projectId}
+                  onBack={() => navigate({ projectId, phase: "discover" })}
+                  onDone={() =>
+                    navigate({ projectId, phase: "define", validate: true })
+                  }
+                  notify={notify}
+                />
+              )}
+            {route.phase === "develop" && projectId !== null && (
+              <DevelopView
+                key={projectId}
+                projectId={projectId}
+                onDone={() => advance("deliver")}
+                notify={notify}
+              />
+            )}
+            {route.phase === "deliver" && projectId !== null && (
+              <DeliverView
+                key={projectId}
+                projectId={projectId}
+                notify={notify}
+                onRestart={() =>
+                  navigate({ projectId: null, phase: "discover" })
+                }
+              />
+            )}
           </div>
         )}
         {toast && <Toast message={toast} onClose={() => setToast(null)} />}

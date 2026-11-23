@@ -8,7 +8,14 @@ import {
   type NodeTypes,
   type OnNodeDrag,
 } from "@xyflow/react";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { DiscoverStage as Stage, Graph, MapNode } from "../types";
 import { BubbleNode, type BubbleFlowNode } from "./BubbleNode";
 import { CenterEdge } from "./CenterEdge";
@@ -19,12 +26,17 @@ const nodeTypes: NodeTypes = { bubble: BubbleNode };
 const edgeTypes: EdgeTypes = { center: CenterEdge };
 
 const MOCK_CARD_HEIGHT = 448;
-const ROOT_Y: Record<Stage, number> = { compose: 221, expanding: 221, select: 249 };
-const SAFE_AREAS: Record<Stage, { top: number; bottom: number; side: number }> = {
-  compose: { top: 118, bottom: 70, side: 20 },
-  expanding: { top: 118, bottom: 70, side: 20 },
-  select: { top: 124, bottom: 14, side: 20 },
+const ROOT_Y: Record<Stage, number> = {
+  compose: 221,
+  expanding: 221,
+  select: 249,
 };
+const SAFE_AREAS: Record<Stage, { top: number; bottom: number; side: number }> =
+  {
+    compose: { top: 118, bottom: 70, side: 20 },
+    expanding: { top: 118, bottom: 70, side: 20 },
+    select: { top: 124, bottom: 14, side: 20 },
+  };
 
 interface Props {
   graph: Graph;
@@ -42,7 +54,8 @@ function useElementSize<T extends HTMLElement>() {
   useLayoutEffect(() => {
     const element = ref.current;
     if (!element) return;
-    const update = () => setSize({ width: element.clientWidth, height: element.clientHeight });
+    const update = () =>
+      setSize({ width: element.clientWidth, height: element.clientHeight });
     update();
     const observer = new ResizeObserver(update);
     observer.observe(element);
@@ -55,7 +68,15 @@ function unitPx(): number {
   return Math.min(window.innerWidth / 672, window.innerHeight / 477);
 }
 
-export function MindMap({ graph, stage, focusedId, onFocus, onToggleStar, onPositions, rightInset }: Props) {
+export function MindMap({
+  graph,
+  stage,
+  focusedId,
+  onFocus,
+  onToggleStar,
+  onPositions,
+  rightInset,
+}: Props) {
   const [containerRef, size] = useElementSize<HTMLDivElement>();
   const { setViewport } = useReactFlow();
   const [nodes, setNodes, onNodesChange] = useNodesState<BubbleFlowNode>([]);
@@ -78,9 +99,15 @@ export function MindMap({ graph, stage, focusedId, onFocus, onToggleStar, onPosi
     for (const node of graph.nodes) {
       const point = laidOut.get(node.id)!;
       const known = positions.current.get(node.id);
-      if (known && (known.x !== point.x || known.y !== point.y)) moved.add(node.id);
-      const stored = known ?? (node.x !== null && node.y !== null ? { x: node.x, y: node.y } : null);
-      if (!node.is_root && (!stored || stored.x !== point.x || stored.y !== point.y)) {
+      if (known && (known.x !== point.x || known.y !== point.y))
+        moved.add(node.id);
+      const stored =
+        known ??
+        (node.x !== null && node.y !== null ? { x: node.x, y: node.y } : null);
+      if (
+        !node.is_root &&
+        (!stored || stored.x !== point.x || stored.y !== point.y)
+      ) {
         changed.push({ id: node.id, ...point });
       }
       positions.current.set(node.id, point);
@@ -92,7 +119,12 @@ export function MindMap({ graph, stage, focusedId, onFocus, onToggleStar, onPosi
     if (moved.size) {
       window.clearTimeout(animationTimer.current);
       animationTimer.current = window.setTimeout(
-        () => setNodes((current) => current.map((n) => (n.className ? { ...n, className: undefined } : n))),
+        () =>
+          setNodes((current) =>
+            current.map((n) =>
+              n.className ? { ...n, className: undefined } : n,
+            ),
+          ),
         800,
       );
     }
@@ -163,7 +195,8 @@ export function MindMap({ graph, stage, focusedId, onFocus, onToggleStar, onPosi
     const safe = SAFE_AREAS[stage];
     const width = size.width - rightInset * u;
     const anchorX = width / 2;
-    const anchorY = ROOT_Y[stage] * u + (size.height - MOCK_CARD_HEIGHT * u) / 2;
+    const anchorY =
+      ROOT_Y[stage] * u + (size.height - MOCK_CARD_HEIGHT * u) / 2;
     const fits =
       anchorX + minX * u >= safe.side * u &&
       anchorX + maxX * u <= width - safe.side * u &&
@@ -195,7 +228,10 @@ export function MindMap({ graph, stage, focusedId, onFocus, onToggleStar, onPosi
   const onNodeDragStop: OnNodeDrag<BubbleFlowNode> = useCallback(
     (_, node) => {
       const diameter = node.width ?? diameterFor(node.data.node);
-      const point = { x: Math.round(node.position.x + diameter / 2), y: Math.round(node.position.y + diameter / 2) };
+      const point = {
+        x: Math.round(node.position.x + diameter / 2),
+        y: Math.round(node.position.y + diameter / 2),
+      };
       positions.current.set(Number(node.id), point);
       onPositions([{ id: Number(node.id), ...point }]);
     },

@@ -3,6 +3,7 @@ import { Star } from "lucide-react";
 import { memo, type CSSProperties, type MouseEvent } from "react";
 import type { MapNode } from "../types";
 import { badgeOffset, diameterFor, fontSizeFor, styleFor } from "./kinds";
+import { t } from "../i18n";
 
 export interface BubbleData extends Record<string, unknown> {
   node: MapNode;
@@ -42,9 +43,22 @@ function BubbleNodeView({ data }: NodeProps<BubbleFlowNode>) {
   };
 
   return (
-    <div className="group relative" style={{ width: diameter, height: diameter }}>
-      <Handle type="target" position={Position.Top} style={hiddenHandle} isConnectable={false} />
-      <Handle type="source" position={Position.Top} style={hiddenHandle} isConnectable={false} />
+    <div
+      className="group relative"
+      style={{ width: diameter, height: diameter }}
+    >
+      <Handle
+        type="target"
+        position={Position.Top}
+        style={hiddenHandle}
+        isConnectable={false}
+      />
+      <Handle
+        type="source"
+        position={Position.Top}
+        style={hiddenHandle}
+        isConnectable={false}
+      />
       <div
         className={fresh ? "pf-pop h-full w-full" : "h-full w-full"}
         style={{ animationDelay: `${delay}ms` }}
@@ -57,7 +71,9 @@ function BubbleNodeView({ data }: NodeProps<BubbleFlowNode>) {
               "0 4px 12px rgba(150, 104, 214, 0.22)",
               "0 1px 3px rgba(150, 104, 214, 0.12)",
               node.starred ? "0 0 0 2.5px #ffffff, 0 0 0 3.6px #f783e9" : "",
-              focused && !node.starred ? "0 0 0 2.5px rgba(255,255,255,0.95), 0 0 0 3.4px rgba(160,120,230,0.55)" : "",
+              focused && !node.starred
+                ? "0 0 0 2.5px rgba(255,255,255,0.95), 0 0 0 3.4px rgba(160,120,230,0.55)"
+                : "",
             ]
               .filter(Boolean)
               .join(", "),
@@ -74,7 +90,7 @@ function BubbleNodeView({ data }: NodeProps<BubbleFlowNode>) {
         <button
           type="button"
           onClick={toggleStar}
-          aria-label={node.starred ? "Odznacz temat" : "Zaznacz temat"}
+          aria-label={node.starred ? t("Odznacz temat") : t("Zaznacz temat")}
           className={`absolute flex items-center justify-center rounded-full bg-white transition-all duration-200 ${
             node.starred ? "opacity-100" : "opacity-0 group-hover:opacity-100"
           }`}

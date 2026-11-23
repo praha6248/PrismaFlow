@@ -2,6 +2,7 @@ import { Check, Copy, RotateCcw, X } from "lucide-react";
 import { useState } from "react";
 import { u } from "../components/ui";
 import type { Handoff } from "../types";
+import { t } from "../i18n";
 
 interface Props {
   handoff: Handoff;
@@ -30,7 +31,10 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
   };
 
   return (
-    <div className="pf-fade absolute inset-0 z-40 flex items-center justify-center bg-[rgba(243,238,255,0.6)] backdrop-blur-[2px]" onClick={onClose}>
+    <div
+      className="pf-fade absolute inset-0 z-40 flex items-center justify-center bg-[rgba(243,238,255,0.6)] backdrop-blur-[2px]"
+      onClick={onClose}
+    >
       <div
         className="pf-fade-up flex flex-col"
         onClick={(e) => e.stopPropagation()}
@@ -45,9 +49,12 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
       >
         <div className="flex items-center">
           <span className="font-serif text-plum" style={{ fontSize: u(14) }}>
-            Handoff Pack
+            {t("Handoff Pack")}
           </span>
-          <div className="ml-auto flex rounded-full bg-[#f3ecfa]" style={{ padding: u(2), gap: u(2) }}>
+          <div
+            className="ml-auto flex rounded-full bg-[#f3ecfa]"
+            style={{ padding: u(2), gap: u(2) }}
+          >
             {(
               [
                 ["figma", "Figma prompt"],
@@ -70,7 +77,13 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
               </button>
             ))}
           </div>
-          <button type="button" onClick={onClose} className="text-haze hover:text-plum" style={{ marginLeft: u(8) }} aria-label="Zamknij">
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-haze hover:text-plum"
+            style={{ marginLeft: u(8) }}
+            aria-label="Zamknij"
+          >
             <X style={{ width: u(9), height: u(9) }} />
           </button>
         </div>
@@ -88,27 +101,51 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
         >
           {text}
         </pre>
-        <div className="flex items-center" style={{ marginTop: u(9), gap: u(8) }}>
-          <span className="min-w-0 flex-1 truncate text-haze" style={{ fontSize: u(5.2) }} title={handoff.directory}>
-            Zapisano: {handoff.directory}
+        <div
+          className="flex items-center"
+          style={{ marginTop: u(9), gap: u(8) }}
+        >
+          <span
+            className="min-w-0 flex-1 truncate text-haze"
+            style={{ fontSize: u(5.2) }}
+            title={handoff.directory}
+          >
+            {t("Zapisano:")} {handoff.directory}
           </span>
           <button
             type="button"
             onClick={onRestart}
             className="flex items-center transition-colors hover:bg-[#e9dcf8]"
-            style={{ fontSize: u(6.6), padding: `${u(5)} ${u(12)}`, borderRadius: u(6), gap: u(3), background: "#f3ecfa", color: "#573476" }}
+            style={{
+              fontSize: u(6.6),
+              padding: `${u(5)} ${u(12)}`,
+              borderRadius: u(6),
+              gap: u(3),
+              background: "#f3ecfa",
+              color: "#573476",
+            }}
           >
             <RotateCcw style={{ width: u(7), height: u(7) }} />
-            Nowy problem
+            {t("Nowy problem")}
           </button>
           <button
             type="button"
             onClick={copy}
             className="flex items-center text-white"
-            style={{ fontSize: u(6.6), padding: `${u(5)} ${u(12)}`, borderRadius: u(6), gap: u(3), background: "#f783e9" }}
+            style={{
+              fontSize: u(6.6),
+              padding: `${u(5)} ${u(12)}`,
+              borderRadius: u(6),
+              gap: u(3),
+              background: "#f783e9",
+            }}
           >
-            {copied ? <Check style={{ width: u(7), height: u(7) }} /> : <Copy style={{ width: u(7), height: u(7) }} />}
-            {copied ? "Skopiowano" : "Kopiuj"}
+            {copied ? (
+              <Check style={{ width: u(7), height: u(7) }} />
+            ) : (
+              <Copy style={{ width: u(7), height: u(7) }} />
+            )}
+            {copied ? t("Skopiowano") : t("Kopiuj")}
           </button>
         </div>
       </div>

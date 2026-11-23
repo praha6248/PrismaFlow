@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import diamonds from "../assets/diamonds.png";
 import { SendButton } from "../components/SendButton";
+import { t } from "../i18n";
 
 interface Props {
   leaving: boolean;
@@ -34,9 +35,14 @@ export function StartScreen({ leaving, busy, onSubmit }: Props) {
       />
       <h1
         className="absolute inset-x-0 text-center font-serif font-normal text-ink"
-        style={{ top: `calc(${offset} + var(--u) * 248.5)`, fontSize: "calc(var(--u) * 18.6)", lineHeight: 1 }}
+        style={{
+          top: `calc(${offset} + var(--u) * 248.5)`,
+          fontSize: "calc(var(--u) * 18.6)",
+          lineHeight: 1,
+        }}
       >
-        Co chcesz <span style={{ color: "#ed34d8" }}>stworzyć?</span>
+        {t("Co chcesz")}{" "}
+        <span style={{ color: "#ed34d8" }}>{t("stworzyć?")}</span>
       </h1>
       <form
         onSubmit={submit}
@@ -46,19 +52,27 @@ export function StartScreen({ leaving, busy, onSubmit }: Props) {
           width: "calc(var(--u) * 241)",
           height: "calc(var(--u) * 22)",
           borderRadius: "calc(var(--u) * 11)",
-          boxShadow: "0 calc(var(--u) * 2) calc(var(--u) * 6) rgba(170, 140, 205, 0.28)",
+          boxShadow:
+            "0 calc(var(--u) * 2) calc(var(--u) * 6) rgba(170, 140, 205, 0.28)",
         }}
       >
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="Wpisz myśl przewodnią..."
+          placeholder={t("Wpisz myśl przewodnią...")}
           maxLength={80}
           autoFocus
           className="h-full w-full bg-transparent text-mauve outline-none placeholder:text-[#c5c5c5]"
-          style={{ paddingLeft: "calc(var(--u) * 7)", paddingRight: "calc(var(--u) * 28)", fontSize: "calc(var(--u) * 7.3)" }}
+          style={{
+            paddingLeft: "calc(var(--u) * 7)",
+            paddingRight: "calc(var(--u) * 28)",
+            fontSize: "calc(var(--u) * 7.3)",
+          }}
         />
-        <div className="absolute" style={{ right: "calc(var(--u) * 1.5)", top: "calc(var(--u) * 1)" }}>
+        <div
+          className="absolute"
+          style={{ right: "calc(var(--u) * 1.5)", top: "calc(var(--u) * 1)" }}
+        >
           <SendButton size={20} disabled={!value.trim() || busy} />
         </div>
       </form>

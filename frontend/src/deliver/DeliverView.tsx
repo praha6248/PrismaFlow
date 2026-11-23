@@ -16,24 +16,38 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, waitForJob } from "../api";
 import { PageTitle, u, SHADOW } from "../components/ui";
 import { ProgressContent } from "../discover/BottomBar";
-import type { DeliverState, Flow, FlowAudit, FlowElement, FlowScreen, Handoff, ScreenKind, Suggestion } from "../types";
+import type {
+  DeliverState,
+  Flow,
+  FlowAudit,
+  FlowElement,
+  FlowScreen,
+  Handoff,
+  ScreenKind,
+  Suggestion,
+} from "../types";
 import { AuditPanel } from "./AuditPanel";
 import { HandoffModal } from "./HandoffModal";
-import { ScreenNode, type ScreenActions, type ScreenFlowNode } from "./ScreenNode";
+import {
+  ScreenNode,
+  type ScreenActions,
+  type ScreenFlowNode,
+} from "./ScreenNode";
 import { Toolbox } from "./Toolbox";
+import { plural, t } from "../i18n";
 
 const PANEL_TOP = 136.8;
 const PANEL_HEIGHT = 293.7;
 const nodeTypes = { screen: ScreenNode };
 
 const STAGE_TEXT: Record<string, string> = {
-  queued: "Przygotowuję projekt",
-  context: "Czytam backlog i personę",
-  thinking: "Model projektuje ekrany",
-  layout: "Układam przepływ",
-  audit: "Liczę metryki audytu",
-  saving: "Zapisuję",
-  done: "Gotowe",
+  queued: t("Przygotowuję projekt"),
+  context: t("Czytam backlog i personę"),
+  thinking: t("Model projektuje ekrany"),
+  layout: t("Układam przepływ"),
+  audit: t("Liczę metryki audytu"),
+  saving: t("Zapisuję"),
+  done: t("Gotowe"),
 };
 
 const panelStyle = (left: number, width: number) => ({
@@ -46,32 +60,44 @@ const panelStyle = (left: number, width: number) => ({
   boxShadow: SHADOW,
 });
 
-const newId = (prefix: string) => `${prefix}${Math.random().toString(16).slice(2, 8)}`;
-
-function plural(count: number, one: string, few: string, many: string): string {
-  if (count === 1) return one;
-  const last = count % 10;
-  const lastTwo = count % 100;
-  return last >= 2 && last <= 4 && (lastTwo < 12 || lastTwo > 14) ? few : many;
-}
+const newId = (prefix: string) =>
+  `${prefix}${Math.random().toString(16).slice(2, 8)}`;
 
 function ZoomControl() {
   const { zoomIn, zoomOut, fitView } = useReactFlow();
   const { zoom } = useViewport();
   return (
-    <div className="flex items-center rounded-full bg-white text-mauve" style={{ gap: u(5), padding: `${u(2)} ${u(6)}`, fontSize: u(5.4), boxShadow: SHADOW }}>
-      <button type="button" onClick={() => zoomOut({ duration: 200 })} aria-label="Pomniejsz">
+    <div
+      className="flex items-center rounded-full bg-white text-mauve"
+      style={{
+        gap: u(5),
+        padding: `${u(2)} ${u(6)}`,
+        fontSize: u(5.4),
+        boxShadow: SHADOW,
+      }}
+    >
+      <button
+        type="button"
+        onClick={() => zoomOut({ duration: 200 })}
+        aria-label={t("Pomniejsz")}
+      >
         <Minus style={{ width: u(5.5), height: u(5.5) }} />
       </button>
-      <span style={{ minWidth: u(17), textAlign: "center" }}>{Math.round(zoom * 100)}%</span>
-      <button type="button" onClick={() => zoomIn({ duration: 200 })} aria-label="Powiększ">
+      <span style={{ minWidth: u(17), textAlign: "center" }}>
+        {Math.round(zoom * 100)}%
+      </span>
+      <button
+        type="button"
+        onClick={() => zoomIn({ duration: 200 })}
+        aria-label={t("Powiększ")}
+      >
         <Plus style={{ width: u(5.5), height: u(5.5) }} />
       </button>
       <button
         type="button"
         onClick={() => fitView({ padding: 0.12, maxZoom: 1, duration: 400 })}
-        aria-label="Pokaż wszystkie ekrany"
-        title="Pokaż wszystkie ekrany"
+        aria-label={t("Pokaż wszystkie ekrany")}
+        title={t("Pokaż wszystkie ekrany")}
         style={{ borderLeft: `${u(0.5)} solid #eee6f5`, paddingLeft: u(5) }}
       >
         <LocateFixed style={{ width: u(5.5), height: u(5.5) }} />
@@ -91,7 +117,16 @@ interface CanvasProps {
   actions: ScreenActions;
 }
 
-function Canvas({ flow, state, audit, selectedId, focusRequest, onSelect, onChange, actions }: CanvasProps) {
+function Canvas({
+  flow,
+  state,
+  audit,
+  selectedId,
+  focusRequest,
+  onSelect,
+  onChange,
+  actions,
+}: CanvasProps) {
   const { fitView, setCenter, getZoom } = useReactFlow();
   const fitted = useRef(false);
   const box = useRef<HTMLDivElement>(null);
@@ -100,7 +135,8 @@ function Canvas({ flow, state, audit, selectedId, focusRequest, onSelect, onChan
 
   const flagged = useMemo(() => {
     const ids = new Set<string>(audit.fitts.map((f) => f.element_id));
-    for (const t of audit.targets.below_aaa) if (t.primary) ids.add(t.element_id);
+    for (const t of audit.targets.below_aaa)
+      if (t.primary) ids.add(t.element_id);
     return ids;
   }, [audit]);
 
@@ -138,8 +174,17 @@ function Canvas({ flow, state, audit, selectedId, focusRequest, onSelect, onChan
           label: element.label,
           type: "smoothstep",
           style: { stroke: "#f2a2e8", strokeWidth: 1.2 },
-          markerEnd: { type: MarkerType.ArrowClosed, color: "#f2a2e8", width: 14, height: 14 },
-          labelStyle: { fontSize: 7.5, fill: "#7c6d88", fontFamily: "Montserrat" },
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: "#f2a2e8",
+            width: 14,
+            height: 14,
+          },
+          labelStyle: {
+            fontSize: 7.5,
+            fill: "#7c6d88",
+            fontFamily: "Montserrat",
+          },
           labelBgStyle: { fill: "#fdfcfe" },
           labelBgPadding: [4, 2] as [number, number],
         })),
@@ -149,14 +194,21 @@ function Canvas({ flow, state, audit, selectedId, focusRequest, onSelect, onChan
   useEffect(() => {
     if (!fitted.current && flow.screens.length) {
       fitted.current = true;
-      window.setTimeout(() => fitView({ padding: 0.12, maxZoom: 1, duration: 0 }), 30);
+      window.setTimeout(
+        () => fitView({ padding: 0.12, maxZoom: 1, duration: 0 }),
+        30,
+      );
     }
   }, [flow.screens.length, fitView]);
 
   useEffect(() => {
     if (!focusRequest) return;
     const screen = flow.screens.find((s) => s.id === focusRequest.id);
-    if (screen) setCenter(screen.x + 100, screen.y + 80, { zoom: Math.max(getZoom(), 0.8), duration: 400 });
+    if (screen)
+      setCenter(screen.x + 100, screen.y + 80, {
+        zoom: Math.max(getZoom(), 0.8),
+        duration: 400,
+      });
   }, [focusRequest]);
 
   const onNodesChange: OnNodesChange<ScreenFlowNode> = useCallback(
@@ -170,8 +222,12 @@ function Canvas({ flow, state, audit, selectedId, focusRequest, onSelect, onChan
       if (moves.length) {
         onChange((current) => ({
           screens: current.screens.map((screen) => {
-            const move = moves.find((m) => m.type === "position" && m.id === screen.id);
-            return move && move.type === "position" && move.position ? { ...screen, x: move.position.x, y: move.position.y } : screen;
+            const move = moves.find(
+              (m) => m.type === "position" && m.id === screen.id,
+            );
+            return move && move.type === "position" && move.position
+              ? { ...screen, x: move.position.x, y: move.position.y }
+              : screen;
           }),
         }));
       }
@@ -181,12 +237,19 @@ function Canvas({ flow, state, audit, selectedId, focusRequest, onSelect, onChan
 
   const onEdgesChange: OnEdgesChange = useCallback(
     (changeset) => {
-      const removed = changeset.toArray().filter((c) => c.type === "remove").map((c) => c.id);
+      const removed = changeset
+        .toArray()
+        .filter((c) => c.type === "remove")
+        .map((c) => c.id);
       if (!removed.length) return;
       onChange((current) => ({
         screens: current.screens.map((screen) => ({
           ...screen,
-          elements: screen.elements.map((e) => (removed.includes(`${screen.id}:${e.id}`) ? { ...e, target: null } : e)),
+          elements: screen.elements.map((e) =>
+            removed.includes(`${screen.id}:${e.id}`)
+              ? { ...e, target: null }
+              : e,
+          ),
         })),
       }));
     },
@@ -195,8 +258,11 @@ function Canvas({ flow, state, audit, selectedId, focusRequest, onSelect, onChan
 
   const onConnect = useCallback(
     (connection: Connection) => {
-      if (!connection.sourceHandle || connection.source === connection.target) return;
-      actions.updateElement(connection.source, connection.sourceHandle, { target: connection.target });
+      if (!connection.sourceHandle || connection.source === connection.target)
+        return;
+      actions.updateElement(connection.source, connection.sourceHandle, {
+        target: connection.target,
+      });
     },
     [actions],
   );
@@ -214,38 +280,55 @@ function Canvas({ flow, state, audit, selectedId, focusRequest, onSelect, onChan
     const right = (Math.max(...xs) + 200) * viewport.zoom + viewport.x;
     const bottom = (Math.max(...ys) + 160) * viewport.zoom + viewport.y;
     const margin = 24;
-    setLost(right < margin || bottom < margin || left > element.clientWidth - margin || top > element.clientHeight - margin);
+    setLost(
+      right < margin ||
+        bottom < margin ||
+        left > element.clientWidth - margin ||
+        top > element.clientHeight - margin,
+    );
   }, [viewport, nodes]);
 
   return (
     <div ref={box} className="relative h-full w-full">
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      nodeTypes={nodeTypes}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      onPaneClick={() => onSelect(null)}
-      minZoom={0.3}
-      maxZoom={1.6}
-      proOptions={{ hideAttribution: true }}
-      forceColorMode="light"
-      style={{ background: "transparent" }}
-      deleteKeyCode={["Delete"]}
-      connectionLineStyle={{ stroke: "#f783e9", strokeWidth: 1.2 }}
-    >
-      <Background variant={BackgroundVariant.Dots} gap={18} size={1} color="#e8dcf2" />
-    </ReactFlow>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onPaneClick={() => onSelect(null)}
+        minZoom={0.3}
+        maxZoom={1.6}
+        proOptions={{ hideAttribution: true }}
+        forceColorMode="light"
+        style={{ background: "transparent" }}
+        deleteKeyCode={["Delete"]}
+        connectionLineStyle={{ stroke: "#f783e9", strokeWidth: 1.2 }}
+      >
+        <Background
+          variant={BackgroundVariant.Dots}
+          gap={18}
+          size={1}
+          color="#e8dcf2"
+        />
+      </ReactFlow>
       {lost && (
         <button
           type="button"
           onClick={() => fitView({ padding: 0.12, maxZoom: 1, duration: 500 })}
           className="pf-fade-up absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center text-white transition-transform hover:scale-[1.03]"
-          style={{ gap: u(4), padding: `${u(6)} ${u(11)}`, borderRadius: u(20), fontSize: u(6.2), background: "#f783e9", boxShadow: SHADOW }}
+          style={{
+            gap: u(4),
+            padding: `${u(6)} ${u(11)}`,
+            borderRadius: u(20),
+            fontSize: u(6.2),
+            background: "#f783e9",
+            boxShadow: SHADOW,
+          }}
         >
           <LocateFixed style={{ width: u(7), height: u(7) }} />
-          Ekrany są poza widokiem · wróć do nich
+          {t("Ekrany są poza widokiem · wróć do nich")}
         </button>
       )}
     </div>
@@ -263,9 +346,15 @@ function Studio({ projectId, notify, onRestart }: Props) {
   const [flow, setFlow] = useState<Flow>({ screens: [] });
   const [audit, setAudit] = useState<FlowAudit | null>(null);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-  const [job, setJob] = useState<{ kind: "flow" | "optimize"; stage: string } | null>(null);
+  const [job, setJob] = useState<{
+    kind: "flow" | "optimize";
+    stage: string;
+  } | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [focusRequest, setFocusRequest] = useState<{ id: string; at: number } | null>(null);
+  const [focusRequest, setFocusRequest] = useState<{
+    id: string;
+    at: number;
+  } | null>(null);
   const [handoff, setHandoff] = useState<Handoff | null>(null);
   const [handoffBusy, setHandoffBusy] = useState(false);
   const saveTimer = useRef<number | undefined>(undefined);
@@ -285,13 +374,24 @@ function Studio({ projectId, notify, onRestart }: Props) {
     async (kind: "flow" | "optimize") => {
       setJob({ kind, stage: "queued" });
       try {
-        const startedJob = kind === "flow" ? await api.generateFlow(projectId) : await api.optimizeFlow(projectId);
-        const finished = await waitForJob(startedJob.id, (j) => setJob({ kind, stage: j.stage }));
+        const startedJob =
+          kind === "flow"
+            ? await api.generateFlow(projectId)
+            : await api.optimizeFlow(projectId);
+        const finished = await waitForJob(startedJob.id, (j) =>
+          setJob({ kind, stage: j.stage }),
+        );
         if (finished.warnings.some((w) => w.startsWith("llm:"))) {
-          notify("Lokalny model nie odpowiedział — pokazuję sugestie wyliczone z audytu.");
+          notify(
+            t(
+              "Lokalny model nie odpowiedział — pokazuję sugestie wyliczone z audytu.",
+            ),
+          );
         }
         if (finished.status === "error" || !finished.result) {
-          notify(`${kind === "flow" ? "Nie udało się zaprojektować przepływu" : "Optymalizacja nie powiodła się"}: ${finished.error ?? "nieznany błąd"}`);
+          notify(
+            `${kind === "flow" ? t("Nie udało się zaprojektować przepływu") : t("Optymalizacja nie powiodła się")}: ${finished.error ?? t("nieznany błąd")}`,
+          );
           return;
         }
         apply(finished.result as DeliverState);
@@ -309,12 +409,22 @@ function Studio({ projectId, notify, onRestart }: Props) {
       .getDeliver(projectId)
       .then((data) => {
         apply(data);
-        if (!data.flow.screens.length && data.features.length && !started.current) {
+        if (
+          !data.flow.screens.length &&
+          data.features.length &&
+          !started.current
+        ) {
           started.current = true;
           runJob("flow");
         }
       })
-      .catch((error: Error) => notify(`Nie udało się wczytać fazy Deliver: ${error.message}`));
+      .catch((error: Error) =>
+        notify(
+          t("Nie udało się wczytać fazy Deliver: {error}", {
+            error: error.message,
+          }),
+        ),
+      );
   }, [projectId, apply, runJob, notify]);
 
   const flush = useCallback(async () => {
@@ -343,7 +453,9 @@ function Studio({ projectId, notify, onRestart }: Props) {
 
   const mapScreen = useCallback(
     (screenId: string, fn: (screen: FlowScreen) => FlowScreen) =>
-      change((current) => ({ screens: current.screens.map((s) => (s.id === screenId ? fn(s) : s)) })),
+      change((current) => ({
+        screens: current.screens.map((s) => (s.id === screenId ? fn(s) : s)),
+      })),
     [change],
   );
 
@@ -354,7 +466,8 @@ function Studio({ projectId, notify, onRestart }: Props) {
         change((current) => ({
           screens: current.screens.map((s) => {
             if (s.id === id) return { ...s, kind };
-            if ((kind === "start" || kind === "goal") && s.kind === kind) return { ...s, kind: "step" };
+            if ((kind === "start" || kind === "goal") && s.kind === kind)
+              return { ...s, kind: "step" };
             return s;
           }),
         })),
@@ -362,25 +475,62 @@ function Studio({ projectId, notify, onRestart }: Props) {
         change((current) => ({
           screens: current.screens
             .filter((s) => s.id !== id)
-            .map((s) => ({ ...s, elements: s.elements.map((e) => (e.target === id ? { ...e, target: null } : e)) })),
+            .map((s) => ({
+              ...s,
+              elements: s.elements.map((e) =>
+                e.target === id ? { ...e, target: null } : e,
+              ),
+            })),
         })),
       addElement: (id) =>
         mapScreen(id, (s) => ({
           ...s,
-          elements: [...s.elements, { id: newId("e"), label: "Nowy przycisk", type: "button", size: "L", zone: "bottom", options: 1, target: null }],
+          elements: [
+            ...s.elements,
+            {
+              id: newId("e"),
+              label: t("Nowy przycisk"),
+              type: "button",
+              size: "L",
+              zone: "bottom",
+              options: 1,
+              target: null,
+            },
+          ],
         })),
       updateElement: (screenId, elementId, patch: Partial<FlowElement>) =>
-        mapScreen(screenId, (s) => ({ ...s, elements: s.elements.map((e) => (e.id === elementId ? { ...e, ...patch } : e)) })),
-      removeElement: (screenId, elementId) => mapScreen(screenId, (s) => ({ ...s, elements: s.elements.filter((e) => e.id !== elementId) })),
+        mapScreen(screenId, (s) => ({
+          ...s,
+          elements: s.elements.map((e) =>
+            e.id === elementId ? { ...e, ...patch } : e,
+          ),
+        })),
+      removeElement: (screenId, elementId) =>
+        mapScreen(screenId, (s) => ({
+          ...s,
+          elements: s.elements.filter((e) => e.id !== elementId),
+        })),
       dropFeature: (screenId, featureId) =>
         change((current) => ({
           screens: current.screens.map((s) =>
             s.id === screenId
-              ? { ...s, feature_ids: s.feature_ids.includes(featureId) ? s.feature_ids : [...s.feature_ids, featureId] }
-              : { ...s, feature_ids: s.feature_ids.filter((f) => f !== featureId) },
+              ? {
+                  ...s,
+                  feature_ids: s.feature_ids.includes(featureId)
+                    ? s.feature_ids
+                    : [...s.feature_ids, featureId],
+                }
+              : {
+                  ...s,
+                  feature_ids: s.feature_ids.filter((f) => f !== featureId),
+                },
           ),
         })),
-      removeFeature: (screenId, featureId) => mapScreen(screenId, (s) => ({ ...s, feature_ids: s.feature_ids.filter((f) => f !== featureId) })),
+      removeFeature: (screenId, featureId) =>
+        mapScreen(screenId, (s) => ({
+          ...s,
+          feature_ids: s.feature_ids.filter((f) => f !== featureId),
+        })),
     }),
     [change, mapScreen],
   );
@@ -394,7 +544,17 @@ function Studio({ projectId, notify, onRestart }: Props) {
       x: last + 250,
       y: 260,
       feature_ids: [],
-      elements: [{ id: newId("e"), label: "Dalej", type: "button", size: "L", zone: "bottom", options: 1, target: null }],
+      elements: [
+        {
+          id: newId("e"),
+          label: t("Dalej"),
+          type: "button",
+          size: "L",
+          zone: "bottom",
+          options: 1,
+          target: null,
+        },
+      ],
     };
     change((current) => ({ screens: [...current.screens, screen] }));
     setSelectedId(screen.id);
@@ -443,12 +603,18 @@ function Studio({ projectId, notify, onRestart }: Props) {
   };
 
   const persona = state?.persona;
-  const subtitle = `${persona ? `${persona.name} · ${persona.focus} · ` : ""}Połącz ekrany i dopracuj doświadczenie`;
+  const subtitle = `${persona ? `${persona.name} · ${persona.focus} · ` : ""}${t("Połącz ekrany i dopracuj doświadczenie")}`;
   const transitions = audit?.transitions ?? 0;
 
   return (
     <>
-      <PageTitle title="Studio User Flow" subtitle={subtitle} top={99.5} size={14.2} gap={19} />
+      <PageTitle
+        title="Studio User Flow"
+        subtitle={subtitle}
+        top={99.5}
+        size={14.2}
+        gap={19}
+      />
 
       <div className="pf-fade-up absolute" style={panelStyle(8.3, 113)}>
         {state && (
@@ -462,14 +628,28 @@ function Studio({ projectId, notify, onRestart }: Props) {
         )}
       </div>
 
-      <div className="pf-fade-up absolute overflow-hidden" style={{ ...panelStyle(129.3, 362.2), animationDelay: "60ms" }}>
-        <div className="absolute z-10 flex items-start justify-between" style={{ left: u(9), right: u(9), top: u(9) }}>
+      <div
+        className="pf-fade-up absolute overflow-hidden"
+        style={{ ...panelStyle(129.3, 362.2), animationDelay: "60ms" }}
+      >
+        <div
+          className="absolute z-10 flex items-start justify-between"
+          style={{ left: u(9), right: u(9), top: u(9) }}
+        >
           <div>
-            <div className="font-serif text-ink" style={{ fontSize: u(9), lineHeight: 1 }}>
-              Przepływ aplikacji
+            <div
+              className="font-serif text-ink"
+              style={{ fontSize: u(9), lineHeight: 1 }}
+            >
+              {t("Przepływ aplikacji")}
             </div>
-            <div className="text-haze" style={{ fontSize: u(4.8), marginTop: u(3) }}>
-              {flow.screens.length} {plural(flow.screens.length, "ekran", "ekrany", "ekranów")} · {transitions}{" "}
+            <div
+              className="text-haze"
+              style={{ fontSize: u(4.8), marginTop: u(3) }}
+            >
+              {flow.screens.length}{" "}
+              {plural(flow.screens.length, "ekran", "ekrany", "ekranów")} ·{" "}
+              {transitions}{" "}
               {plural(transitions, "połączenie", "połączenia", "połączeń")}
             </div>
           </div>
@@ -492,31 +672,54 @@ function Studio({ projectId, notify, onRestart }: Props) {
         {job?.kind === "flow" && (
           <div
             className="pf-fade-up absolute left-1/2 z-20 -translate-x-1/2"
-            style={{ top: u(120), width: u(300), height: u(42), borderRadius: u(10), background: "#fdfcfe", boxShadow: SHADOW }}
+            style={{
+              top: u(120),
+              width: u(300),
+              height: u(42),
+              borderRadius: u(10),
+              background: "#fdfcfe",
+              boxShadow: SHADOW,
+            }}
           >
-            <ProgressContent title="Projektuję przepływ..." text={STAGE_TEXT[job.stage] ?? STAGE_TEXT.thinking} stage={job.stage} />
+            <ProgressContent
+              title={t("Projektuję przepływ...")}
+              text={STAGE_TEXT[job.stage] ?? STAGE_TEXT.thinking}
+              stage={job.stage}
+            />
           </div>
         )}
         {!job && state && !flow.screens.length && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center" style={{ gap: u(6) }}>
+          <div
+            className="absolute inset-0 flex flex-col items-center justify-center text-center"
+            style={{ gap: u(6) }}
+          >
             <span className="text-mauve" style={{ fontSize: u(7) }}>
-              {state.features.length ? "Przepływ jest pusty." : "Najpierw dodaj funkcje w fazie Develop."}
+              {state.features.length
+                ? t("Przepływ jest pusty.")
+                : t("Najpierw dodaj funkcje w fazie Develop.")}
             </span>
             {state.features.length > 0 && (
               <button
                 type="button"
                 onClick={() => runJob("flow")}
                 className="rounded text-white"
-                style={{ fontSize: u(6.4), padding: `${u(4)} ${u(10)}`, background: "#f783e9" }}
+                style={{
+                  fontSize: u(6.4),
+                  padding: `${u(4)} ${u(10)}`,
+                  background: "#f783e9",
+                }}
               >
-                Zaprojektuj przepływ z AI
+                {t("Zaprojektuj przepływ z AI")}
               </button>
             )}
           </div>
         )}
       </div>
 
-      <div className="pf-fade-up absolute" style={{ ...panelStyle(498.6, 143.3), animationDelay: "120ms" }}>
+      <div
+        className="pf-fade-up absolute"
+        style={{ ...panelStyle(498.6, 143.3), animationDelay: "120ms" }}
+      >
         {audit && (
           <AuditPanel
             audit={audit}
@@ -532,11 +735,21 @@ function Studio({ projectId, notify, onRestart }: Props) {
         )}
       </div>
 
-      <p className="pf-fade pointer-events-none absolute inset-x-0 text-center text-haze" style={{ top: u(441), fontSize: u(4.6) }}>
-        Audyt: Hick RT = a + b·log₂(n+1) · Fitts ID = log₂(2D/W) · KLM · WCAG 2.2 · sugestie i projekt z lokalnego modelu do weryfikacji
+      <p
+        className="pf-fade pointer-events-none absolute inset-x-0 text-center text-haze"
+        style={{ top: u(441), fontSize: u(4.6) }}
+      >
+        Audyt: Hick RT = a + b·log₂(n+1) · Fitts ID = log₂(2D/W) · KLM · WCAG
+        2.2 · sugestie i projekt z lokalnego modelu do weryfikacji
       </p>
 
-      {handoff && <HandoffModal handoff={handoff} onClose={() => setHandoff(null)} onRestart={onRestart} />}
+      {handoff && (
+        <HandoffModal
+          handoff={handoff}
+          onClose={() => setHandoff(null)}
+          onRestart={onRestart}
+        />
+      )}
     </>
   );
 }

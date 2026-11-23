@@ -14,7 +14,8 @@ export function Toast({ message, onClose }: Props) {
         padding: "calc(var(--u) * 5) calc(var(--u) * 12)",
         borderRadius: "calc(var(--u) * 10)",
         background: "rgba(255,255,255,0.92)",
-        boxShadow: "0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(196, 160, 232, 0.3)",
+        boxShadow:
+          "0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(196, 160, 232, 0.3)",
         fontSize: "calc(var(--u) * 6.4)",
       }}
       onClick={onClose}

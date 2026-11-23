@@ -10,13 +10,39 @@ import {
   type DragOverEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
-import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { Plus } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import { api, waitForJob } from "../api";
-import { BarProgress, ChoiceBar, FooterNote, PageTitle, SHADOW, u, type Frame } from "../components/ui";
+import {
+  BarProgress,
+  ChoiceBar,
+  FooterNote,
+  PageTitle,
+  SHADOW,
+  u,
+  type Frame,
+} from "../components/ui";
 import type { DevelopState, Feature, Priority } from "../types";
-import { CARD_GAP, CARD_HEIGHT, FeatureCardView, PRIORITY_STYLES, SortableFeatureCard } from "./FeatureCard";
+import {
+  CARD_GAP,
+  CARD_HEIGHT,
+  FeatureCardView,
+  PRIORITY_STYLES,
+  SortableFeatureCard,
+} from "./FeatureCard";
+import { plural, t } from "../i18n";
 
 const COLUMNS: Priority[] = ["must", "should", "could", "wont"];
 const COLUMN = { left: 25.2, top: 179, width: 140, height: 207.5, gap: 11.7 };
@@ -24,11 +50,11 @@ const BAR: Frame = { left: 25.2, top: 397.4, width: 595, height: 31 };
 const BAR_BUTTON: Frame = { left: 461.7, top: 4.8, width: 122, height: 21.3 };
 
 const STAGE_TEXT: Record<string, string> = {
-  queued: "Przygotowuję propozycje",
-  context: "Zbieram dowody z mapy",
-  thinking: "Model proponuje funkcje",
-  scoring: "Liczę popyt na podstawie dowodów",
-  saving: "Zapisuję tablicę",
+  queued: t("Przygotowuję propozycje"),
+  context: t("Zbieram dowody z mapy"),
+  thinking: t("Model proponuje funkcje"),
+  scoring: t("Liczę popyt na podstawie dowodów"),
+  saving: t("Zapisuję tablicę"),
   done: "Gotowe",
 };
 
@@ -36,20 +62,17 @@ type Board = Record<Priority, Feature[]>;
 
 function toBoard(features: Feature[]): Board {
   const board: Board = { must: [], should: [], could: [], wont: [] };
-  for (const feature of [...features].sort((a, b) => a.position - b.position)) board[feature.priority].push(feature);
+  for (const feature of [...features].sort((a, b) => a.position - b.position))
+    board[feature.priority].push(feature);
   return board;
 }
 
-function plural(count: number, one: string, few: string, many: string): string {
-  if (count === 1) return one;
-  const last = count % 10;
-  const lastTwo = count % 100;
-  return last >= 2 && last <= 4 && (lastTwo < 12 || lastTwo > 14) ? few : many;
-}
-
 function columnOf(board: Board, id: number | string): Priority | null {
-  if (typeof id === "string" && (COLUMNS as string[]).includes(id)) return id as Priority;
-  return COLUMNS.find((column) => board[column].some((f) => f.id === id)) ?? null;
+  if (typeof id === "string" && (COLUMNS as string[]).includes(id))
+    return id as Priority;
+  return (
+    COLUMNS.find((column) => board[column].some((f) => f.id === id)) ?? null
+  );
 }
 
 interface ColumnProps {
@@ -60,7 +83,13 @@ interface ColumnProps {
   onDelete: (feature: Feature) => void;
 }
 
-function Column({ priority, index, features, onRename, onDelete }: ColumnProps) {
+function Column({
+  priority,
+  index,
+  features,
+  onRename,
+  onDelete,
+}: ColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id: priority });
   const style = PRIORITY_STYLES[priority];
   return (
@@ -73,7 +102,9 @@ function Column({ priority, index, features, onRename, onDelete }: ColumnProps) 
         width: u(COLUMN.width),
         height: u(COLUMN.height),
         borderRadius: u(8),
-        background: isOver ? "rgba(255, 255, 255, 0.62)" : "rgba(255, 255, 255, 0.4)",
+        background: isOver
+          ? "rgba(255, 255, 255, 0.62)"
+          : "rgba(255, 255, 255, 0.4)",
         border: `${u(0.7)} solid ${isOver ? "#f7b6ee" : "#ebdff4"}`,
         transition: "background 160ms, border-color 160ms",
         animationDelay: `${index * 60}ms`,
@@ -95,19 +126,39 @@ function Column({ priority, index, features, onRename, onDelete }: ColumnProps) 
       >
         {style.label}
       </span>
-      <span className="absolute text-haze" style={{ left: u(112), top: u(10.5), fontSize: u(7) }}>
+      <span
+        className="absolute text-haze"
+        style={{ left: u(112), top: u(10.5), fontSize: u(7) }}
+      >
         {features.length}
       </span>
-      <span className="absolute text-haze" style={{ left: u(8), top: u(27.4), fontSize: u(5.6) }}>
+      <span
+        className="absolute text-haze"
+        style={{ left: u(8), top: u(27.4), fontSize: u(5.6) }}
+      >
         {style.hint}
       </span>
       <div
         className="pf-scroll absolute overflow-y-auto overflow-x-hidden"
-        style={{ left: u(6.8), right: u(0), top: u(42.6), bottom: u(4), paddingRight: u(6.8) }}
+        style={{
+          left: u(6.8),
+          right: u(0),
+          top: u(42.6),
+          bottom: u(4),
+          paddingRight: u(6.8),
+        }}
       >
-        <SortableContext items={features.map((f) => f.id)} strategy={verticalListSortingStrategy}>
+        <SortableContext
+          items={features.map((f) => f.id)}
+          strategy={verticalListSortingStrategy}
+        >
           {features.map((feature) => (
-            <SortableFeatureCard key={feature.id} feature={feature} onRename={onRename} onDelete={onDelete} />
+            <SortableFeatureCard
+              key={feature.id}
+              feature={feature}
+              onRename={onRename}
+              onDelete={onDelete}
+            />
           ))}
         </SortableContext>
         {(priority === "wont" || features.length === 0) && (
@@ -124,7 +175,9 @@ function Column({ priority, index, features, onRename, onDelete }: ColumnProps) 
               padding: `0 ${u(14)}`,
             }}
           >
-            {priority === "wont" ? "Odłóż tutaj funkcje, które mogą poczekać." : "Przeciągnij tutaj funkcję."}
+            {priority === "wont"
+              ? t("Odłóż tutaj funkcje, które mogą poczekać.")
+              : t("Przeciągnij tutaj funkcję.")}
           </div>
         )}
       </div>
@@ -133,7 +186,11 @@ function Column({ priority, index, features, onRename, onDelete }: ColumnProps) 
 }
 
 interface AddFormProps {
-  onSubmit: (title: string, description: string, priority: Priority) => Promise<void>;
+  onSubmit: (
+    title: string,
+    description: string,
+    priority: Priority,
+  ) => Promise<void>;
   onClose: () => void;
 }
 
@@ -172,7 +229,7 @@ function AddFeatureForm({ onSubmit, onClose }: AddFormProps) {
         value={title}
         maxLength={60}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="Nazwa funkcji"
+        placeholder={t("Nazwa funkcji")}
         className="rounded bg-[#f7f3fb] text-ink outline-none placeholder:text-[#9b8fa6]"
         style={{ height: u(17), padding: `0 ${u(6)}`, fontSize: u(7.4) }}
       />
@@ -180,7 +237,7 @@ function AddFeatureForm({ onSubmit, onClose }: AddFormProps) {
         value={description}
         maxLength={140}
         onChange={(e) => setDescription(e.target.value)}
-        placeholder="Co daje użytkownikowi?"
+        placeholder={t("Co daje użytkownikowi?")}
         className="rounded bg-[#f7f3fb] text-mauve outline-none placeholder:text-[#9b8fa6]"
         style={{ height: u(15), padding: `0 ${u(6)}`, fontSize: u(6.4) }}
       />
@@ -198,22 +255,34 @@ function AddFeatureForm({ onSubmit, onClose }: AddFormProps) {
               fontSize: u(6),
               background: PRIORITY_STYLES[column].background,
               color: PRIORITY_STYLES[column].color,
-              boxShadow: priority === column ? `0 0 0 ${u(0.9)} #f783e9` : "none",
+              boxShadow:
+                priority === column ? `0 0 0 ${u(0.9)} #f783e9` : "none",
             }}
           >
             {PRIORITY_STYLES[column].label}
           </button>
         ))}
-        <button type="button" onClick={onClose} className="ml-auto text-haze" style={{ fontSize: u(6.4) }}>
-          Anuluj
+        <button
+          type="button"
+          onClick={onClose}
+          className="ml-auto text-haze"
+          style={{ fontSize: u(6.4) }}
+        >
+          {t("Anuluj")}
         </button>
         <button
           type="submit"
           disabled={!title.trim() || busy}
           className="text-white disabled:opacity-50"
-          style={{ height: u(14), padding: `0 ${u(8)}`, borderRadius: u(5), fontSize: u(6.6), background: "#f783e9" }}
+          style={{
+            height: u(14),
+            padding: `0 ${u(8)}`,
+            borderRadius: u(5),
+            fontSize: u(6.6),
+            background: "#f783e9",
+          }}
         >
-          Dodaj
+          {t("Dodaj")}
         </button>
       </div>
     </form>
@@ -235,7 +304,9 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
   const started = useRef(false);
   const dragOrigin = useRef<Priority | null>(null);
 
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+  );
 
   const apply = useCallback((next: DevelopState) => {
     setState(next);
@@ -248,7 +319,11 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
       const job = await api.generateFeatures(projectId);
       const finished = await waitForJob(job.id, (j) => setJobStage(j.stage));
       if (finished.status === "error" || !finished.result) {
-        notify(`Nie udało się zaproponować funkcji: ${finished.error ?? "nieznany błąd"}`);
+        notify(
+          t("Nie udało się zaproponować funkcji: {error}", {
+            error: finished.error ?? t("nieznany błąd"),
+          }),
+        );
         apply(await api.getDevelop(projectId));
         return;
       }
@@ -270,13 +345,23 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
           generate();
         }
       })
-      .catch((error: Error) => notify(`Nie udało się wczytać fazy Develop: ${error.message}`));
+      .catch((error: Error) =>
+        notify(
+          t("Nie udało się wczytać fazy Develop: {error}", {
+            error: error.message,
+          }),
+        ),
+      );
   }, [projectId, apply, generate, notify]);
 
   const persist = useCallback(
     (next: Board) => {
-      const items = COLUMNS.flatMap((priority) => next[priority].map((f, position) => ({ id: f.id, priority, position })));
-      api.orderFeatures(projectId, items).catch((error: Error) => notify(error.message));
+      const items = COLUMNS.flatMap((priority) =>
+        next[priority].map((f, position) => ({ id: f.id, priority, position })),
+      );
+      api
+        .orderFeatures(projectId, items)
+        .catch((error: Error) => notify(error.message));
     },
     [projectId, notify],
   );
@@ -300,7 +385,11 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
       return {
         ...current,
         [from]: current[from].filter((f) => f.id !== active.id),
-        [to]: [...target.slice(0, index), { ...moving, priority: to }, ...target.slice(index)],
+        [to]: [
+          ...target.slice(0, index),
+          { ...moving, priority: to },
+          ...target.slice(index),
+        ],
       };
     });
   };
@@ -330,7 +419,9 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
       const updated = await api.updateFeature(feature.id, { title });
       setBoard((current) => ({
         ...current,
-        [updated.priority]: current[updated.priority].map((f) => (f.id === updated.id ? updated : f)),
+        [updated.priority]: current[updated.priority].map((f) =>
+          f.id === updated.id ? updated : f,
+        ),
       }));
     } catch (error) {
       notify((error as Error).message);
@@ -338,7 +429,12 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
   };
 
   const remove = async (feature: Feature) => {
-    setBoard((current) => ({ ...current, [feature.priority]: current[feature.priority].filter((f) => f.id !== feature.id) }));
+    setBoard((current) => ({
+      ...current,
+      [feature.priority]: current[feature.priority].filter(
+        (f) => f.id !== feature.id,
+      ),
+    }));
     try {
       await api.deleteFeature(feature.id);
     } catch (error) {
@@ -347,10 +443,22 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
     }
   };
 
-  const add = async (title: string, description: string, priority: Priority) => {
+  const add = async (
+    title: string,
+    description: string,
+    priority: Priority,
+  ) => {
     try {
-      const feature = await api.addFeature(projectId, title, description, priority);
-      setBoard((current) => ({ ...current, [priority]: [...current[priority], feature] }));
+      const feature = await api.addFeature(
+        projectId,
+        title,
+        description,
+        priority,
+      );
+      setBoard((current) => ({
+        ...current,
+        [priority]: [...current[priority], feature],
+      }));
       setAdding(false);
     } catch (error) {
       notify((error as Error).message);
@@ -363,19 +471,33 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
   const mustCount = board.must.length;
   const busy = jobStage !== null;
   const persona = state?.persona;
-  const subtitle = persona ? `${persona.name} · ${persona.focus} · Zakres pierwszej wersji` : "Zakres pierwszej wersji";
-  const scope = `${inScope} ${plural(inScope, "funkcja", "funkcje", "funkcji")} · ${mustCount} ${plural(mustCount, "niezbędna", "niezbędne", "niezbędnych")} w MVP`;
+  const subtitle = persona
+    ? `${persona.name} · ${persona.focus} · ${t("Zakres pierwszej wersji")}`
+    : t("Zakres pierwszej wersji");
+  const scope = `${inScope} ${plural(inScope, "funkcja", "funkcje", "funkcji")} · ${t("{count} w MVP", { count: `${mustCount} ${plural(mustCount, "niezbędna", "niezbędne", "niezbędnych")}` })}`;
 
   return (
     <>
-      <PageTitle title="Zamień potrzeby w priorytety" subtitle={subtitle} top={101} size={16.5} gap={23} />
+      <PageTitle
+        title={t("Zamień potrzeby w priorytety")}
+        subtitle={subtitle}
+        top={101}
+        size={16.5}
+        gap={23}
+      />
 
       <div className="pf-fade absolute" style={{ left: u(25.2), top: u(143) }}>
-        <div className="font-serif text-plum" style={{ fontSize: u(10), lineHeight: 1 }}>
-          Propozycje lokalnego LLM
+        <div
+          className="font-serif text-plum"
+          style={{ fontSize: u(10), lineHeight: 1 }}
+        >
+          {t("Propozycje lokalnego LLM")}
         </div>
-        <div className="text-haze" style={{ fontSize: u(5.8), marginTop: u(5) }}>
-          Przeciągnij karty między kolumnami MoSCoW.
+        <div
+          className="text-haze"
+          style={{ fontSize: u(5.8), marginTop: u(5) }}
+        >
+          {t("Przeciągnij karty między kolumnami MoSCoW.")}
         </div>
       </div>
 
@@ -397,7 +519,7 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
         }}
       >
         <Plus style={{ width: u(7), height: u(7) }} />
-        Dodaj własną funkcję
+        {t("Dodaj własną funkcję")}
       </button>
       <button
         type="button"
@@ -416,9 +538,11 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
           boxShadow: SHADOW,
         }}
       >
-        Wygeneruj ponownie
+        {t("Wygeneruj ponownie")}
       </button>
-      {adding && <AddFeatureForm onSubmit={add} onClose={() => setAdding(false)} />}
+      {adding && (
+        <AddFeatureForm onSubmit={add} onClose={() => setAdding(false)} />
+      )}
 
       <DndContext
         sensors={sensors}
@@ -441,19 +565,33 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
             onDelete={remove}
           />
         ))}
-        <DragOverlay dropAnimation={{ duration: 180, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }}>
+        <DragOverlay
+          dropAnimation={{
+            duration: 180,
+            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
+        >
           {active ? <FeatureCardView feature={active} overlay /> : null}
         </DragOverlay>
       </DndContext>
 
       {busy ? (
-        <BarProgress title="Układam tablicę MoSCoW..." text={STAGE_TEXT[jobStage] ?? STAGE_TEXT.thinking} stage={jobStage} frame={BAR} />
+        <BarProgress
+          title={t("Układam tablicę MoSCoW...")}
+          text={STAGE_TEXT[jobStage] ?? STAGE_TEXT.thinking}
+          stage={jobStage}
+          frame={BAR}
+        />
       ) : (
         <ChoiceBar
-          label="TWÓJ ZAKRES"
+          label={t("TWÓJ ZAKRES")}
           value={all.length ? scope : null}
-          placeholder={persona ? "Brak funkcji — wygeneruj propozycje" : "Najpierw wybierz personę w fazie Define"}
-          action="Przejdź do user flow"
+          placeholder={
+            persona
+              ? t("Brak funkcji — wygeneruj propozycje")
+              : t("Najpierw wybierz personę w fazie Define")
+          }
+          action={t("Przejdź do user flow")}
           disabled={mustCount === 0}
           onConfirm={onDone}
           frame={BAR}
@@ -461,7 +599,9 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
         />
       )}
       <FooterNote top={436}>
-        Popyt = odsetek dowodów z mapy (Google, Stack Exchange, Lemmy) wspierających funkcję × 100 · propozycje lokalnego modelu do weryfikacji
+        {t(
+          "Popyt = odsetek dowodów z mapy (Google, Stack Exchange, Lemmy) wspierających funkcję × 100 · propozycje lokalnego modelu do weryfikacji",
+        )}
       </FooterNote>
     </>
   );

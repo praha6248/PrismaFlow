@@ -1,6 +1,16 @@
-export type NodeKind = "niche" | "idea" | "target_group" | "pain_point" | "competitor";
+export type NodeKind =
+  "niche" | "idea" | "target_group" | "pain_point" | "competitor";
 
-export type Stage = "compose" | "expanding" | "select" | "problems" | "personas" | "validate" | "done" | "board" | "flow";
+export type Stage =
+  | "compose"
+  | "expanding"
+  | "select"
+  | "problems"
+  | "personas"
+  | "validate"
+  | "done"
+  | "board"
+  | "flow";
 
 export type DiscoverStage = "compose" | "expanding" | "select";
 
@@ -173,7 +183,8 @@ export interface DevelopState {
   features: Feature[];
 }
 
-export type ElementType = "button" | "link" | "select" | "input" | "toggle" | "list";
+export type ElementType =
+  "button" | "link" | "select" | "input" | "toggle" | "list";
 export type ElementSize = "S" | "M" | "L";
 export type ElementZone = "top" | "center" | "bottom";
 export type ScreenKind = "start" | "step" | "goal";
@@ -205,16 +216,48 @@ export interface Flow {
 export interface FlowAudit {
   screens: number;
   transitions: number;
-  steps: { value: number | null; path: string[]; status: "ok" | "no_path" | "missing" };
-  klm: { seconds: number; steps: { screen: string; element: string; seconds: number }[] } | null;
+  steps: {
+    value: number | null;
+    path: string[];
+    status: "ok" | "no_path" | "missing";
+  };
+  klm: {
+    seconds: number;
+    steps: { screen: string; element: string; seconds: number }[];
+  } | null;
   targets: {
     total: number;
     aa: number;
     aaa: number;
-    below_aaa: { screen_id: string; screen: string; element_id: string; element: string; size: ElementSize; pixels: number; primary: boolean }[];
+    below_aaa: {
+      screen_id: string;
+      screen: string;
+      element_id: string;
+      element: string;
+      size: ElementSize;
+      pixels: number;
+      primary: boolean;
+    }[];
   };
-  hick: { screen_id: string; screen: string; element_id: string | null; element: string | null; options: number; seconds: number; warning: boolean; hide: number }[];
-  fitts: { screen_id: string; screen: string; element_id: string; element: string; size: ElementSize; zone: ElementZone; index: number }[];
+  hick: {
+    screen_id: string;
+    screen: string;
+    element_id: string | null;
+    element: string | null;
+    options: number;
+    seconds: number;
+    warning: boolean;
+    hide: number;
+  }[];
+  fitts: {
+    screen_id: string;
+    screen: string;
+    element_id: string;
+    element: string;
+    size: ElementSize;
+    zone: ElementZone;
+    index: number;
+  }[];
   dead_ends: { screen_id: string; screen: string }[];
   unreachable: { screen_id: string; screen: string }[];
   constants: Record<string, number>;
@@ -263,7 +306,11 @@ export interface Hypothesis {
   supports: number;
   contradicts: number;
   status: HypothesisStatus;
-  quotes: { person: string; verdict: "supports" | "contradicts"; quote: string }[];
+  quotes: {
+    person: string;
+    verdict: "supports" | "contradicts";
+    quote: string;
+  }[];
 }
 
 export interface Interview {
@@ -271,7 +318,11 @@ export interface Interview {
   person: string;
   notes: string;
   summary: string;
-  verdicts: { hypothesis: number; verdict: "supports" | "contradicts" | "no_data"; quote: string }[];
+  verdicts: {
+    hypothesis: number;
+    verdict: "supports" | "contradicts" | "no_data";
+    quote: string;
+  }[];
   created_at: number;
 }
 

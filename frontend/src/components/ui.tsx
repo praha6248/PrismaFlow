@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import { ProgressContent } from "../discover/BottomBar";
+import { t } from "../i18n";
 
 export const u = (value: number) => `calc(var(--u) * ${value})`;
 
@@ -29,7 +30,13 @@ export function PageTitle({
       {subtitle && (
         <p
           className="pf-fade pointer-events-none absolute left-1/2 -translate-x-1/2 truncate text-center"
-          style={{ top: u(top + gap), width: u(480), fontSize: u(7.5), lineHeight: 1.2, color: "#7c6d88" }}
+          style={{
+            top: u(top + gap),
+            width: u(480),
+            fontSize: u(7.5),
+            lineHeight: 1.2,
+            color: "#7c6d88",
+          }}
         >
           {subtitle}
         </p>
@@ -38,7 +45,13 @@ export function PageTitle({
   );
 }
 
-export function Radio({ checked, size = 10 }: { checked: boolean; size?: number }) {
+export function Radio({
+  checked,
+  size = 10,
+}: {
+  checked: boolean;
+  size?: number;
+}) {
   return (
     <span
       className="flex shrink-0 items-center justify-center rounded-full transition-colors duration-200"
@@ -49,7 +62,16 @@ export function Radio({ checked, size = 10 }: { checked: boolean; size?: number 
         background: "#ffffff",
       }}
     >
-      {checked && <span className="pf-pop rounded-full" style={{ width: u(size * 0.52), height: u(size * 0.52), background: "#f783e9" }} />}
+      {checked && (
+        <span
+          className="pf-pop rounded-full"
+          style={{
+            width: u(size * 0.52),
+            height: u(size * 0.52),
+            background: "#f783e9",
+          }}
+        />
+      )}
     </span>
   );
 }
@@ -87,7 +109,11 @@ export function Card({
       tabIndex={onSelect && !disabled ? 0 : undefined}
       onClick={disabled ? undefined : onSelect}
       onKeyDown={(event) => {
-        if (!disabled && onSelect && (event.key === "Enter" || event.key === " ")) {
+        if (
+          !disabled &&
+          onSelect &&
+          (event.key === "Enter" || event.key === " ")
+        ) {
           event.preventDefault();
           onSelect();
         }
@@ -116,13 +142,37 @@ export function SkeletonCards({ count = 3 }: { count?: number }) {
     <>
       {Array.from({ length: count }, (_, index) => (
         <Card key={index} index={index} selected={false}>
-          <div style={{ padding: u(12), animation: "pf-pulse 1.6s ease-in-out infinite", animationDelay: `${index * 160}ms` }}>
-            <div className="rounded-full bg-[#efe8f5]" style={{ width: u(42), height: u(5) }} />
-            <div className="rounded-full bg-[#efe8f5]" style={{ width: u(140), height: u(10), marginTop: u(13) }} />
-            <div className="rounded-full bg-[#efe8f5]" style={{ width: u(110), height: u(10), marginTop: u(5) }} />
-            <div className="rounded-full bg-[#f4eff8]" style={{ width: u(150), height: u(5), marginTop: u(14) }} />
-            <div className="rounded-full bg-[#f4eff8]" style={{ width: u(130), height: u(5), marginTop: u(4) }} />
-            <div className="rounded bg-[#f4eff8]" style={{ width: u(153.5), height: u(52), marginTop: u(30) }} />
+          <div
+            style={{
+              padding: u(12),
+              animation: "pf-pulse 1.6s ease-in-out infinite",
+              animationDelay: `${index * 160}ms`,
+            }}
+          >
+            <div
+              className="rounded-full bg-[#efe8f5]"
+              style={{ width: u(42), height: u(5) }}
+            />
+            <div
+              className="rounded-full bg-[#efe8f5]"
+              style={{ width: u(140), height: u(10), marginTop: u(13) }}
+            />
+            <div
+              className="rounded-full bg-[#efe8f5]"
+              style={{ width: u(110), height: u(10), marginTop: u(5) }}
+            />
+            <div
+              className="rounded-full bg-[#f4eff8]"
+              style={{ width: u(150), height: u(5), marginTop: u(14) }}
+            />
+            <div
+              className="rounded-full bg-[#f4eff8]"
+              style={{ width: u(130), height: u(5), marginTop: u(4) }}
+            />
+            <div
+              className="rounded bg-[#f4eff8]"
+              style={{ width: u(153.5), height: u(52), marginTop: u(30) }}
+            />
           </div>
         </Card>
       ))}
@@ -163,10 +213,10 @@ interface ChoiceBarProps {
 }
 
 export function ChoiceBar({
-  label = "TWÓJ WYBÓR",
+  label = t("TWÓJ WYBÓR"),
   value,
   placeholder,
-  action = "Zatwierdź wybór",
+  action = t("Zatwierdź wybór"),
   disabled,
   busy,
   onConfirm,
@@ -174,17 +224,31 @@ export function ChoiceBar({
   button = { left: 424.7, top: 8.2, width: 121.7, height: 25.6 },
   tone = "pink",
 }: ChoiceBarProps) {
-  const active = tone === "pink" ? { background: "#f783e9", color: "#ffffff" } : { background: "#e6d8f7", color: "#573476" };
+  const active =
+    tone === "pink"
+      ? { background: "#f783e9", color: "#ffffff" }
+      : { background: "#e6d8f7", color: "#573476" };
   return (
     <div className="pf-fade-up absolute" style={barStyle(frame)}>
-      <div className="absolute flex flex-col justify-center" style={{ left: u(14), top: 0, bottom: 0, width: u(400) }}>
-        <span className="tracking-[0.12em] text-haze" style={{ fontSize: u(5.4), lineHeight: 1 }}>
+      <div
+        className="absolute flex flex-col justify-center"
+        style={{ left: u(14), top: 0, bottom: 0, width: u(400) }}
+      >
+        <span
+          className="tracking-[0.12em] text-haze"
+          style={{ fontSize: u(5.4), lineHeight: 1 }}
+        >
           {label}
         </span>
         <span
           key={value ? "value" : "placeholder"}
           className="pf-fade truncate"
-          style={{ marginTop: u(4.5), fontSize: u(8), lineHeight: 1.15, color: value ? "#573476" : "#9b8fa6" }}
+          style={{
+            marginTop: u(4.5),
+            fontSize: u(8),
+            lineHeight: 1.15,
+            color: value ? "#573476" : "#9b8fa6",
+          }}
         >
           {value ?? placeholder}
         </span>
@@ -203,16 +267,28 @@ export function ChoiceBar({
           fontSize: u(8),
           background: disabled ? "#ece8f1" : active.background,
           color: disabled ? "#b3a9bd" : active.color,
-          boxShadow: disabled ? "none" : `0 ${u(1.5)} ${u(6)} rgba(240, 110, 220, 0.35)`,
+          boxShadow: disabled
+            ? "none"
+            : `0 ${u(1.5)} ${u(6)} rgba(240, 110, 220, 0.35)`,
         }}
       >
-        {busy ? "Chwileczkę..." : action}
+        {busy ? t("Chwileczkę...") : action}
       </button>
     </div>
   );
 }
 
-export function BarProgress({ title, text, stage, frame = DEFINE_BAR }: { title: string; text: string; stage: string; frame?: Frame }) {
+export function BarProgress({
+  title,
+  text,
+  stage,
+  frame = DEFINE_BAR,
+}: {
+  title: string;
+  text: string;
+  stage: string;
+  frame?: Frame;
+}) {
   return (
     <div className="pf-fade-up absolute" style={barStyle(frame)}>
       <ProgressContent title={title} text={text} stage={stage} />
@@ -220,7 +296,13 @@ export function BarProgress({ title, text, stage, frame = DEFINE_BAR }: { title:
   );
 }
 
-export function FooterNote({ children, top = 431 }: { children: ReactNode; top?: number }) {
+export function FooterNote({
+  children,
+  top = 431,
+}: {
+  children: ReactNode;
+  top?: number;
+}) {
   return (
     <p
       className="pf-fade pointer-events-none absolute inset-x-0 text-center text-haze"
@@ -255,7 +337,15 @@ export function IconButton({
       title={title}
       aria-label={title}
       className="pf-fade absolute z-10 flex items-center justify-center text-mauve transition-transform hover:scale-[1.04] active:scale-[0.97]"
-      style={{ left: u(left), top: u(top), width: u(width), height: u(height), borderRadius: u(7), background: "#fdfcfe", boxShadow: SHADOW }}
+      style={{
+        left: u(left),
+        top: u(top),
+        width: u(width),
+        height: u(height),
+        borderRadius: u(7),
+        background: "#fdfcfe",
+        boxShadow: SHADOW,
+      }}
     >
       {children}
     </button>

@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import sparkle from "../assets/sparkle.png";
+import { t } from "../i18n";
 
 const PHASES = ["Discover", "Define", "Develop", "Deliver"] as const;
 const STEP_X = [145, 262, 379, 500];
@@ -19,23 +20,33 @@ export function Header({ active, reached, onHome, onNavigate }: Props) {
         onClick={onHome}
         className="absolute z-20 flex items-center"
         style={{ left: "calc(var(--u) * 15)", top: "calc(var(--u) * 16)" }}
-        title="Nowy projekt"
+        title={t("Nowy projekt")}
       >
         <img
           src={sparkle}
           alt=""
           draggable={false}
-          style={{ width: "calc(var(--u) * 19)", height: "calc(var(--u) * 19)" }}
+          style={{
+            width: "calc(var(--u) * 19)",
+            height: "calc(var(--u) * 19)",
+          }}
         />
         <span
           className="font-serif text-ink"
-          style={{ marginLeft: "calc(var(--u) * 7.5)", fontSize: "calc(var(--u) * 14.6)", lineHeight: 1 }}
+          style={{
+            marginLeft: "calc(var(--u) * 7.5)",
+            fontSize: "calc(var(--u) * 14.6)",
+            lineHeight: 1,
+          }}
         >
           PrismaFlow
         </span>
       </button>
 
-      <nav className="pointer-events-none absolute inset-x-0 top-0 z-20" aria-label="Fazy Double Diamond">
+      <nav
+        className="pointer-events-none absolute inset-x-0 top-0 z-20"
+        aria-label={t("Fazy Double Diamond")}
+      >
         <div
           className="absolute"
           style={{
@@ -69,8 +80,12 @@ export function Header({ active, reached, onHome, onNavigate }: Props) {
               disabled={locked || isActive}
               onClick={() => onNavigate(index)}
               className="pointer-events-auto absolute flex flex-col items-center disabled:cursor-default"
-              style={{ left: `calc(50% + var(--u) * ${STEP_X[index] - 322})`, top: "calc(var(--u) * 52.8)", transform: "translateX(-50%)" }}
-              title={locked ? "Ukończ wcześniejsze fazy" : phase}
+              style={{
+                left: `calc(50% + var(--u) * ${STEP_X[index] - 322})`,
+                top: "calc(var(--u) * 52.8)",
+                transform: "translateX(-50%)",
+              }}
+              title={locked ? t("Ukończ wcześniejsze fazy") : phase}
               aria-current={isActive ? "step" : undefined}
             >
               <span
@@ -86,16 +101,33 @@ export function Header({ active, reached, onHome, onNavigate }: Props) {
                   width: "calc(var(--u) * 14)",
                   height: "calc(var(--u) * 14)",
                   border: `calc(var(--u) * 1) solid ${isActive ? "#f783e9" : done ? "#f783e9" : "#f9c4f1"}`,
-                  background: isActive ? "#ffffff" : done ? "#f783e9" : "#fff7fd",
+                  background: isActive
+                    ? "#ffffff"
+                    : done
+                      ? "#f783e9"
+                      : "#fff7fd",
                 }}
               >
                 {isActive && (
                   <span
                     className="rounded-full"
-                    style={{ width: "calc(var(--u) * 7.6)", height: "calc(var(--u) * 7.6)", background: "#f783e9" }}
+                    style={{
+                      width: "calc(var(--u) * 7.6)",
+                      height: "calc(var(--u) * 7.6)",
+                      background: "#f783e9",
+                    }}
                   />
                 )}
-                {done && <Check color="#ffffff" strokeWidth={3} style={{ width: "calc(var(--u) * 8)", height: "calc(var(--u) * 8)" }} />}
+                {done && (
+                  <Check
+                    color="#ffffff"
+                    strokeWidth={3}
+                    style={{
+                      width: "calc(var(--u) * 8)",
+                      height: "calc(var(--u) * 8)",
+                    }}
+                  />
+                )}
               </span>
             </button>
           );

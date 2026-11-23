@@ -23,7 +23,13 @@ function CenterEdgeView({ id, source, target, style }: EdgeProps) {
   const ux = dx / length;
   const uy = dy / length;
   const path = `M ${a.x + ux * a.r} ${a.y + uy * a.r} L ${b.x - ux * b.r} ${b.y - uy * b.r}`;
-  return <BaseEdge id={id} path={path} style={{ stroke: "#d3cfd6", strokeWidth: 0.6, ...style }} />;
+  return (
+    <BaseEdge
+      id={id}
+      path={path}
+      style={{ stroke: "#d3cfd6", strokeWidth: 0.6, ...style }}
+    />
+  );
 }
 
 export const CenterEdge = memo(CenterEdgeView);
