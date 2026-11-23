@@ -1,5 +1,6 @@
 import { Card, Radio, u } from "../components/ui";
 import type { Persona } from "../types";
+import { EvidenceBadge } from "./EvidenceBadge";
 
 const AVATAR_COLORS = ["#e6dcf7", "#fbdcf3", "#dbe7f9"];
 
@@ -50,6 +51,7 @@ export function PersonaCard({ persona, index, selectedOption, onSelect }: Props)
       <div className="absolute tracking-[0.14em] text-haze" style={{ left: u(12), top: u(121.7), fontSize: u(5.2), lineHeight: 1 }}>
         WYBIERZ GŁÓWNY PROBLEM
       </div>
+      <EvidenceBadge evidence={persona.evidence ?? []} style={{ right: u(12), top: u(118) }} />
 
       {persona.options.slice(0, 2).map((option, i) => {
         const checked = selectedOption === i;

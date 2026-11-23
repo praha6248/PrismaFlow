@@ -99,6 +99,14 @@ export interface TrendSummary {
   months?: { month: string; value: number }[];
 }
 
+export interface CitedEvidence {
+  id: number;
+  source: string;
+  title: string;
+  url: string | null;
+  place: string | null;
+}
+
 export interface Problem {
   id: number;
   project_id: number;
@@ -110,6 +118,7 @@ export interface Problem {
   quote_source: string | null;
   node_ids: number[];
   evidence_ids: number[];
+  evidence: CitedEvidence[];
   trend: TrendSummary | null;
   chosen: boolean;
 }
@@ -124,6 +133,8 @@ export interface Persona {
   role: string;
   quote: string;
   options: string[];
+  evidence_ids: number[];
+  evidence: CitedEvidence[];
   chosen_option: number | null;
 }
 

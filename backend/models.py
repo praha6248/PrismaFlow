@@ -157,6 +157,7 @@ class ProblemDraft(BaseModel):
     description: str = Field(description="One short sentence (max 12 words) explaining why it happens")
     trend_keyword: str = Field(description="1-3 word everyday Google query people type when they have this problem")
     quote_id: int = Field(description="Id of the evidence line that best illustrates the problem, 0 if none fits")
+    evidence_ids: list[int] = Field(default_factory=list, description="Ids of 2-5 evidence lines showing that people really have this problem")
     node_labels: list[str] = Field(description="Exact labels of the map nodes this problem is grounded in")
 
     @field_validator("title")
@@ -193,6 +194,7 @@ class PersonaDraft(BaseModel):
         description="Two concrete sub-problems this persona faces, each 3-7 words",
         json_schema_extra={"minItems": 2, "maxItems": 2},
     )
+    evidence_ids: list[int] = Field(default_factory=list, description="Ids of 1-4 evidence lines this persona's situation and quote are based on")
 
     @field_validator("name", "role")
     @classmethod

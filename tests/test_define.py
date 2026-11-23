@@ -211,3 +211,26 @@ def test_persona_ages_must_fit_their_roles() -> None:
     assert fixed[1]["age"] >= 36 and fixed[0]["age"] == 18 and fixed[2]["age"] == 41
     assert age_issues(fixed) == []
     assert age_issues([{"name": "Ola", "age": 20, "role": "Nauczycielka"}, {"name": "Jan", "age": 12, "role": "Emeryt"}]) != []
+
+
+async def test_problems_and_personas_cite_real_evidence(db: Database) -> None:
+    project_id = await _project(db)
+    evidence_id = db.list_evidence(db.find_node(project_id, "plan")["id"])[0]["id"]
+    problems = {"problems": [dict(p, evidence_ids=[evidence_id, 99999]) for p in PROBLEMS["problems"]]}
+    personas = {"personas": [dict(p, evidence_ids=[evidence_id] if i else []) for i, p in enumerate(PERSONAS["personas"])]}
+
+    class Citing(SchemaLLM):
+        async def structured(self, schema, system, prompt, **_):
+            self.prompts.append(prompt)
+            return schema.model_validate(problems if schema.__name__ == "ProblemSet" else personas)
+
+    llm = Citing()
+    service = DefineService(db, llm, define_collectors())
+    state = await service.generate_problems(project_id, _noop, _noop)
+    assert all(p["evidence_ids"] == [evidence_id] for p in state["problems"])
+    assert state["problems"][0]["evidence"][0]["title"] == "Can't stick to my training plan"
+
+    db.choose_problem(state["problems"][0]["id"])
+    state = await service.generate_personas(project_id, _noop, _noop)
+    assert "cites no evidence" in llm.prompts[-1]
+    assert [len(p["evidence"]) for p in state["personas"]] == [0, 1, 1]

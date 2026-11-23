@@ -10,7 +10,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Iterator
 
-SCHEMA_VERSION = 5
+SCHEMA_VERSION = 6
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS meta (
@@ -142,6 +142,7 @@ CREATE TABLE IF NOT EXISTS personas (
     role TEXT NOT NULL DEFAULT '',
     quote TEXT NOT NULL DEFAULT '',
     options TEXT NOT NULL DEFAULT '[]',
+    evidence_ids TEXT NOT NULL DEFAULT '[]',
     chosen_option INTEGER,
     created_at REAL NOT NULL
 );
@@ -248,6 +249,9 @@ class Database:
                 conn.execute("PRAGMA foreign_keys = OFF")
                 conn.execute("ALTER TABLE evidence RENAME TO evidence_old")
             conn.executescript(SCHEMA)
+            persona_columns = {r["name"] for r in conn.execute("PRAGMA table_info(personas)")}
+            if "evidence_ids" not in persona_columns:
+                conn.execute("ALTER TABLE personas ADD COLUMN evidence_ids TEXT NOT NULL DEFAULT '[]'")
             if rebuild:
                 conn.execute("INSERT INTO evidence SELECT * FROM evidence_old")
                 conn.execute("DROP TABLE evidence_old")
@@ -441,6 +445,17 @@ class Database:
                 (project_id, node_id, source, title, body, url, weight, json.dumps(meta or {}), time.time()),
             )
 
+    def evidence_by_ids(self, ids: list[int]) -> list[dict[str, Any]]:
+        """Return evidence items in the order of the given ids, skipping unknown ones."""
+        if not ids:
+            return []
+        with self.connect() as conn:
+            rows = conn.execute(
+                f"SELECT id, source, title, body, url, meta FROM evidence WHERE id IN ({','.join('?' * len(ids))})", ids
+            ).fetchall()
+        by_id = {r["id"]: {**dict(r), "meta": json.loads(r["meta"])} for r in rows}
+        return [by_id[i] for i in ids if i in by_id]
+
     def list_evidence(self, node_id: int) -> list[dict[str, Any]]:
         """Return evidence attached to a node, strongest first."""
         with self.connect() as conn:
@@ -564,8 +579,8 @@ class Database:
             conn.execute("DELETE FROM personas WHERE problem_id = ?", (problem_id,))
             for position, item in enumerate(personas):
                 conn.execute(
-                    "INSERT INTO personas(project_id, problem_id, position, name, age, role, quote, options, created_at) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO personas(project_id, problem_id, position, name, age, role, quote, options, evidence_ids, created_at) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         project_id,
                         problem_id,
@@ -575,6 +590,7 @@ class Database:
                         item.get("role", ""),
                         item.get("quote", ""),
                         json.dumps(item.get("options", []), ensure_ascii=False),
+                        json.dumps(item.get("evidence_ids", [])),
                         now,
                     ),
                 )
@@ -590,6 +606,7 @@ class Database:
         for row in rows:
             item = dict(row)
             item["options"] = json.loads(item["options"])
+            item["evidence_ids"] = json.loads(item["evidence_ids"])
             items.append(item)
         return items
 

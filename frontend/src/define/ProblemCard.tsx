@@ -1,6 +1,7 @@
 import { ArrowDownRight, ArrowRight, ArrowUpRight } from "lucide-react";
 import { Card, Radio, u } from "../components/ui";
 import type { Problem } from "../types";
+import { EvidenceBadge } from "./EvidenceBadge";
 
 interface Props {
   problem: Problem;
@@ -96,6 +97,7 @@ export function ProblemCard({ problem, index, selected, scaleMax, onSelect }: Pr
       <div className="absolute text-haze" style={{ left: u(12), top: u(162), fontSize: u(4.8), lineHeight: 1 }}>
         Zainteresowanie w ostatnich 12 miesiącach
       </div>
+      <EvidenceBadge evidence={problem.evidence ?? []} style={{ right: u(12), top: u(158) }} />
 
       {problem.quote && (
         <p

@@ -18,7 +18,7 @@ class OllamaError(RuntimeError):
 
 
 def inline_schema(model: type[BaseModel]) -> dict[str, Any]:
-    """Return the model's JSON schema with every $ref resolved in place."""
+    """Return the model's JSON schema with every $ref resolved in place and every property required."""
     schema = model.model_json_schema()
     defs = schema.pop("$defs", {})
 
@@ -28,7 +28,10 @@ def inline_schema(model: type[BaseModel]) -> dict[str, Any]:
                 name = node["$ref"].rsplit("/", 1)[-1]
                 merged = {**resolve(defs[name]), **{k: v for k, v in node.items() if k != "$ref"}}
                 return merged
-            return {k: resolve(v) for k, v in node.items() if not (k == "title" and isinstance(v, str))}
+            out = {k: resolve(v) for k, v in node.items() if not (k == "title" and isinstance(v, str))}
+            if isinstance(out.get("properties"), dict):
+                out["required"] = list(out["properties"])
+            return out
         if isinstance(node, list):
             return [resolve(v) for v in node]
         return node

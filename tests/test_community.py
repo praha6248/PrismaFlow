@@ -4,9 +4,26 @@ import json
 import sqlite3
 
 import httpx
+import pytest
 
-from backend.collectors import community
+from backend.collectors import community, reddit
 from backend.database import Database
+
+
+@pytest.fixture
+def reddit_queries(monkeypatch):
+    queries = []
+
+    async def fetch_browser(query, limit):
+        queries.append(query)
+        return []
+
+    monkeypatch.delenv("PRISMAFLOW_REDDIT_CLIENT_ID", raising=False)
+    monkeypatch.delenv("PRISMAFLOW_REDDIT_PLAYWRIGHT", raising=False)
+    monkeypatch.setattr(reddit, "_fetch_browser", fetch_browser)
+    monkeypatch.setattr(reddit, "_throttle_lock", None)
+    monkeypatch.setattr(reddit, "MIN_INTERVAL", 0)
+    return queries
 
 
 def _transport(calls: list[str]) -> httpx.MockTransport:
@@ -51,7 +68,7 @@ def test_site_choice_and_keywords() -> None:
     assert community.specific_word("workout motivation") is None
 
 
-async def test_search_merges_sources_and_filters_noise(db: Database) -> None:
+async def test_search_merges_sources_and_filters_noise(db: Database, reddit_queries) -> None:
     community.MIN_INTERVAL = 0
     calls: list[str] = []
     async with httpx.AsyncClient(transport=_transport(calls)) as client:
@@ -71,14 +88,16 @@ async def test_search_merges_sources_and_filters_noise(db: Database) -> None:
     async with httpx.AsyncClient(transport=_transport(calls)) as client:
         await community.search(db, client, "sport for autistic children", "en")
     assert calls == []
+    assert reddit_queries == ["sport for autistic children"]
 
 
-async def test_non_english_queries_skip_stack_exchange(db: Database) -> None:
+async def test_non_english_queries_skip_stack_exchange(db: Database, reddit_queries) -> None:
     community.MIN_INTERVAL = 0
     calls: list[str] = []
     async with httpx.AsyncClient(transport=_transport(calls)) as client:
         await community.search(db, client, "sport dla dzieci", "pl")
     assert calls and all("lemmy.world" in c for c in calls)
+    assert reddit_queries == ["sport dla dzieci"]
 
 
 def test_evidence_table_is_migrated(tmp_path) -> None:

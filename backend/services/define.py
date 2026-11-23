@@ -28,7 +28,9 @@ Rules:
 - The three problems must not overlap; each should be grounded in different nodes or evidence.
 - trend_keyword is a short, popular everyday query (1-3 words) that people really type into Google when they have
   the problem; prefer common head terms that Google Trends can measure; the three keywords must all be different.
-- quote_id must be the id of an evidence line that illustrates the problem, or 0 when none fits."""
+- quote_id must be the id of an evidence line that illustrates the problem, or 0 when none fits.
+- evidence_ids lists 2-5 ids of evidence lines that show real people have this problem. Every problem must be
+  supported by evidence; do not invent a problem the evidence does not show. Use only ids from the list."""
 
 PERSONA_SYSTEM = """You are a UX researcher creating proto-personas for the Define phase of the Double Diamond.
 They are conceptual hypotheses to validate later, not interview results.
@@ -36,7 +38,9 @@ Rules:
 - Write in {language}; use typical first names for that language.
 - Create three clearly different people (age, life situation, motivation) who all experience the chosen problem.
 - Spread their ages at least 8 years apart and keep every age realistic for the role (a parent of a teenager or student is at least 36); include the person who pays for or decides about a solution (for example a parent, carer or teacher) when the problem concerns someone else.
-- Base them on the target groups and evidence when available.
+- Ground every persona in the evidence: their situation, wording and sub-problems must follow from real lines,
+  and evidence_ids lists 1-4 ids of the lines each persona is based on. Use only ids from the list.
+- Avoid generic personas: give each a specific context (where, when, with what tools) visible in the evidence.
 - The quote sounds natural and personal, as if said in an interview, 1-2 short sentences.
 - Each persona has two concrete sub-problems (3-7 words each) that a product could address; avoid repeating them across personas."""
 
@@ -135,7 +139,22 @@ def define_state(db: Database, project_id: int) -> dict[str, Any]:
     problems = db.list_problems(project_id)
     chosen = next((p for p in problems if p["chosen"]), None)
     personas = db.list_personas(chosen["id"]) if chosen else []
+    for item in [*problems, *personas]:
+        seen: set[str] = set()
+        item["evidence"] = []
+        for e in db.evidence_by_ids(item["evidence_ids"]):
+            key = e["title"].casefold()
+            if key not in seen:
+                seen.add(key)
+                item["evidence"].append(
+                    {"id": e["id"], "source": e["source"], "title": e["title"], "url": e["url"] or e["meta"].get("url"), "place": e["meta"].get("place")}
+                )
     return {"project": project, "problems": problems, "personas": personas, "chosen_problem_id": chosen["id"] if chosen else None}
+
+
+def cited(ids: list[int], pool: dict[int, Any], limit: int = 5) -> list[int]:
+    """Keep only evidence ids that exist in the pool, without duplicates."""
+    return [i for i in dict.fromkeys(ids) if i in pool][:limit]
 
 
 class DefineService:
@@ -221,15 +240,23 @@ class DefineService:
         )
 
         progress(0.15, "thinking")
-        result: ProblemSet = await self.llm.structured(
-            ProblemSet,
-            PROBLEM_SYSTEM.format(language=LANGUAGE_NAMES.get(language, "the niche's language")),
-            prompt,
-            temperature=0.5,
-        )
+        system = PROBLEM_SYSTEM.format(language=LANGUAGE_NAMES.get(language, "the niche's language"))
+        result: ProblemSet = await self.llm.structured(ProblemSet, system, prompt, temperature=0.5)
         drafts = result.problems[:3]
         if len(drafts) < 3:
             raise ValueError("the model returned fewer than three problems")
+        unsupported = [d.title for d in drafts if evidence and not cited([*d.evidence_ids, d.quote_id], evidence)]
+        if unsupported:
+            progress(0.3, "thinking")
+            retry = prompt + "\n\nThese problems cite no valid evidence ids: " + "; ".join(unsupported) + ". Replace them with problems the evidence lines really show, and cite their ids."
+            try:
+                again: ProblemSet = await self.llm.structured(ProblemSet, system, retry, temperature=0.4)
+                if len(again.problems) >= 3:
+                    better = sum(1 for d in again.problems[:3] if cited([*d.evidence_ids, d.quote_id], evidence))
+                    if better > len(drafts) - len(unsupported):
+                        drafts = again.problems[:3]
+            except ValueError:
+                pass
 
         progress(0.5, "trends")
         anchor = trends.anchor_for(language)
@@ -262,7 +289,7 @@ class DefineService:
                         "quote": quote,
                         "quote_source": source,
                         "node_ids": node_ids,
-                        "evidence_ids": [draft.quote_id] if picked else [],
+                        "evidence_ids": cited([*([draft.quote_id] if picked else []), *draft.evidence_ids], evidence),
                         "trend": summarize_trend(
                             trend_data["dates"],
                             trend_data["series"].get(draft.trend_keyword) or [],
@@ -302,10 +329,10 @@ class DefineService:
                 warn(f"trends: {exc}")
         return data, ratios
 
-    async def _draft_personas(self, system: str, prompt: str) -> list[dict[str, Any]]:
+    async def _draft_personas(self, system: str, prompt: str, pool: dict[int, Any]) -> list[dict[str, Any]]:
         result: PersonaSet = await self.llm.structured(PersonaSet, system, prompt, temperature=0.7)
         personas = [
-            {"name": p.name, "age": p.age, "role": p.role, "quote": p.quote, "options": p.problems}
+            {"name": p.name, "age": p.age, "role": p.role, "quote": p.quote, "options": p.problems, "evidence_ids": cited(p.evidence_ids, pool, 4)}
             for p in result.personas[:3]
             if len(p.problems) == 2
         ]
@@ -328,13 +355,14 @@ class DefineService:
         groups = [n["label"] for n in nodes if n["kind"] == "target_group"]
         await self._prepare(project_id, warn)
         _, _, evidence = self._context(project_id)
-        lines = [f"- ({item['source']}) {item['title']}" for item in list(evidence.values())[:20]]
+        pool = dict(list(evidence.items())[:24])
+        lines = [f"[{item['id']}] ({item['source']}) {item['title']}" for item in pool.values()]
         prompt = "\n".join(
             [
                 f'Niche: "{project["seed"]}"',
                 f'Chosen problem: "{problem["title"]}" — {problem["description"]}',
                 f"Target groups from the map: {', '.join(groups) if groups else 'not specified'}",
-                "Evidence:",
+                "Evidence lines (id, source, text):",
                 *(lines or ["(none)"]),
                 "",
                 "Create exactly three personas.",
@@ -343,13 +371,15 @@ class DefineService:
 
         progress(0.25, "personas")
         system = PERSONA_SYSTEM.format(language=LANGUAGE_NAMES.get(language, "the niche's language"))
-        personas = await self._draft_personas(system, prompt)
+        personas = await self._draft_personas(system, prompt, pool)
         issues = age_issues(personas)
+        if pool:
+            issues += [f"{p['name']} cites no evidence" for p in personas if not p["evidence_ids"]]
         if issues:
             progress(0.6, "personas")
-            retry = prompt + "\n\nYour previous personas had implausible ages: " + "; ".join(issues) + ". Fix them; a parent must be old enough to have the child described."
+            retry = prompt + "\n\nFix these problems in your previous personas: " + "; ".join(issues) + ". A parent must be old enough to have the child described; every persona cites the evidence ids it is based on."
             try:
-                personas = await self._draft_personas(system, retry)
+                personas = await self._draft_personas(system, retry, pool)
             except ValueError:
                 pass
             personas = fix_ages(personas)
