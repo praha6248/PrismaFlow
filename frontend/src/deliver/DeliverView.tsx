@@ -107,6 +107,7 @@ function ZoomControl() {
 }
 
 interface CanvasProps {
+  detailed: boolean;
   flow: Flow;
   state: DeliverState;
   audit: FlowAudit;
@@ -118,6 +119,7 @@ interface CanvasProps {
 }
 
 function Canvas({
+  detailed,
   flow,
   state,
   audit,
@@ -151,6 +153,7 @@ function Canvas({
       dragHandle: undefined,
       data: {
         screen,
+        detailed,
         index,
         features: state.features,
         deadEnd: dead.has(screen.id),
@@ -159,7 +162,7 @@ function Canvas({
         actions,
       },
     }));
-  }, [flow, audit, selectedId, state.features, flagged, actions]);
+  }, [flow, detailed, audit, selectedId, state.features, flagged, actions]);
 
   const edges: Edge[] = useMemo(() => {
     const ids = new Set(flow.screens.map((s) => s.id));
@@ -173,15 +176,15 @@ function Canvas({
           target: element.target as string,
           label: element.label,
           type: "smoothstep",
-          style: { stroke: "#f2a2e8", strokeWidth: 1.2 },
+          style: { stroke: "#805d91", strokeWidth: 1.7 },
           markerEnd: {
             type: MarkerType.ArrowClosed,
-            color: "#f2a2e8",
+            color: "#805d91",
             width: 14,
             height: 14,
           },
           labelStyle: {
-            fontSize: 7.5,
+            fontSize: 10,
             fill: "var(--color-muted)",
             fontFamily: "Montserrat",
           },
@@ -297,6 +300,7 @@ function Canvas({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        nodesConnectable={detailed}
         onPaneClick={() => onSelect(null)}
         minZoom={0.3}
         maxZoom={1.6}
@@ -350,6 +354,7 @@ function Studio({ projectId, notify, onRestart }: Props) {
     kind: "flow" | "optimize";
     stage: string;
   } | null>(null);
+  const [detailed, setDetailed] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [focusRequest, setFocusRequest] = useState<{
     id: string;
@@ -627,7 +632,7 @@ function Studio({ projectId, notify, onRestart }: Props) {
 
       <div
         className="pf-fade-up absolute overflow-hidden"
-        style={{ ...panelStyle(129.3, 362.2), animationDelay: "60ms" }}
+        style={{ ...panelStyle(129.3, detailed ? 362.2 : 512.6), animationDelay: "60ms" }}
       >
         <div
           className="absolute z-10 flex items-start justify-between"
@@ -650,11 +655,17 @@ function Studio({ projectId, notify, onRestart }: Props) {
               {plural(transitions, "połączenie", "połączenia", "połączeń")}
             </div>
           </div>
-          <ZoomControl />
+          <div className="flex items-center gap-2 text-mauve" style={{fontSize: "var(--text-small)"}}>
+            <button type="button" aria-pressed={detailed} className="rounded-full bg-[#f3ecfa] px-3 py-1"
+              onClick={() => setDetailed(value => !value)}>{detailed ? t("Schemat") : t("Edytuj schemat")}</button>
+            {!detailed && flow.screens.length > 0 && <button type="button" disabled={handoffBusy} onClick={generateHandoff}
+              className="rounded-full bg-[#f3ecfa] px-3 py-1">{t("Eksportuj")}</button>}
+            <ZoomControl />
+          </div>
         </div>
         <div className="absolute inset-0" style={{ top: u(26) }}>
           {state && (
-            <Canvas
+            <Canvas key={detailed ? "editor" : "diagram"} detailed={detailed}
               flow={flow}
               state={state}
               audit={audit ?? state.audit}
@@ -713,6 +724,7 @@ function Studio({ projectId, notify, onRestart }: Props) {
         )}
       </div>
 
+      {detailed && <>
       <div
         className="pf-fade-up absolute"
         style={{ ...panelStyle(498.6, 143.3), animationDelay: "120ms" }}
@@ -739,6 +751,8 @@ function Studio({ projectId, notify, onRestart }: Props) {
         {t("Audyt:")} Hick RT = a + b·log₂(n+1) · Fitts ID = log₂(2D/W) · KLM · WCAG 2.2 ·{" "}
         {t("sugestie i projekt z lokalnego modelu do weryfikacji")}
       </p>
+
+      </>}
 
       {handoff && (
         <HandoffModal

@@ -44,6 +44,7 @@ export interface ScreenActions {
 
 export type ScreenNodeData = {
   screen: FlowScreen;
+  detailed: boolean;
   index: number;
   features: Feature[];
   deadEnd: boolean;
@@ -290,6 +291,45 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
       actions.dropFeature(screen.id, id);
     }
   };
+
+  if (!data.detailed) {
+    const exits = screen.elements.filter(element => element.target && element.target !== screen.id);
+    const branching = new Set(exits.map(element => element.target)).size > 1;
+    const terminal = screen.kind !== "step";
+    return (
+      <div data-screen-id={screen.id} className="relative text-ink"
+        onDrop={onDrop}
+        onDragOver={event => {
+          if (event.dataTransfer.types.includes("application/x-prismaflow-feature")) {
+            event.preventDefault();
+            setOver(true);
+          }
+        }}
+        onDragLeave={() => setOver(false)}
+        style={{
+          width: 200, padding: "12px 16px", borderRadius: terminal ? 28 : 8,
+          background: terminal ? "var(--color-plum)" : "#f3ecfa",
+          color: terminal ? "white" : "var(--color-ink)",
+          border: `2px solid ${over || selected ? "var(--color-pink)" : terminal ? "var(--color-plum)" : "#d9c6ec"}`,
+        }}>
+        <Handle type="target" position={Position.Left} style={{ opacity: 0 }} />
+        {terminal && <div className="mb-1 text-xs tracking-wider">{tag}</div>}
+        <div className="break-words font-serif text-lg leading-tight">{screen.name}</div>
+        {linked.length > 0 && (
+          <ul className="mt-2 list-disc space-y-1 pl-4 text-xs leading-snug">
+            {linked.map(feature => <li key={feature.id}>{feature.title}</li>)}
+          </ul>
+        )}
+        {branching && <span aria-label={t("Wybór ścieżki")} title={t("Wybór ścieżki")}
+          className="absolute top-1/2 h-4 w-4 -translate-y-1/2 rotate-45 border-2 border-pink"
+          style={{right: -9, background: "#fbdcf3"}} />}
+        {exits.map(element => (
+          <Handle key={element.id} type="source" position={Position.Right} id={element.id}
+            isConnectable={false} style={{opacity: 0}} />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div
