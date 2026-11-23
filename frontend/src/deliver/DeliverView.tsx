@@ -4,6 +4,7 @@ import {
   MarkerType,
   ReactFlow,
   ReactFlowProvider,
+  useNodesInitialized,
   useReactFlow,
   useViewport,
   type Connection,
@@ -136,6 +137,7 @@ function Canvas({
 }: CanvasProps) {
   const { fitView, setCenter, getZoom } = useReactFlow();
   const fitted = useRef(false);
+  const measured = useNodesInitialized();
   const box = useRef<HTMLDivElement>(null);
   const viewport = useViewport();
   const [lost, setLost] = useState(false);
@@ -225,14 +227,14 @@ function Canvas({
   }, [flow]);
 
   useEffect(() => {
-    if (!fitted.current && flow.screens.length) {
+    if (!fitted.current && measured && flow.screens.length) {
       fitted.current = true;
       window.setTimeout(
         () => fitView({ padding: 0.12, maxZoom: 1, duration: 0 }),
         30,
       );
     }
-  }, [flow.screens.length, fitView]);
+  }, [flow.screens.length, measured, fitView]);
 
   useEffect(() => {
     if (!focusRequest) return;
@@ -345,6 +347,8 @@ function Canvas({
         onPaneClick={() => onSelect(null)}
         minZoom={0.3}
         maxZoom={1.6}
+        fitView
+        fitViewOptions={{ padding: 0.12, maxZoom: 1 }}
         proOptions={{ hideAttribution: true }}
         forceColorMode="light"
         style={{ background: "transparent" }}
@@ -395,7 +399,7 @@ function Studio({ projectId, notify, onRestart }: Props) {
     kind: "flow" | "optimize";
     stage: string;
   } | null>(null);
-  const [detailed, setDetailed] = useState(false);
+  const [detailed, setDetailed] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [focusRequest, setFocusRequest] = useState<{
     id: string;
