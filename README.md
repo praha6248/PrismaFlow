@@ -29,6 +29,19 @@ The Linux script unpacks the latest build to `~/.local/share/PrismaFlow-app`, li
 `~/.local/bin` and adds a menu entry. The window needs WebKit2GTK (`sudo apt install gir1.2-webkit2-4.1 python3-gi`);
 the AppImage also needs FUSE 2 (`libfuse2t64`). The Windows script downloads and runs the setup wizard.
 
+### Run with Docker Compose
+
+From the repository root, start PrismaFlow and Ollama, then download a model once.
+
+```bash
+docker compose up -d --build
+docker compose exec ollama ollama pull gemma3:4b
+```
+
+Open <http://127.0.0.1:8765>. To enable semantic evidence search, also run
+`docker compose exec ollama ollama pull bge-m3`. Compose stores projects and settings
+in the `workspace` volume and downloaded models in `models`. Both survive `docker compose down`.
+
 ## Models
 
 PrismaFlow writes text with a local model in [Ollama](https://ollama.com/download). On first launch it checks

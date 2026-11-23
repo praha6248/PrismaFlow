@@ -1,0 +1,15 @@
+**
+!requirements.txt
+!backend/
+!backend/**/*.py
+!backend/collectors/
+!backend/services/
+!frontend/
+!frontend/package*.json
+!frontend/index.html
+!frontend/*.ts
+!frontend/tsconfig.json
+!frontend/public/
+!frontend/public/**
+!frontend/src/
+!frontend/src/**
