@@ -55,10 +55,16 @@ button {
 .frame {
   position: fixed;
   inset: 0;
-  background:
-    radial-gradient(ellipse 34% 60% at 0% 50%, #fed3f9 0%, rgba(254, 211, 249, 0) 100%),
-    radial-gradient(ellipse 34% 60% at 100% 50%, #fed3f9 0%, rgba(254, 211, 249, 0) 100%),
-    linear-gradient(180deg, #ece2ff 0%, #f3edff 50%, #e9deff 100%);
+  overflow: hidden;
+  background: #e6d7fd;
+}
+
+.frame::before {
+  content: "";
+  position: absolute;
+  inset: -4%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpolygon points='14,-4 49.5,50 14,104 -21.5,50' fill='%23fbd3f8'/%3E%3Cpolygon points='85,-4 120.5,50 85,104 49.5,50' fill='%23fbd3f8'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  filter: blur(calc(var(--u) * 7));
 }
 
 .card {
@@ -69,13 +75,12 @@ button {
   bottom: var(--card-bottom);
   border-radius: calc(var(--u) * 14);
   overflow: hidden;
-  background:
-    radial-gradient(ellipse 60% 55% at 55% 62%, rgba(255, 238, 251, 0.95) 0%, rgba(255, 244, 253, 0) 70%),
-    radial-gradient(ellipse 45% 45% at 22% 55%, rgba(255, 240, 252, 0.9) 0%, rgba(255, 244, 253, 0) 70%),
-    linear-gradient(180deg, #f8f4ff 0%, #fbf6ff 55%, #f9f5ff 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.5) 100%);
+  -webkit-backdrop-filter: blur(calc(var(--u) * 8)) saturate(1.2);
+  backdrop-filter: blur(calc(var(--u) * 8)) saturate(1.2);
   box-shadow:
-    0 0 calc(var(--u) * 10) rgba(206, 182, 255, 0.55),
-    inset 0 0 0 calc(var(--u) * 0.5) rgba(255, 255, 255, 0.8);
+    0 calc(var(--u) * 4) calc(var(--u) * 16) rgba(150, 110, 215, 0.22),
+    inset 0 0 0 calc(var(--u) * 0.5) rgba(255, 255, 255, 0.85);
 }
 
 .stage {
