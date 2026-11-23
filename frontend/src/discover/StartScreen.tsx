@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import diamonds from "../assets/diamonds.png";
 import { SendButton } from "../components/SendButton";
 import { t } from "../i18n";
+import { RecentProjects } from "./RecentProjects";
 
 import { api } from "../api";
 import type { Project } from "../types";
@@ -86,19 +87,7 @@ export function StartScreen({ leaving, busy, onSubmit, onResume, notify }: Props
           <SendButton size={20} disabled={!value.trim() || busy} />
         </div>
       </form>
-      {projects.length > 0 && (
-        <label className="absolute left-1/2 flex -translate-x-1/2 flex-col text-mauve"
-          style={{ top: `calc(${offset} + var(--u) * 352)`, width: "calc(var(--u) * 241)", fontSize: "var(--text-small)" }}>
-          {t("Wróć do projektu")}
-          <select className="mt-1 rounded-md bg-white p-2 text-ink" value="" onChange={(event) => {
-            const project = projects.find((item) => item.id === Number(event.target.value));
-            if (project) onResume(project);
-          }}>
-            <option value="" disabled>{t("Wybierz zapisany projekt")}</option>
-            {projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}
-          </select>
-        </label>
-      )}
+      <RecentProjects projects={projects} top={`calc(${offset} + var(--u) * 356)`} onResume={onResume} />
     </div>
   );
 }

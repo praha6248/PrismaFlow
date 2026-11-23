@@ -5,8 +5,6 @@
   "Utwórz klucz w Google AI Studio": "Create a key in Google AI Studio",
   "Zapisuję…": "Saving…",
   "Zapisz": "Save",
-  "Wróć do projektu": "Resume a project",
-  "Wybierz zapisany projekt": "Choose a saved project",
   "Brak pasujących dyskusji dla tego hasła.": "No matching discussions for this query.",
   "Rozwiń opis problemu": "Expand problem description",
   "odpowiedź|odpowiedzi|odpowiedzi": "answer|answers",
@@ -501,5 +499,12 @@
   "Wklej cytaty z forów": "Paste forum quotes",
   "Dodano cytaty: {count}. Wygeneruj ponownie, aby ich użyć.": "Quotes added: {count}. Regenerate to use them.",
   "Te cytaty już są w projekcie.": "These quotes are already in the project.",
-  "Cytat z forum: {place}": "Forum quote: {place}"
+  "Cytat z forum: {place}": "Forum quote: {place}",
+  "ALBO WRÓĆ DO PROJEKTU": "OR RESUME A PROJECT",
+  "Wszystkie ({n})": "All ({n})",
+  "dziś": "today",
+  "wczoraj": "yesterday",
+  "{n} {unit} temu": "{n} {unit} ago",
+  "dzień|dni|dni": "day|days",
+  "Pokaż mniej": "Show less"
 }
