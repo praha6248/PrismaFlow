@@ -322,5 +322,8 @@
   "Audyt:": "Audit:",
   "sugestie i projekt z lokalnego modelu do weryfikacji": "suggestions and design by the local model, to be verified",
   "Studio User Flow": "Studio User Flow",
-  "Ostatnie 12 miesięcy": "Last 12 months"
+  "Ostatnie 12 miesięcy": "Last 12 months",
+  "brak danych w Google Trends": "no Google Trends data",
+  "za mało wyszukiwań": "too few searches",
+  "indeks Google Trends (0–100)": "Google Trends index (0–100)"
 }

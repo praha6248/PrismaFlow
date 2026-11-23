@@ -16,14 +16,8 @@ import httpx
 from ..database import Database
 from .base import CollectorUnavailable, cached
 
-DEFAULT_FEEDS = {
-    "pl": "https://forum.arturhome.pl/latest.rss",
-    "en": "https://forum.arduino.cc/latest.rss",
-}
-
-
 def feeds(language: str) -> list[str]:
-    raw = os.environ.get(f"PRISMAFLOW_RSS_FEEDS_{language.upper()}", DEFAULT_FEEDS.get(language, ""))
+    raw = os.environ.get(f"PRISMAFLOW_RSS_FEEDS_{language.upper()}", "")
     return list(dict.fromkeys(url.strip() for url in raw.split(",") if url.strip().startswith(("https://", "http://"))))
 
 

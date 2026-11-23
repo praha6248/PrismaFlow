@@ -17,7 +17,7 @@ _lock = threading.Lock()
 
 def growth_3m_vs_9m(series: list[float]) -> float | None:
     """Compare the mean of the last quarter with the mean of the nine months before it."""
-    if len(series) < 16:
+    if len(series) < 16 or mean(series) < 1:
         return None
     window = max(1, round(len(series) / 4))
     recent = series[-window:]

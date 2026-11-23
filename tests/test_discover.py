@@ -99,6 +99,7 @@ async def test_prompt_lists_map_and_suggestions(db: Database) -> None:
 def test_growth_compares_last_quarter_with_previous_months() -> None:
     assert growth_3m_vs_9m([10.0] * 39 + [15.0] * 13) == 0.5
     assert growth_3m_vs_9m([1.0, 2.0]) is None
+    assert growth_3m_vs_9m([2.0] * 13 + [0.0] * 39) is None
 
 
 def test_score_is_bounded() -> None:

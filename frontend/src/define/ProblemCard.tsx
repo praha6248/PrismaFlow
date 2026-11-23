@@ -130,9 +130,11 @@ export function ProblemCard({
           className="text-haze"
           style={{ fontSize: "var(--text-small)", marginTop: u(3), lineHeight: 1 }}
         >
-          {trend?.available
-            ? "indeks Google Trends (0–100)"
-            : "brak danych w Google Trends"}
+          {!trend?.available
+            ? t("brak danych w Google Trends")
+            : growth === null
+              ? t("za mało wyszukiwań")
+              : t("indeks Google Trends (0–100)")}
         </div>
       </div>
 

@@ -184,7 +184,7 @@ function Canvas({
             height: 14,
           },
           labelStyle: {
-            fontSize: 10,
+            fontSize: 7.5,
             fill: "var(--color-muted)",
             fontFamily: "Montserrat",
           },
