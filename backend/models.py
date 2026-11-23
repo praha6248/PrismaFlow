@@ -145,9 +145,9 @@ class Job(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
-def _sentence(value: str, limit: int) -> str:
+def _sentence(value: str, limit: int | None = None) -> str:
     text = " ".join(value.replace("_", " ").split()).strip().strip('"\u201e\u201d')
-    return text if len(text) <= limit else text[: limit - 1].rstrip(" ,.;") + "…"
+    return text if limit is None or len(text) <= limit else text[: limit - 1].rstrip(" ,.;") + "…"
 
 
 class ProblemDraft(BaseModel):
@@ -163,13 +163,13 @@ class ProblemDraft(BaseModel):
     @field_validator("title")
     @classmethod
     def _title(cls, value: str) -> str:
-        text = _sentence(value, 70).rstrip(".")
+        text = _sentence(value).rstrip(".")
         return text[:1].upper() + text[1:]
 
     @field_validator("description")
     @classmethod
     def _description(cls, value: str) -> str:
-        return _sentence(value, 140)
+        return _sentence(value)
 
     @field_validator("trend_keyword")
     @classmethod

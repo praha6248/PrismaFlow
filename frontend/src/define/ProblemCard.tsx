@@ -1,4 +1,6 @@
-import { ArrowDownRight, ArrowRight, ArrowUpRight } from "lucide-react";
+import { useState } from "react";
+import { CardDialog } from "./CardDialog";
+import { ArrowDownRight, ArrowRight, ArrowUpRight, Expand } from "lucide-react";
 import { Card, Radio, u } from "../components/ui";
 import type { Problem } from "../types";
 import { EvidenceBadge } from "./EvidenceBadge";
@@ -27,6 +29,7 @@ export function ProblemCard({
   scaleMax,
   onSelect,
 }: Props) {
+  const [expanded, setExpanded] = useState(false);
   const trend = problem.trend;
   const months = trend?.available
     ? (trend.months ?? []).map((m) => m.value)
@@ -49,8 +52,28 @@ export function ProblemCard({
         >
           PROBLEM {String(index + 1).padStart(2, "0")}
         </span>
-        <Radio checked={selected} />
+        <div className="flex items-center gap-2">
+          <button type="button" className="rounded-full p-1 text-mauve hover:bg-purple-50"
+            aria-label={t("Rozwiń opis problemu")} title={t("Rozwiń opis problemu")}
+            onKeyDown={event => event.stopPropagation()}
+            onClick={event => { event.stopPropagation(); setExpanded(true); }}>
+            <Expand size={18} />
+          </button>
+          <Radio checked={selected} />
+        </div>
       </div>
+
+      {expanded && (
+        <CardDialog title={problem.title} onClose={() => setExpanded(false)}>
+          <p className="whitespace-pre-wrap break-words text-ink">{problem.description}</p>
+          {problem.quote && <div className="mt-5 border-t border-[#efe8f5] pt-4">
+            <p className="mb-2 text-sm text-haze">
+              {problem.quote_source === "autocomplete" ? t("Podpowiedź Google") : t("Dyskusja")}
+            </p>
+            <blockquote className="whitespace-pre-wrap break-words font-serif text-xl text-mauve">„{problem.quote}”</blockquote>
+          </div>}
+        </CardDialog>
+      )}
 
       <h3
         className="absolute line-clamp-2 font-serif font-normal text-plum"

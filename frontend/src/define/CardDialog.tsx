@@ -32,7 +32,7 @@ export function CardDialog({ title, children, onClose }: {
         }
       }}>
       <header className="mb-4 flex items-start justify-between gap-4">
-        <h2 id={heading} className="font-serif text-2xl">{title}</h2>
+        <h2 id={heading} className="min-w-0 break-words font-serif text-2xl">{title}</h2>
         <button type="button" onClick={onClose} aria-label={t("Zamknij")} className="rounded-full p-2"><X size={18} /></button>
       </header>
       {children}
