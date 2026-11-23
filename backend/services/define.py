@@ -8,12 +8,10 @@ from statistics import mean
 import re
 from typing import Any
 
-import httpx
-
-from ..collectors import CollectorUnavailable, autocomplete, community, trends
-from ..config import settings
+from ..collectors import CollectorUnavailable, community, trends
+from ..ollama_client import OllamaError
 from ..database import Database
-from ..models import PersonaSet, ProblemSet
+from ..models import PersonaSet, ProblemSet, RelevantItems
 from ..retrieval import Retriever, graph_boost
 from .discover import LANGUAGE_NAMES, StructuredLLM, normalize_label
 from .translate import trend_queries
@@ -21,7 +19,7 @@ from .jobs import ProgressFn, WarnFn
 from .research import board_lines, quote_from_notes, real_notes
 
 PROBLEM_SYSTEM = """You are a product strategist running the Define phase of the Double Diamond.
-From a mind map and real evidence (search suggestions and community threads) you synthesise exactly three
+From a mind map, research notes and community discussions you synthesise exactly three
 distinct, competing problem statements a product could solve.
 Rules:
 - Write in {language}.
@@ -32,12 +30,12 @@ Rules:
   the problem; prefer common head terms that Google Trends can measure; the three keywords must all be different.
 - quote_id must be the id of an evidence line that illustrates the problem, or 0 when none fits.
 - evidence_ids lists 2-5 ids of evidence lines that show real people have this problem. Every problem must be
-  supported by evidence; do not invent a problem the evidence does not show. Use only ids from the list."""
+  supported by evidence where available. For hypotheses based on notes or the map alone, leave the ids empty."""
 
 PERSONA_SYSTEM = """You are a UX researcher creating proto-personas for the Define phase of the Double Diamond.
 They are conceptual hypotheses to validate later, not interview results.
 Rules:
-- Write in {language}; use typical first names for that language.
+- Write every field, including role and life situation, in {language}; use typical first names for that language.
 - Create three clearly different people (age, life situation, motivation) who all experience the chosen problem.
 - Spread their ages at least 8 years apart and keep every age realistic for the role (a parent of a teenager or student is at least 36); include the person who pays for or decides about a solution (for example a parent, carer or teacher) when the problem concerns someone else.
 - Ground every persona in the evidence: their situation, wording and sub-problems must follow from real lines,
@@ -55,7 +53,6 @@ class DefineCollectors:
     """Injectable collector callables, replaceable in tests."""
 
     interest: Any = trends.interest
-    suggestions: Any = autocomplete.suggestions
 
 
 PARENT = re.compile(r"rodzic|matk|mama|ojc|tata|tat\b|opiekun|parent|mother|father|mom\b|dad\b|carer|guardian", re.IGNORECASE)
@@ -243,6 +240,7 @@ class DefineService:
         focus, map_lines, evidence = self._context(project_id)
         if not focus:
             raise ValueError("the map has no topics yet; add or expand nodes in Discover first")
+        evidence = {key: item for key, item in evidence.items() if item["source"] in ("community", "reddit")}
         evidence_lines = [
             f"[{item['id']}] ({item['source']}) {item['title']}" + (f" — {item['body'][:160]}" if item.get("body") else "")
             for item in evidence.values()
@@ -268,19 +266,6 @@ class DefineService:
         drafts = result.problems[:3]
         if len(drafts) < 3:
             raise ValueError("the model returned fewer than three problems")
-        unsupported = [d.title for d in drafts if evidence and not cited([*d.evidence_ids, d.quote_id], evidence)]
-        if unsupported:
-            progress(0.3, "thinking")
-            retry = prompt + "\n\nThese problems cite no valid evidence ids: " + "; ".join(unsupported) + ". Replace them with problems the evidence lines really show, and cite their ids."
-            try:
-                again: ProblemSet = await self.llm.structured(ProblemSet, system, retry, temperature=0.4)
-                if len(again.problems) >= 3:
-                    better = sum(1 for d in again.problems[:3] if cited([*d.evidence_ids, d.quote_id], evidence))
-                    if better > len(drafts) - len(unsupported):
-                        drafts = again.problems[:3]
-            except ValueError:
-                pass
-
         progress(0.5, "trends")
         keywords = list(dict.fromkeys(d.trend_keyword for d in drafts if d.trend_keyword))
         summaries = {keyword: {} for keyword in keywords}
@@ -301,38 +286,54 @@ class DefineService:
         progress(0.75, "quotes")
         by_label = {normalize_label(n["label"]): n for n in self.db.list_nodes(project_id)}
         rows = []
-        async with httpx.AsyncClient(timeout=settings.http_timeout, headers={"User-Agent": settings.user_agent}) as http:
-            for draft in drafts:
-                quote, source = None, None
-                picked = evidence.get(draft.quote_id)
-                if picked:
-                    quote, source = picked["title"], picked["source"]
-                else:
-                    try:
-                        hints = await self.collectors.suggestions(self.db, http, draft.trend_keyword, language, geo)
-                    except CollectorUnavailable as exc:
-                        warn(f"autocomplete: {exc}")
-                        hints = []
-                    if hints:
-                        quote, source = hints[0], "autocomplete"
-                node_ids = [by_label[k]["id"] for k in map(normalize_label, draft.node_labels) if k in by_label]
-                markets = summaries.get(draft.trend_keyword, {})
-                primary = markets.get(language) or markets.get("pl") or markets.get("en") or {}
-                if not primary.get("available"):
-                    primary = next((row for row in markets.values() if row["available"]), primary)
-                primary = {"available": False, "anchor": trends.anchor_for(language), **primary}
-                rows.append(
-                    {
-                        "title": draft.title,
-                        "description": draft.description,
-                        "keyword": draft.trend_keyword,
-                        "quote": quote,
-                        "quote_source": source,
-                        "node_ids": node_ids,
-                        "evidence_ids": cited([*([draft.quote_id] if picked else []), *draft.evidence_ids], evidence),
-                        "trend": {**primary, "markets": markets},
-                    }
+        # A valid id can still point to a discussion about a different problem.
+        pairs = [
+            (index, key)
+            for index, draft in enumerate(drafts)
+            for key in cited([draft.quote_id, *draft.evidence_ids], evidence)
+        ]
+        approved: list[list[int]] = [[] for _ in drafts]
+        if pairs:
+            lines = [
+                f"{n}. Problem: {drafts[index].title} — {drafts[index].description} | "
+                f"Source: {evidence[key]['title']} {(evidence[key].get('body') or '')[:300]}"
+                for n, (index, key) in enumerate(pairs, 1)
+            ]
+            try:
+                check = await self.llm.structured(
+                    RelevantItems,
+                    "Return the numbers of pairs where the source directly illustrates the stated problem "
+                    "in the given niche. Reject mere keyword matches, general news and ambiguous cases.",
+                    f"Niche: {project['seed']}\n" + "\n".join(lines), temperature=0,
                 )
+                for n in dict.fromkeys(check.relevant):
+                    if 1 <= n <= len(pairs):
+                        index, key = pairs[n - 1]
+                        approved[index].append(key)
+            except (OllamaError, ValueError) as exc:
+                warn(f"screening: {exc}")
+        for index, draft in enumerate(drafts):
+            picked = evidence.get(draft.quote_id) if draft.quote_id in approved[index] else None
+            quote = picked["title"] if picked else None
+            source = picked["source"] if picked else None
+            node_ids = [by_label[k]["id"] for k in map(normalize_label, draft.node_labels) if k in by_label]
+            markets = summaries.get(draft.trend_keyword, {})
+            primary = markets.get(language) or markets.get("pl") or markets.get("en") or {}
+            if not primary.get("available"):
+                primary = next((row for row in markets.values() if row["available"]), primary)
+            primary = {"available": False, "anchor": trends.anchor_for(language), **primary}
+            rows.append(
+                {
+                    "title": draft.title,
+                    "description": draft.description,
+                    "keyword": draft.trend_keyword,
+                    "quote": quote,
+                    "quote_source": source,
+                    "node_ids": node_ids,
+                    "evidence_ids": approved[index],
+                    "trend": {**primary, "markets": markets},
+                }
+            )
 
         progress(0.95, "saving")
         self.db.replace_problems(project_id, rows)

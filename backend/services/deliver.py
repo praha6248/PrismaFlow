@@ -847,7 +847,7 @@ def handoff_documents(state: dict[str, Any], style: dict[str, Any] | None = None
     feature_titles = {f["id"]: f["title"] for f in features}
     order = {"must": 0, "should": 1, "could": 2}
     backlog = [
-        f"- **{f['priority'].capitalize()}** — {f['title']}: {f['description']} (popyt {f['demand']}/100, {f['support']}/{f['pool']} dowodów)"
+        f"- **{f['priority'].capitalize()}** — {f['title']}: {f['description']} (dopasowane źródła: {f['support']}/{f['pool']})"
         for f in sorted(features, key=lambda f: (order.get(f["priority"], 3), f["position"]))
     ]
     screen_lines = []
@@ -914,7 +914,7 @@ def handoff_documents(state: dict[str, Any], style: dict[str, Any] | None = None
             "",
             *guidance,
             "## Uwagi",
-            "- Popyt oznacza odsetek dowodów (podpowiedzi Google, dyskusje ze Stack Exchange i Lemmy) wspierających funkcję; to hipotezy do zweryfikowania w testach z użytkownikami.",
+            "- Liczba dopasowanych źródeł pokazuje, ile z zebranych materiałów powiązano z funkcją. Potrzebę warto sprawdzić w rozmowach z użytkownikami.",
             "",
         ]
     )

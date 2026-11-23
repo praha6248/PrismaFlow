@@ -75,10 +75,7 @@ def define_collectors(fail_trends: bool = False) -> DefineCollectors:
         dates = [f"2026-{(i // 4) % 12 + 1:02d}-{(i % 4) * 7 + 1:02d}" for i in range(52)]
         return {"dates": dates, "series": {k: [float(10 + i % 5 + idx) for i in range(52)] for idx, k in enumerate(keywords)}}
 
-    async def suggestions(db, http, query, language, geo=""):
-        return [f"jak {query}"]
-
-    return DefineCollectors(interest=interest, suggestions=suggestions)
+    return DefineCollectors(interest=interest)
 
 
 async def _project(db: Database) -> int:
@@ -103,7 +100,7 @@ async def test_problems_are_grounded_scored_and_quoted(db: Database) -> None:
 
     problems = state["problems"]
     assert [p["title"] for p in problems][0] == "Trudno utrzymać regularność treningów"
-    assert problems[0]["quote"] == "jak plan treningowy"
+    assert problems[0]["quote"] is None
     assert problems[0]["node_ids"] == [db.find_node(project_id, "plan")["id"]]
     assert all(p["trend"]["available"] and len(p["trend"]["months"]) == 12 for p in problems)
     markets = problems[0]["trend"]["markets"]
@@ -123,11 +120,14 @@ async def test_problem_quote_prefers_selected_evidence(db: Database) -> None:
 
     class Picky(SchemaLLM):
         async def structured(self, schema, system, prompt, **_):
+            if schema.__name__ == "RelevantItems":
+                return schema(relevant=[1])
             return schema.model_validate(payload if schema.__name__ == "ProblemSet" else PERSONAS)
 
     state = await DefineService(db, Picky(), define_collectors()).generate_problems(project_id, _noop, _noop)
     assert state["problems"][0]["quote"] == "Can't stick to my training plan"
     assert state["problems"][0]["quote_source"] == "reddit"
+    assert all(p["quote"] is None and not p["evidence_ids"] for p in state["problems"][1:])
 
 
 async def test_trends_failure_is_a_warning(db: Database) -> None:
@@ -237,6 +237,8 @@ async def test_problems_and_personas_cite_real_evidence(db: Database) -> None:
     class Citing(SchemaLLM):
         async def structured(self, schema, system, prompt, **_):
             self.prompts.append(prompt)
+            if schema.__name__ == "RelevantItems":
+                return schema(relevant=[1, 2, 3])
             return schema.model_validate(problems if schema.__name__ == "ProblemSet" else personas)
 
     llm = Citing()
@@ -270,3 +272,19 @@ def test_saved_persona_excludes_unrelated_news_and_search_suggestions(db: Databa
     persona = define_state(db, project)["personas"][0]
     assert [e["title"] for e in persona["evidence"]] == [titles[-1][1]]
     assert persona["evidence_ids"] == [persona["evidence"][0]["id"]]
+
+
+def test_saved_search_suggestion_cannot_be_a_problem_quote(db: Database) -> None:
+    project = discover.create_project(db, "Planowanie posiłków dla jednej osoby")["project"]["id"]
+    root = db.root_node(project)["id"]
+    hint = "resztki świetności budowli warownej"
+    db.add_evidence(project, root, "autocomplete", hint)
+    evidence_id = db.list_evidence(root)[0]["id"]
+    db.replace_problems(project, [dict(
+        title="Trudno wykorzystać resztki z obiadu", description="", keyword="resztki",
+        quote=hint, quote_source="autocomplete", evidence_ids=[evidence_id], node_ids=[],
+    )])
+    problem = define_state(db, project)["problems"][0]
+    assert problem["quote"] is None and problem["quote_source"] is None
+    assert problem["evidence"] == []
+    assert db.list_evidence(root)[0]["title"] == hint

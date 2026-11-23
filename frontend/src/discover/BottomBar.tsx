@@ -11,7 +11,7 @@ export const STAGE_TEXT: Record<string, string> = {
   screening: t("Odrzucam dyskusje nie na temat"),
   translating: t("Tłumaczę wyniki z angielskiego"),
   trends: t("Sprawdzam trendy Google"),
-  scoring: t("Liczę popyt"),
+  scoring: t("Porównuję zebrane sygnały"),
   done: t("Gotowe"),
 };
 

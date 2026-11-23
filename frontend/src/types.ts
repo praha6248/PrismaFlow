@@ -55,6 +55,7 @@ export interface MapEdge {
 }
 
 export interface Graph {
+  expansion_job_id?: string;
   project: Project;
   nodes: MapNode[];
   edges: MapEdge[];

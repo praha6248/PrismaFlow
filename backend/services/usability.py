@@ -13,6 +13,7 @@ import networkx as nx
 
 from ..database import Database
 from ..models import Flow, TaskSet
+from ..ollama_client import OllamaError
 from .deliver import graph, klm_time
 from .discover import LANGUAGE_NAMES, StructuredLLM
 from .jobs import ProgressFn, WarnFn
@@ -187,7 +188,7 @@ class UsabilityService:
         for attempt in range(2):
             try:
                 answer: TaskSet = await self.llm.structured(TaskSet, system, request, temperature=0.4 - 0.2 * attempt)
-            except (ValueError, TypeError, AttributeError) as exc:
+            except (OllamaError, ValueError, TypeError, AttributeError) as exc:
                 warn(f"tests: task scenarios fell back to templates ({type(exc).__name__})")
                 break
             drafts = {t.goal: " ".join(t.scenario.split()) for t in answer.tasks if t.scenario.strip()}

@@ -572,12 +572,17 @@ class Database:
             row = conn.execute("SELECT * FROM problems WHERE id = ?", (problem_id,)).fetchone()
         return self._problem(row) if row else None
 
-    @staticmethod
-    def _problem(row: sqlite3.Row) -> dict[str, Any]:
+    def _problem(self, row: sqlite3.Row) -> dict[str, Any]:
         item = dict(row)
         item["chosen"] = bool(item["chosen"])
         item["node_ids"] = json.loads(item["node_ids"])
         item["evidence_ids"] = json.loads(item["evidence_ids"])
+        # Previous versions stored search suggestions as problem quotes and citations.
+        if item["quote_source"] == "autocomplete":
+            item["quote"] = item["quote_source"] = None
+        item["evidence_ids"] = [
+            e["id"] for e in self.evidence_by_ids(item["evidence_ids"]) if e["source"] in ("community", "reddit")
+        ]
         item["trend"] = json.loads(item["trend"]) if item["trend"] else None
         return item
 

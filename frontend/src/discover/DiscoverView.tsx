@@ -2,7 +2,7 @@ import { ReactFlowProvider } from "@xyflow/react";
 import { ArrowRight } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, waitForJob } from "../api";
-import type { DiscoverStage, Graph, MapNode, Stage } from "../types";
+import type { DiscoverStage, Graph, MapNode, Project, Stage } from "../types";
 import { ComposerBar, ExpandProgress } from "./BottomBar";
 import { relativeScores } from "./kinds";
 import { EvidenceDrawer } from "./EvidenceDrawer";
@@ -56,6 +56,7 @@ const DISCOVER_STAGES: Stage[] = ["compose", "expanding", "select"];
 
 interface Props {
   projectId: number | null;
+  onResume: (project: Project) => void;
   onCreated: (projectId: number) => void;
   onOpenDefine: () => void;
   notify: (message: string) => void;
@@ -64,6 +65,7 @@ interface Props {
 export function DiscoverView({
   projectId,
   onCreated,
+  onResume,
   onOpenDefine,
   notify,
 }: Props) {
@@ -79,23 +81,22 @@ export function DiscoverView({
   const [focusedId, setFocusedId] = useState<number | null>(null);
   const shownWarnings = useRef(new Set<string>());
   const loadedId = graph?.project.id ?? null;
+  const graphWasEnriched = useRef(false);
+  const [jobId, setJobId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (projectId === null) {
-      setGraph(null);
-      setLeaving(false);
-      setFocusedId(null);
-      setLocalStage(null);
-      return;
-    }
-    if (projectId === loadedId) return;
+    if (projectId === null) return;
+    let current = true;
     api
       .getProject(projectId)
       .then((data) => {
+        if (!current) return;
+        setJobId(data.expansion_job_id ?? null);
         const enriched = data.nodes.some((n) => n.enriched_at !== null);
+        graphWasEnriched.current = enriched;
         if (
           !DISCOVER_STAGES.includes(data.project.stage) ||
-          data.project.stage === "expanding"
+          (data.project.stage === "expanding" && !data.expansion_job_id)
         ) {
           data = {
             ...data,
@@ -114,7 +115,8 @@ export function DiscoverView({
           }),
         ),
       );
-  }, [projectId, loadedId, notify]);
+    return () => { current = false; };
+  }, [projectId, notify]);
 
   const stage = (localStage ??
     graph?.project.stage ??
@@ -158,6 +160,7 @@ export function DiscoverView({
   const expand = async (node?: MapNode) => {
     if (!graph || busy) return;
     const previous = stage;
+    graphWasEnriched.current = stage === "select";
     setLocalStage("expanding");
     setJobStage("queued");
     try {
@@ -166,7 +169,18 @@ export function DiscoverView({
         node?.is_root ? undefined : node?.id,
         3,
       );
-      const finished = await waitForJob(job.id, (j) => setJobStage(j.stage));
+      setJobId(job.id);
+    } catch (error) {
+      notify((error as Error).message);
+      setLocalStage(previous);
+    }
+  };
+
+  useEffect(() => {
+    if (!jobId || projectId === null) return;
+    const controller = new AbortController();
+    const follow = async () => {
+      const finished = await waitForJob(jobId, (j) => setJobStage(j.stage), 450, controller.signal);
       for (const warning of finished.warnings) {
         const match = WARNINGS.find(([prefix]) => warning.startsWith(prefix) || warning.includes(prefix));
         if (match && !shownWarnings.current.has(match[1])) {
@@ -180,17 +194,21 @@ export function DiscoverView({
             error: finished.error ?? t("nieznany błąd"),
           }),
         );
-        setGraph(await api.getProject(graph.project.id));
-        setLocalStage(previous);
+        setGraph(await api.getProject(projectId));
+        setLocalStage(null);
         return;
       }
       setGraph(finished.result as Graph);
       setLocalStage(null);
-    } catch (error) {
-      notify((error as Error).message);
-      setLocalStage(previous);
-    }
-  };
+    };
+    follow().catch((error: Error) => {
+      if (controller.signal.aborted) return;
+      notify(error.message);
+      setJobId(null);
+      setLocalStage(graphWasEnriched.current ? "select" : "compose");
+    });
+    return () => controller.abort();
+  }, [jobId, projectId, notify]);
 
   const toggleStar = useCallback(
     async (node: MapNode) => {
@@ -251,8 +269,8 @@ export function DiscoverView({
 
   return (
     <>
-      {!graph && (
-        <StartScreen leaving={leaving} busy={creating} onSubmit={start} />
+      {!graph && projectId === null && (
+        <StartScreen onResume={onResume} notify={notify} leaving={leaving} busy={creating} onSubmit={start} />
       )}
 
       {graph && (

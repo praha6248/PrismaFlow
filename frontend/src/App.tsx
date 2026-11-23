@@ -124,6 +124,14 @@ export function App() {
         )}
         {route.phase === "discover" && (
           <DiscoverView
+            key={projectId ?? "home"}
+            onResume={(project) => navigate({
+              projectId: project.id,
+              phase: project.phase,
+              sub: project.phase !== "define" ? undefined
+                : project.stage === "validate" ? "validate"
+                : project.stage === "select" ? "board" : undefined,
+            })}
             projectId={projectId}
             onCreated={(id) => navigate({ projectId: id, phase: "discover" })}
             onOpenDefine={() => advance("define", "board")}

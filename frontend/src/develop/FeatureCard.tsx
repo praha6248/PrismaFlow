@@ -204,7 +204,7 @@ export function FeatureCardView({
             color: style.color,
           }}
         >
-          {t("Popyt {value}/100", { value: feature.demand })}
+          {feature.pool ? t("Źródła {n}/{all}", { n: feature.support, all: feature.pool }) : t("Brak źródeł")}
         </span>
         {rice && (
           <button

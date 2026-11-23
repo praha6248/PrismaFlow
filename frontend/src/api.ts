@@ -83,6 +83,7 @@ export const api = {
     }),
   createProject: (seed: string) =>
     request<Graph>("/projects", { method: "POST", body: json({ seed }) }),
+  listProjects: () => request<Project[]>("/projects"),
   getProject: (id: number) => request<Graph>(`/projects/${id}`),
   setStage: (id: number, stage: Stage) =>
     request<Graph>(`/projects/${id}`, {
@@ -272,9 +273,12 @@ export async function waitForJob(
   id: string,
   onProgress: (job: Job) => void,
   intervalMs = 450,
+  signal?: AbortSignal,
 ): Promise<Job> {
   for (;;) {
+    if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
     const job = await api.job(id);
+    if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
     onProgress(job);
     if (job.status !== "running") return job;
     await new Promise((resolve) => setTimeout(resolve, intervalMs));

@@ -72,6 +72,7 @@ def create_app(
     case_study = CaseStudyService(deliver)
     usability = UsabilityService(database, ollama)
     jobs = JobRegistry()
+    expansions: dict[int, Job] = {}
 
     def with_rice(feature: dict | None) -> dict | None:
         if feature is None:
@@ -120,9 +121,13 @@ def create_app(
         return discover.create_project(database, body.seed)
 
     @api.get("/projects/{project_id}")
-    def get_project(project_id: int) -> dict:
+    async def get_project(project_id: int) -> dict:
         """Return a project's full mind map."""
-        return discover.graph(database, project_id)
+        graph = discover.graph(database, project_id)
+        active = expansions.get(project_id)
+        if active:
+            graph["expansion_job_id"] = active.id
+        return graph
 
     @api.patch("/projects/{project_id}")
     def update_project(project_id: int, body: ProjectUpdate) -> dict:
@@ -185,6 +190,8 @@ def create_app(
         """Start an AI expansion job and return its handle."""
         if database.get_project(body.project_id) is None:
             raise HTTPException(404, "project not found")
+        if active := expansions.get(body.project_id):
+            return active
         database.update_project(body.project_id, stage="expanding")
 
         async def run(progress, warn) -> dict:
@@ -193,8 +200,12 @@ def create_app(
             except Exception:
                 database.update_project(body.project_id, stage="compose" if body.node_id is None else "select")
                 raise
+            finally:
+                expansions.pop(body.project_id, None)
 
-        return jobs.start("discover.expand", run)
+        job = jobs.start("discover.expand", run)
+        expansions[body.project_id] = job
+        return job
 
     @api.get("/projects/{project_id}/validate")
     def get_validate(project_id: int) -> dict:

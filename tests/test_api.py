@@ -52,3 +52,32 @@ def test_expand_job_runs_to_completion(tmp_path) -> None:
                 break
         assert state["status"] == "done", state
         assert state["result"]["project"]["stage"] == "select"
+
+
+def test_running_expansion_can_be_resumed(tmp_path) -> None:
+    import asyncio
+    from threading import Event
+
+    release = Event()
+
+    class PausedDiscover(DiscoverService):
+        async def expand(self, *args):
+            await asyncio.to_thread(release.wait, 5)
+            return await super().expand(*args)
+
+    db = Database(":memory:")
+    service = PausedDiscover(db, FakeLLM(), offline_collectors())
+    with TestClient(create_app(db=db, service=service, frontend_dist=tmp_path)) as client:
+        project = client.post("/api/projects", json={"seed": "Planer"}).json()["project"]["id"]
+        body = {"project_id": project}
+        job = client.post("/api/discover/expand", json=body).json()
+        try:
+            assert client.get(f"/api/projects/{project}").json()["expansion_job_id"] == job["id"]
+            assert client.post("/api/discover/expand", json=body).json()["id"] == job["id"]
+        finally:
+            release.set()
+        for _ in range(200):
+            if client.get(f"/api/jobs/{job['id']}").json()["status"] == "done":
+                break
+        graph = client.get(f"/api/projects/{project}").json()
+        assert graph["project"]["stage"] == "select" and "expansion_job_id" not in graph

@@ -168,13 +168,21 @@ def test_mentions_matches_whole_names() -> None:
 class ScreeningLLM(FakeLLM):
     """Fake model with embeddings: vectors point along the topic when the text mentions the knee."""
 
+    async def structured(self, schema, system, prompt, **kwargs):
+        if schema.__name__ == "RelevantItems":
+            self.prompts.append(prompt)
+            lines = [line for line in prompt.splitlines() if line[:1].isdigit()]
+            return schema(relevant=[n for n, line in enumerate(lines, 1)
+                                    if "Ćwiczenia na kolana" in line or "Fizjoterapia" in line])
+        return await super().structured(schema, system, prompt, **kwargs)
+
     async def embed(self, texts: list[str]) -> list[list[float]]:
         def vector(text: str) -> list[float]:
             low = text.casefold()
             if "kolan" in low:
                 return [1.0, 0.0]
             if "kot" in low:
-                return [0.0, 1.0]
+                return [1.0, 0.0]  # An off-topic result can have a high cosine score.
             return [0.5, 0.866]
 
         return [vector(t) for t in texts]

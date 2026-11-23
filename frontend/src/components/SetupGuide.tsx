@@ -163,7 +163,7 @@ export function SetupGuide({ state, onRefresh, onClose }: Props) {
         </div>
         <p className="text-mauve" style={{ fontSize: "var(--text-small)", lineHeight: 1.5 }}>
           {t(
-            "PrismaFlow działa na Twoim komputerze. Tekst generuje lokalny model w Ollamie, więc dane nie opuszczają dysku.",
+            "Projekty są zapisywane na tym komputerze. Zapytania wyszukiwania trafiają do źródeł internetowych, a treść do analizy otrzymuje skonfigurowany serwer Ollama.",
           )}
           {state?.memory_gb
             ? ` ${t("Masz {ram} GB RAM, dlatego polecamy model poniżej.", { ram: number(state.memory_gb, 1) })}`

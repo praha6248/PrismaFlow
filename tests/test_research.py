@@ -181,3 +181,15 @@ async def test_report_and_svg(db: Database) -> None:
     assert "<h2>Mapa empatii</h2>" in page and "<ul>" in page
     svg = prototype_svg(flow, {"primary": "#123456"})
     assert svg.startswith("<svg") and svg.count('rx="32"') == 5 and "#123456" in svg
+
+
+async def test_usability_tasks_work_with_ollama_offline(db: Database) -> None:
+    from .conftest import FakeLLM
+    from backend.services.discover import create_project
+
+    project = create_project(db, "Trening")["project"]["id"]
+    db.save_flow(project, sample_flow().model_dump())
+    warnings = []
+    state = await UsabilityService(db, FakeLLM(fail=True)).plan(project, _noop, warnings.append)
+    assert warnings and state["tasks"][0]["goal"] == "s3"
+    assert state["tasks"][0]["scenario"]

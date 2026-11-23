@@ -1,16 +1,26 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import diamonds from "../assets/diamonds.png";
 import { SendButton } from "../components/SendButton";
 import { t } from "../i18n";
 
+import { api } from "../api";
+import type { Project } from "../types";
+
 interface Props {
+  onResume: (project: Project) => void;
+  notify: (message: string) => void;
   leaving: boolean;
   busy: boolean;
   onSubmit: (seed: string) => void;
 }
 
-export function StartScreen({ leaving, busy, onSubmit }: Props) {
+export function StartScreen({ leaving, busy, onSubmit, onResume, notify }: Props) {
   const [value, setValue] = useState("");
+
+  const [projects, setProjects] = useState<Project[]>([]);
+  useEffect(() => {
+    api.listProjects().then(setProjects).catch((error: Error) => notify(error.message));
+  }, [notify]);
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
@@ -76,6 +86,19 @@ export function StartScreen({ leaving, busy, onSubmit }: Props) {
           <SendButton size={20} disabled={!value.trim() || busy} />
         </div>
       </form>
+      {projects.length > 0 && (
+        <label className="absolute left-1/2 flex -translate-x-1/2 flex-col text-mauve"
+          style={{ top: `calc(${offset} + var(--u) * 352)`, width: "calc(var(--u) * 241)", fontSize: "var(--text-small)" }}>
+          {t("Wróć do projektu")}
+          <select className="mt-1 rounded-md bg-white p-2 text-ink" value="" onChange={(event) => {
+            const project = projects.find((item) => item.id === Number(event.target.value));
+            if (project) onResume(project);
+          }}>
+            <option value="" disabled>{t("Wybierz zapisany projekt")}</option>
+            {projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}
+          </select>
+        </label>
+      )}
     </div>
   );
 }

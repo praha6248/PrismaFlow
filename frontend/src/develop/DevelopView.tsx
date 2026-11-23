@@ -53,7 +53,7 @@ const STAGE_TEXT: Record<string, string> = {
   queued: t("Przygotowuję propozycje"),
   context: t("Zbieram dowody z mapy"),
   thinking: t("Model proponuje funkcje"),
-  scoring: t("Liczę popyt na podstawie dowodów"),
+  scoring: t("Dopasowuję źródła do funkcji"),
   saving: t("Zapisuję tablicę"),
   done: "Gotowe",
 };
@@ -636,7 +636,7 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
       )}
       <FooterNote top={436}>
         {t(
-          "Popyt = odsetek dowodów wspierających funkcję · RICE = zasięg × wpływ × pewność ÷ nakład · kliknij RICE, aby zmienić ocenę",
+          "Źródła = liczba dopasowanych materiałów z zebranej puli · RICE = zasięg × wpływ × pewność ÷ nakład · kliknij RICE, aby zmienić ocenę",
         )}
       </FooterNote>
     </>

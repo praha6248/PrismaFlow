@@ -2,7 +2,8 @@
 
 A local-first desktop app that helps you find and validate a product idea, from a rough topic to a
 user flow you can hand to a designer. It follows the Double Diamond method (Discover, Define, Validate,
-Develop, Deliver) and runs entirely on your machine: no account, no cloud, your data stays local.
+Develop, Deliver) and saves projects on your machine. Discover sends search queries to online sources.
+Model requests go to the configured Ollama server or, when enabled, the Anthropic API.
 
 ![PrismaFlow demo: from the topic map through problems, validation and the backlog to the user flow audit](docs/screenshots/demo.gif)
 

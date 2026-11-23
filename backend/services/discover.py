@@ -65,7 +65,6 @@ COMPETITOR_SYSTEM = "You label names from a product research mind map. Answer ea
 
 RELEVANCE_LOW = 0.36
 RELEVANCE_HIGH = 0.58
-RELEVANCE_MID = 0.45
 FORMATS = {
     "aplikacja", "aplikacja mobilna", "aplikacja webowa", "aplikacja internetowa", "strona internetowa", "strona www",
     "platforma", "platforma online", "darmowa", "darmowa aplikacja", "app", "mobile app", "web app", "website",
@@ -377,11 +376,7 @@ class DiscoverService:
         unsure: list[int] = []
         for position in range(len(items)):
             sim = sims[position] if sims else None
-            if sim is None:
-                unsure.append(position)
-            elif sim >= RELEVANCE_HIGH:
-                keep.add(position)
-            elif sim >= RELEVANCE_LOW:
+            if sim is None or sim >= RELEVANCE_LOW:
                 unsure.append(position)
         for start in range(0, len(unsure), 30):
             chunk = unsure[start : start + 30]
@@ -393,7 +388,6 @@ class DiscoverService:
                 keep.update(chunk[n - 1] for n in verdict.relevant if 1 <= n <= len(chunk))
             except OllamaError as exc:
                 warn(f"screening: {exc}")
-                keep.update(p for p in chunk if sims is None or sims[p] >= RELEVANCE_MID)
         for position, (node_id, key, index, _) in enumerate(items):
             if position not in keep:
                 gathered[node_id][key][index] = None
