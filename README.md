@@ -186,6 +186,16 @@ Evidence is collected bilingually: queries are translated to English by the loca
 suggestions and threads are fetched alongside local ones and translated back into the project
 language, keeping the original text in the evidence metadata.
 
+## Design
+
+The interface uses a frosted-glass card over a blurred double-diamond background, Crimson Text for titles
+and Montserrat for everything else. Text uses three sizes only (`--text-small`, `--text-body` and
+`--text-title` in `frontend/src/index.css`, 12, 14 and 28 px at the default window size); the screen
+mock-ups on the Deliver canvas and the mind-map bubbles scale with zoom and bubble size. Colours are
+tokens in the same file and every text colour meets WCAG 2.2 AA contrast (4.5:1) against the card and
+tinted backgrounds. Body text is near-black, the brand pink `#f783e9` is used for accents, and
+buttons with white semibold labels use the deeper `#f34cdf`.
+
 ## Contributing
 
 Contributions are welcome, see [CONTRIBUTING.md](CONTRIBUTING.md) and the
