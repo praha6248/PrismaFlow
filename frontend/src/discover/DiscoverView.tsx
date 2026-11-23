@@ -13,6 +13,24 @@ import { t } from "../i18n";
 
 const WARNINGS: [string, string][] = [
   [
+    "google trends: too many requests",
+    t(
+      "Google Trends ogranicza liczbę zapytań — wstrzymuję trendy na pewien czas, reszta mapy działa bez nich.",
+    ),
+  ],
+  [
+    "google trends: paused for",
+    t(
+      "Google Trends ogranicza liczbę zapytań — wstrzymuję trendy na pewien czas, reszta mapy działa bez nich.",
+    ),
+  ],
+  [
+    "(429)",
+    t(
+      "YouTube lub Stack Exchange ograniczają liczbę zapytań — wstrzymuję je na 15 minut, dyskusji będzie mniej.",
+    ),
+  ],
+  [
     "competitor:",
     t(
       "Usunięto konkurencję, której nazwa nie pojawia się w wyszukiwaniach ani dyskusjach — model mógł ją zmyślić.",
@@ -29,26 +47,14 @@ const WARNINGS: [string, string][] = [
     t("Stack Exchange i Lemmy chwilowo nie odpowiadają — pomijam dyskusje."),
   ],
   [
-    "too many requests",
-    t(
-      "Google Trends ogranicza liczbę zapytań — wstrzymuję trendy na pewien czas, reszta mapy działa bez nich.",
-    ),
-  ],
-  [
-    "paused for",
-    t(
-      "Google Trends ogranicza liczbę zapytań — wstrzymuję trendy na pewien czas, reszta mapy działa bez nich.",
-    ),
+    "autocomplete:",
+    t("Google Autocomplete nie odpowiada — pomijam podpowiedzi."),
   ],
   [
     "trends:",
     t(
       "Google Trends chwilowo nie odpowiada — trendy uzupełnię przy kolejnej rozbudowie.",
     ),
-  ],
-  [
-    "autocomplete:",
-    t("Google Autocomplete nie odpowiada — pomijam podpowiedzi."),
   ],
 ];
 

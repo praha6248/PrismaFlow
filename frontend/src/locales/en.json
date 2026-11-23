@@ -467,5 +467,6 @@
   "PDF: otwórz case-study.html i wydrukuj do PDF": "PDF: open case-study.html and print to PDF",
   "Napisz ponownie": "Write again",
   "Odrzucam dyskusje nie na temat": "Dropping off-topic discussions",
-  "Google Trends ogranicza liczbę zapytań — wstrzymuję trendy na pewien czas, reszta mapy działa bez nich.": "Google Trends is limiting requests — trends are paused for a while, the rest of the map works without them."
+  "Google Trends ogranicza liczbę zapytań — wstrzymuję trendy na pewien czas, reszta mapy działa bez nich.": "Google Trends is limiting requests — trends are paused for a while, the rest of the map works without them.",
+  "YouTube lub Stack Exchange ograniczają liczbę zapytań — wstrzymuję je na 15 minut, dyskusji będzie mniej.": "YouTube or Stack Exchange is limiting requests — they are paused for 15 minutes, so there will be fewer discussions."
 }

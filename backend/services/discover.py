@@ -50,7 +50,7 @@ Rules:
 - Stay inside the niche: every node must matter for this exact product, not for its audience's life in general.
 - Never propose the product format or a platform as a node ("mobile app", "website", "platform", "iPhone", "Android",
   "free"); when the focus node is such a format, expand the needs and problems it would serve instead.
-- search_query is a 2-5 word phrase in {language} that joins the node with the niche so the search stays on topic
+- search_query is a 2-4 word phrase in {language} that joins the node with the niche so the search stays on topic
   (for the niche "training plan after a knee injury" and the node "rehabilitation": "knee rehabilitation exercises").
   Give one for every classified node too.
 - connects_to lists 1-2 exact labels from the map (existing or newly proposed) that the node is meaningfully related to."""
@@ -356,6 +356,7 @@ class DiscoverService:
         self, seed: str, nodes: list[dict[str, Any]], gathered: dict[int, dict[str, Any]], warn: WarnFn
     ) -> None:
         """Keep only discussions that are about the niche, not just sharing a word with a node."""
+        await self._screen_suggestions(seed, gathered, warn)
         labels = {n["id"]: n["label"] for n in nodes}
         items = [
             (node_id, key, index, f"{post['title']} {(post.get('body') or '')[:200]}".strip())
@@ -395,6 +396,22 @@ class DiscoverService:
             for key in ("posts", "en_posts"):
                 if entry.get(key):
                     entry[key] = [post for post in entry[key] if post is not None]
+
+    async def _screen_suggestions(self, seed: str, gathered: dict[int, dict[str, Any]], warn: WarnFn) -> None:
+        """Drop search suggestions that are far from the niche in meaning."""
+        texts = list(dict.fromkeys(t for e in gathered.values() for k in ("suggestions", "en_suggestions") for t in e.get(k) or []))
+        if not texts or not callable(getattr(self.llm, "embed", None)):
+            return
+        try:
+            vectors = await self.llm.embed([seed, *texts])
+        except (OllamaError, httpx.HTTPError) as exc:
+            warn(f"screening: {exc}")
+            return
+        far = {text for text, vector in zip(texts, vectors[1:]) if cosine(vectors[0], vector) < RELEVANCE_LOW}
+        for entry in gathered.values():
+            for key in ("suggestions", "en_suggestions"):
+                if entry.get(key):
+                    entry[key] = [t for t in entry[key] if t not in far]
 
     async def _check_competitors(
         self, project: dict[str, Any], candidates: list[dict[str, Any]], suggestions: list[str], warn: WarnFn
@@ -532,35 +549,49 @@ class DiscoverService:
         language, geo = project["language"], project["geo"]
         bilingual = language != "en"
         queries = [n["search_query"] or n["label"] for n in nodes]
+        talks = [n["label"] for n in nodes]
         english: list[str] = []
+        english_talks: list[str] = []
         if bilingual:
             progress(0.56, "translating")
-            english = await translate(self.llm, queries, "English")
+            both = await translate(self.llm, [*queries, *talks], "English")
+            english, english_talks = both[: len(queries)], both[len(queries) :]
         limiter = asyncio.Semaphore(4)
         gathered: dict[int, dict[str, Any]] = {}
         done = 0
 
-        async def lookup(query: str, hl: str, gl: str) -> tuple[list[str], list[dict] | None]:
+        async def lookup(query: str, talk: str, hl: str, gl: str) -> tuple[list[str], list[dict] | None]:
             suggestions: list[str] = []
             posts: list[dict] | None = None
-            try:
-                suggestions = await self.collectors.simple_suggestions(self.db, http, query, hl, gl)
-            except CollectorUnavailable as exc:
-                warn(f"autocomplete: {exc}")
-            try:
-                posts = await self.collectors.community_search(self.db, http, query, hl)
-            except CollectorUnavailable as exc:
-                warn(f"community: {exc}")
+            for candidate in dict.fromkeys(q for q in (query, talk) if q):
+                try:
+                    suggestions = await self.collectors.simple_suggestions(self.db, http, candidate, hl, gl)
+                except CollectorUnavailable as exc:
+                    warn(f"autocomplete: {exc}")
+                    break
+                if suggestions:
+                    break
+            for candidate in dict.fromkeys(q for q in (query, talk) if q):
+                try:
+                    found = await self.collectors.community_search(self.db, http, candidate, hl)
+                except CollectorUnavailable as exc:
+                    warn(f"community: {exc}")
+                    continue
+                seen = {p.get("url") or p["title"] for p in posts or []}
+                posts = [*(posts or []), *(p for p in found if (p.get("url") or p["title"]) not in seen)]
+                if len(posts) >= 3:
+                    break
             return suggestions, posts
 
         async def collect(index: int, node: dict[str, Any]) -> None:
             nonlocal done
             async with limiter:
-                suggestions, posts = await lookup(queries[index], language, geo)
+                suggestions, posts = await lookup(queries[index], talks[index], language, geo)
                 entry: dict[str, Any] = {"suggestions": suggestions, "posts": posts, "en_suggestions": [], "en_posts": []}
                 foreign = english[index] if bilingual and index < len(english) else ""
+                foreign_talk = english_talks[index] if bilingual and index < len(english_talks) else ""
                 if foreign and normalize_label(foreign) != normalize_label(queries[index]):
-                    en_suggestions, en_posts = await lookup(foreign, "en", "")
+                    en_suggestions, en_posts = await lookup(foreign, foreign_talk, "en", "")
                     entry["en_suggestions"] = en_suggestions[:6]
                     entry["en_posts"] = (en_posts or [])[:6]
             gathered[node["id"]] = entry

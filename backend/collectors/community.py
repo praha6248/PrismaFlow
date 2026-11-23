@@ -20,7 +20,7 @@ from ..config import settings
 from ..database import Database
 from ..evidence import SHORT_TERMS, STOPWORDS, relevant, terms
 from . import forums, reddit, youtube
-from .base import CollectorUnavailable, cached
+from .base import CollectorUnavailable, cache_key, cached
 
 STACKEXCHANGE_ENDPOINT = "https://api.stackexchange.com/2.3/search/advanced"
 LEMMY_ENDPOINT = "https://lemmy.world/api/v3/search"
@@ -57,6 +57,17 @@ NSFW = re.compile(r"nsfw|porn|onlyfans|gonewild|hentai", re.IGNORECASE)
 _locks: dict[str, asyncio.Lock] = {}
 _last_call: dict[str, float] = {}
 _backoff_until: dict[str, float] = {}
+_paused_until: dict[str, float] = {}
+PAUSE_AFTER_LIMIT = 15 * 60
+
+
+def _family(source: str) -> str:
+    return source.split(":")[1] if ":" in source else source
+
+
+def paused(source: str, now: float | None = None) -> float:
+    """Seconds a source stays paused after it answered 429, or 0."""
+    return max(0.0, _paused_until.get(_family(source), 0.0) - (now or time.time()))
 
 
 def _clean(text: str, limit: int) -> str:
@@ -277,11 +288,19 @@ async def search(db: Database, client: httpx.AsyncClient, query: str, language: 
 
     errors: list[str] = []
     for source, cache_query, fetch in jobs:
+        params = {"limit": limit, "max_age_days": settings.discussion_max_age_days}
+        hit = db.cache_get(cache_key(source, cache_query, params), settings.cache_ttl_seconds, 0)
+        left = paused(source)
+        if left and not (hit and hit[0] == "ok"):
+            errors.append(f"{_family(source)}: paused for {round(left / 60)} more min after too many requests (429)")
+            continue
         try:
             results.extend(
-                await cached(db, source, cache_query, {"limit": limit, "max_age_days": settings.discussion_max_age_days}, fetch, settings.cache_ttl_seconds, settings.negative_cache_ttl_seconds)
+                await cached(db, source, cache_query, params, fetch, settings.cache_ttl_seconds, settings.negative_cache_ttl_seconds)
             )
         except CollectorUnavailable as exc:
+            if "429" in str(exc):
+                _paused_until[_family(source)] = time.time() + PAUSE_AFTER_LIMIT
             errors.append(f"{source.split(':', 1)[1]}: {exc}")
     for url in feed_urls:
         try:
