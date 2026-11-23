@@ -1,4 +1,4 @@
-import { Check, Copy, X } from "lucide-react";
+import { Check, Copy, RotateCcw, X } from "lucide-react";
 import { useState } from "react";
 import { u } from "../components/ui";
 import type { Handoff } from "../types";
@@ -6,9 +6,10 @@ import type { Handoff } from "../types";
 interface Props {
   handoff: Handoff;
   onClose: () => void;
+  onRestart: () => void;
 }
 
-export function HandoffModal({ handoff, onClose }: Props) {
+export function HandoffModal({ handoff, onClose, onRestart }: Props) {
   const [tab, setTab] = useState<"figma" | "claude">("figma");
   const [copied, setCopied] = useState(false);
   const text = tab === "figma" ? handoff.figma_prompt : handoff.claude_md;
@@ -91,6 +92,15 @@ export function HandoffModal({ handoff, onClose }: Props) {
           <span className="min-w-0 flex-1 truncate text-haze" style={{ fontSize: u(5.2) }} title={handoff.directory}>
             Zapisano: {handoff.directory}
           </span>
+          <button
+            type="button"
+            onClick={onRestart}
+            className="flex items-center transition-colors hover:bg-[#e9dcf8]"
+            style={{ fontSize: u(6.6), padding: `${u(5)} ${u(12)}`, borderRadius: u(6), gap: u(3), background: "#f3ecfa", color: "#573476" }}
+          >
+            <RotateCcw style={{ width: u(7), height: u(7) }} />
+            Nowy problem
+          </button>
           <button
             type="button"
             onClick={copy}

@@ -255,9 +255,10 @@ function Canvas({ flow, state, audit, selectedId, focusRequest, onSelect, onChan
 interface Props {
   projectId: number;
   notify: (message: string) => void;
+  onRestart: () => void;
 }
 
-function Studio({ projectId, notify }: Props) {
+function Studio({ projectId, notify, onRestart }: Props) {
   const [state, setState] = useState<DeliverState | null>(null);
   const [flow, setFlow] = useState<Flow>({ screens: [] });
   const [audit, setAudit] = useState<FlowAudit | null>(null);
@@ -535,7 +536,7 @@ function Studio({ projectId, notify }: Props) {
         Audyt: Hick RT = a + b·log₂(n+1) · Fitts ID = log₂(2D/W) · KLM · WCAG 2.2 · sugestie i projekt z lokalnego modelu do weryfikacji
       </p>
 
-      {handoff && <HandoffModal handoff={handoff} onClose={() => setHandoff(null)} />}
+      {handoff && <HandoffModal handoff={handoff} onClose={() => setHandoff(null)} onRestart={onRestart} />}
     </>
   );
 }
