@@ -70,7 +70,50 @@ Held-out answer loss on the Deliver tasks fell from 1.58 to 0.022 (optimise) and
 
 `backend/config.py` defines `TASK_MODELS = {"deliver": ("local/gemma3-4b-ux",)}`. `OllamaClient.structured(..., task="deliver")` picks `local/gemma3-4b-ux` when it is installed, and otherwise falls back to the usual `PREFERRED_MODELS` order. `PRISMAFLOW_MODEL` still overrides everything. Every other phase keeps using `local/gemma3-12b`.
 
-## Reproduce
+## Round 2: `local/gemma3-4b-ux2` with multiple-choice knowledge
+
+Goal: close the knowledge-quiz gap without losing the Deliver gains. A 12B QLoRA was started and then dropped by decision; only the 4B was retrained.
+
+### What changed
+
+- `distill_mc.py`: `gemma3-12b` wrote 1100 multiple-choice items, in the quiz's format, from 400 passages of **training** documents only. Each item also becomes an open answer with its reason.
+- **Quiz contamination guard:** items whose question has word Jaccard ≥ 0.2 with any of the 26 quiz questions were removed, together with their open-answer twins. That removed 27 items, and the removed ones were real near-duplicates (Miller 7±2, Hick's logarithm, the 4.5:1 contrast, MoSCoW "Won't", Fitts target width, SUS). 2 of the 816 round-1 open Q&A matched the same guard and were excluded from ux2. 1076 MC items remained, with answer letters balanced (A/B/C/D 268/254/272/306 before filtering).
+- **Training mix:** 364 Deliver examples, 338 MC items and 338 open answers, so knowledge is 65% of 1040 examples instead of 35% of 559. Same LoRA settings, 2 epochs, 260 steps, 18.2 min, 12.5 GiB peak.
+
+### Results (all four models re-run back to back on the same held-out set)
+
+| Metric | gemma3-4b | gemma3-4b-ux | **gemma3-4b-ux2** | gemma3-12b |
+|---|---|---|---|---|
+| Optimise: schema valid | 100% | 100% | 100% | 98.3% |
+| Optimise: valid references | 81.8% | 99.1% | 99.1% | 93.2% |
+| Optimise: audit issue reduction (gold 71.4%) | 39.6% | **68.7%** | 68.5% | 41.5% |
+| Optimise: dead-end fix | 33.3% | **100%** | 97.2% | 88.9% |
+| Optimise: Fitts/WCAG fix | 41.1% | 71.0% | **71.8%** | 27.8% |
+| Optimise: latency | 3.26 s | 3.08 s | 2.33 s | 17.45 s |
+| Flow: structure rules | 16.7% | **100%** | **100%** | 55.6% |
+| Flow: goal reachable | 83.3% | **100%** | 94.4% | **100%** |
+| Flow: Must-have coverage | 57.4% | **95.4%** | 94.0% | 76.4% |
+| Flow: audit issues | 5.11 | **0.06** | **0.06** | 5.94 |
+| UX quiz (26 items) | 57.7% | 57.7% | **65.4%** | **76.9%** |
+| Held-out loss: optimise / flow / knowledge | 1.58 / 0.90 / 2.42 | 0.022 / 0.106 / 1.38 | 0.020 / 0.107 / 1.39 | — |
+
+### Honest reading
+
+- **The quiz improved a little, not decisively.** ux2 answers 17 of 26 correctly, against 15 for ux and the base 4B and 20 for the 12B. Two questions on 26 is within what a different phrasing could swing. ux2 gained Miller, the 4.5:1 contrast, Material's 48 dp, the dead-end heuristic and SC 3.3.8. It lost the 24 px of SC 2.5.8 and Hick's logarithm, exactly the topics whose near-duplicate items were filtered out. Multiple-choice practice helped with facts it saw in training; it did not make the model reliable on UX facts in general. The 12B is still the better source of UX facts.
+- **Deliver held.** On every metric ux2 is within one example of ux. Dead ends: 35 of 36 fixed vs 36 of 36. Goal reachable: 17 of 18 vs 18 of 18. Fitts/WCAG fixes are slightly better. The held-out losses are practically identical.
+- **Run-to-run noise is visible.** The base 4B went from 34.4% to 39.6% issue reduction between round 1 and round 2 with no change at all, so differences of a few points are noise. The 12B's latency (17 s here, 6 s in round 1) depended on what else was running on the GPU; latencies are only comparable within one round.
+- **Decision:** the rule was to switch only if ux2 is at least as good on Deliver. It ties within noise but is one example worse on two metrics, so `TASK_MODELS` stays on `local/gemma3-4b-ux`. ux2 stays installed in Ollama for anyone who wants the slightly better quiz score. To use it, set `PRISMAFLOW_MODEL=local/gemma3-4b-ux2`; note that this then applies to every phase.
+
+Raw results: `results/round2/`. Reproduce ux2:
+
+```bash
+OLLAMA_HOST=127.0.0.1:11434 .venv/bin/python distill_mc.py --limit 400
+.venv/bin/python train.py --name ux2 --knowledge-share 0.65 --mc-share 0.5
+./export.sh gemma3-4b-ux2 out/ux2
+.venv/bin/python evaluate.py local/gemma3-4b-ux2
+```
+
+## Reproduce (round 1)
 
 ```bash
 cd training
@@ -89,3 +132,14 @@ curl -s http://127.0.0.1:11434/api/generate -d '{"model":"local/gemma3-12b","kee
 ./export.sh
 .venv/bin/python evaluate.py local/gemma3-4b-ux
 ```
+
+## Publishing on Hugging Face
+
+`hf/` holds the release of `gemma3-4b-ux`: the model card (`README.md`), the `Modelfile`, the Gemma `NOTICE` and `upload.sh`. Nothing is uploaded automatically. Log in first, then pass the repo id:
+
+```bash
+.venv/bin/hf auth login
+hf/upload.sh <hf-user>/<repo-name>
+```
+
+The script fills the repo id into the card, creates the repo (public by default) and uploads the card, the Modelfile, the notice and `out/gemma3-4b-ux-Q4_K_M.gguf`. After that the model runs with `ollama run hf.co/<hf-user>/<repo-name>`.

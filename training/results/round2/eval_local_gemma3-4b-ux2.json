@@ -1,0 +1,5009 @@
+{
+ "model": "local/gemma3-4b-ux2",
+ "summary": {
+  "optimize": {
+   "n": 60,
+   "schema_valid": 1.0,
+   "valid_reference": 0.991,
+   "suggestions_per_answer": 3.68,
+   "issues_before": 6.98,
+   "issues_after": 2.2,
+   "issue_reduction": 0.685,
+   "gold_issue_reduction": 0.714,
+   "improved_share": 1.0,
+   "dead_end_fix": 0.972,
+   "fitts_wcag_fix": 0.718,
+   "latency_s": 2.33
+  },
+  "flow": {
+   "n": 18,
+   "schema_valid": 1.0,
+   "structure_ok": 1.0,
+   "goal_reachable": 0.944,
+   "must_coverage": 0.94,
+   "issues": 0.06,
+   "dead_ends": 0,
+   "latency_s": 3.7
+  },
+  "quiz": {
+   "n": 26,
+   "accuracy": 0.654
+  }
+ },
+ "optimize": [
+  {
+   "valid": true,
+   "latency": 5.617404425000132,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 12,
+   "issues_after": 6,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 7,
+   "fw_after": 4,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Termin” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Termin",
+      "element": "Dalej",
+      "value": "Potwierdzenie"
+     },
+     {
+      "title": "Przenieś „Potwierdź” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Potwierdzenie",
+      "element": "Potwierdź",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Na skróty” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,81",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Na skróty",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Udostępnij” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Salon",
+      "element": "Udostępnij",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.3234848530046293,
+   "raw": 4,
+   "resolved": 3,
+   "issues_before": 5,
+   "issues_after": 2,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 2,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Salon” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Salon",
+      "element": "Dalej",
+      "value": "Potwierdzenie"
+     },
+     {
+      "title": "Przesuń „Pokaż więcej” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 5,54",
+      "op": "move_zone",
+      "screen": "Potwierdzenie",
+      "element": "Pokaż więcej",
+      "value": "bottom"
+     },
+     {
+      "title": "Zwiększ przycisk „Szukaj” do L",
+      "reason": "Za mały cel, poniżej WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj",
+      "value": "L"
+     },
+     {
+      "title": "Przesuń „Historia” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 8,78",
+      "op": "move_zone",
+      "screen": "Termin",
+      "element": "Historia",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.429579465002462,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 9,
+   "issues_after": 1,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Start” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Start",
+      "element": "Kontynuuj",
+      "value": "Salon"
+     },
+     {
+      "title": "Przenieś „Wybierz termin” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Termin",
+      "element": "Wybierz termin",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Szukaj” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 5,54",
+      "op": "move_zone",
+      "screen": "Potwierdzenie",
+      "element": "Szukaj",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Potwierdź” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Potwierdzenie",
+      "element": "Potwierdź",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.00390926500404,
+   "raw": 3,
+   "resolved": 3,
+   "issues_before": 4,
+   "issues_after": 1,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przenieś „Profil” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Profil",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Język” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Potwierdzenie",
+      "element": "Język",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Zaproś znajomych” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,74",
+      "op": "move_zone",
+      "screen": "Potwierdzenie",
+      "element": "Zaproś znajomych",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.554567491999478,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 6,
+   "issues_after": 1,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 5,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przenieś „Tryb ciemny” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Salon",
+      "element": "Tryb ciemny",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Udostępnij” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Potwierdzenie",
+      "element": "Udostępnij",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Wybierz usługę” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Salon",
+      "element": "Wybierz usługę",
+      "value": "bottom"
+     },
+     {
+      "title": "Zwiększ przycisk „Szukaj” do L",
+      "reason": "Za mały cel, poniżej WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.4319836719951127,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 6,
+   "issues_after": 1,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Termin” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Termin",
+      "element": "Dalej",
+      "value": "Potwierdzenie"
+     },
+     {
+      "title": "Przesuń „Tagi” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 5,54",
+      "op": "move_zone",
+      "screen": "Termin",
+      "element": "Tagi",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Tryb ciemny” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Potwierdzenie",
+      "element": "Tryb ciemny",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Szukaj” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Szukaj",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.513798363004753,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 5,
+   "issues_after": 1,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przenieś „Wybierz usługę” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Salon",
+      "element": "Wybierz usługę",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Potwierdź” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,81",
+      "op": "move_zone",
+      "screen": "Potwierdzenie",
+      "element": "Potwierdź",
+      "value": "bottom"
+     },
+     {
+      "title": "Zwiększ przycisk „Szukaj” do L",
+      "reason": "Za mały cel, poniżej WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj",
+      "value": "L"
+     },
+     {
+      "title": "Zwiększ przycisk „Wybierz usługę” do L",
+      "reason": "Za mały cel, poniżej WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Salon",
+      "element": "Wybierz usługę",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.3989283600021736,
+   "raw": 2,
+   "resolved": 2,
+   "issues_before": 2,
+   "issues_after": 0,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 2,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przesuń „Potwierdź” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 5,54",
+      "op": "move_zone",
+      "screen": "Potwierdzenie",
+      "element": "Potwierdź",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Pokaż więcej” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Potwierdzenie",
+      "element": "Pokaż więcej",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.9787894729961408,
+   "raw": 3,
+   "resolved": 3,
+   "issues_before": 3,
+   "issues_after": 0,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przenieś „Potwierdź” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Potwierdzenie",
+      "element": "Potwierdź",
+      "value": "bottom"
+     },
+     {
+      "title": "Powiększ „Szukaj” do 56 px",
+      "reason": "Cel dotykowy poniżej 44 px, WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj",
+      "value": "L"
+     },
+     {
+      "title": "Powiększ „Wybierz termin” do 56 px",
+      "reason": "Cel dotykowy poniżej 44 px, WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Termin",
+      "element": "Wybierz termin",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.321965828006796,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 1,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Termin” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Termin",
+      "element": "Kontynuuj",
+      "value": "Potwierdzenie"
+     },
+     {
+      "title": "Przenieś „Tagi” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Tagi",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Szukaj” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,74",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Szukaj",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Profil” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,74",
+      "op": "move_zone",
+      "screen": "Termin",
+      "element": "Profil",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.5434039530009613,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 6,
+   "issues_after": 1,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Pomiar” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Pomiar",
+      "element": "Kontynuuj",
+      "value": "Raport"
+     },
+     {
+      "title": "Przenieś „Udostępnij” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Udostępnij",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Tryb ciemny” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Pomiar",
+      "element": "Tryb ciemny",
+      "value": "bottom"
+     },
+     {
+      "title": "Powiększ „Zacznij” do 56 px",
+      "reason": "Cel dotykowy poniżej 44 px, WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.4051775759944576,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 1,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Pomiar” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Pomiar",
+      "element": "Kontynuuj",
+      "value": "Dziennik"
+     },
+     {
+      "title": "Przenieś „Język” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Pomiar",
+      "element": "Język",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Pokaż więcej” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 5,54",
+      "op": "move_zone",
+      "screen": "Dziennik",
+      "element": "Pokaż więcej",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Język” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 5,54",
+      "op": "move_zone",
+      "screen": "Raport",
+      "element": "Język",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.626319595001405,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 8,
+   "issues_after": 2,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przenieś „Ustawienia” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Pomiar",
+      "element": "Ustawienia",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Zacznij” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Pokaż dziennik” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,74",
+      "op": "move_zone",
+      "screen": "Dziennik",
+      "element": "Pokaż dziennik",
+      "value": "bottom"
+     },
+     {
+      "title": "Powiększ „Pomiń” do 56 px",
+      "reason": "Cel dotykowy poniżej 44 px, WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Pomiń",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.611106798001856,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 6,
+   "issues_after": 1,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przenieś „Dodaj pomiar” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Pomiar",
+      "element": "Dodaj pomiar",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Wyślij raport” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,81",
+      "op": "move_zone",
+      "screen": "Raport",
+      "element": "Wyślij raport",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Tryb ciemny” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Pomiar",
+      "element": "Tryb ciemny",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Zaproś znajomych” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Pomiar",
+      "element": "Zaproś znajomych",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.5527500289972522,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 8,
+   "issues_after": 2,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 6,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przesuń „Dodaj pomiar” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 5,54",
+      "op": "move_zone",
+      "screen": "Pomiar",
+      "element": "Dodaj pomiar",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Sortuj” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Raport",
+      "element": "Sortuj",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Pomiń” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,81",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Pomiń",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Notatki” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Pomiar",
+      "element": "Notatki",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.8773882370005595,
+   "raw": 3,
+   "resolved": 3,
+   "issues_before": 8,
+   "issues_after": 4,
+   "dead_before": 2,
+   "dead_after": 1,
+   "fw_before": 3,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Start” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Start",
+      "element": "Przejdź dalej",
+      "value": "Pomiar"
+     },
+     {
+      "title": "Przenieś „Oceń aplikację” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Dziennik",
+      "element": "Oceń aplikację",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Wyślij raport” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 5,54",
+      "op": "move_zone",
+      "screen": "Raport",
+      "element": "Wyślij raport",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.480385279006441,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 11,
+   "issues_after": 6,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 6,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Dziennik” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Dziennik",
+      "element": "Kontynuuj",
+      "value": "Raport"
+     },
+     {
+      "title": "Przenieś „Język” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Język",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Szukaj” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,81",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Szukaj",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Ulubione” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Dziennik",
+      "element": "Ulubione",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.9574560199980624,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 2,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Dziennik” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Dziennik",
+      "element": "Dalej",
+      "value": "Raport"
+     },
+     {
+      "title": "Przenieś „Regulamin” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Regulamin",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Pokaż więcej” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,74",
+      "op": "move_zone",
+      "screen": "Dziennik",
+      "element": "Pokaż więcej",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Pomoc” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Raport",
+      "element": "Pomoc",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.8169346950016916,
+   "raw": 3,
+   "resolved": 3,
+   "issues_before": 4,
+   "issues_after": 0,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przenieś „Pokaż dziennik” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Dziennik",
+      "element": "Pokaż dziennik",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Ustawienia” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,74",
+      "op": "move_zone",
+      "screen": "Pomiar",
+      "element": "Ustawienia",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Udostępnij” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Pomiar",
+      "element": "Udostępnij",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 4.278666381003859,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 15,
+   "issues_after": 8,
+   "dead_before": 2,
+   "dead_after": 0,
+   "fw_before": 6,
+   "fw_after": 4,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Start” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Start",
+      "element": "Dalej",
+      "value": "Pomiar"
+     },
+     {
+      "title": "Dodaj przejście z „Pomiar” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Pomiar",
+      "element": "Pokaż dziennik",
+      "value": "Dziennik"
+     },
+     {
+      "title": "Przenieś „Tagi” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Pomiar",
+      "element": "Tagi",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Filtry” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Dziennik",
+      "element": "Filtry",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.4422360169992317,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 6,
+   "issues_after": 1,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Akcja” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Akcja",
+      "element": "Kontynuuj",
+      "value": "Zgłoszenie"
+     },
+     {
+      "title": "Przesuń „Język” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,81",
+      "op": "move_zone",
+      "screen": "Akcja",
+      "element": "Język",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Tryb ciemny” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Tryb ciemny",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Szukaj” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Akcja",
+      "element": "Szukaj",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.577602826997463,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 9,
+   "issues_after": 3,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 5,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przesuń „Filtry” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 5,54",
+      "op": "move_zone",
+      "screen": "Akcja",
+      "element": "Filtry",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Zacznij” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Zgłoś się” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Akcja",
+      "element": "Zgłoś się",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Filtry” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Zgłoszenie",
+      "element": "Filtry",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.4119958390001557,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 9,
+   "issues_after": 2,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Akcje” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Akcje",
+      "element": "Kontynuuj",
+      "value": "Akcja"
+     },
+     {
+      "title": "Przesuń „Notatki” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 5,54",
+      "op": "move_zone",
+      "screen": "Akcje",
+      "element": "Notatki",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Zacznij” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Udostępnij” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,74",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Udostępnij",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.9737812460007262,
+   "raw": 3,
+   "resolved": 3,
+   "issues_before": 4,
+   "issues_after": 1,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przesuń „Zaproś znajomych” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,74",
+      "op": "move_zone",
+      "screen": "Akcje",
+      "element": "Zaproś znajomych",
+      "value": "bottom"
+     },
+     {
+      "title": "Powiększ „Zacznij” do 56 px",
+      "reason": "Cel dotykowy poniżej 44 px, WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "L"
+     },
+     {
+      "title": "Powiększ „Zgłoś się” do 56 px",
+      "reason": "Cel dotykowy poniżej 44 px, WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Akcja",
+      "element": "Zgłoś się",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.528074312998797,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 5,
+   "issues_after": 0,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przesuń „Potwierdź udział” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 5,54",
+      "op": "move_zone",
+      "screen": "Zgłoszenie",
+      "element": "Potwierdź udział",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Regulamin” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Zgłoszenie",
+      "element": "Regulamin",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Kategorie” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Kategorie",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Zacznij” na dół ekranu",
+      "reason": "Za mały cel, poniżej WCAG 2.5.5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.529737209995801,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 6,
+   "issues_after": 1,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Akcje” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Akcje",
+      "element": "Kontynuuj",
+      "value": "Zgłoszenie"
+     },
+     {
+      "title": "Przenieś „Kategorie” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Akcje",
+      "element": "Kategorie",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Regulamin” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Zgłoszenie",
+      "element": "Regulamin",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Oceń aplikację” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Zgłoszenie",
+      "element": "Oceń aplikację",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.571262437995756,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 5,
+   "issues_after": 0,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przenieś „Profil” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Akcja",
+      "element": "Profil",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Regulamin” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Akcja",
+      "element": "Regulamin",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Zacznij” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,74",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "bottom"
+     },
+     {
+      "title": "Zwiększ przycisk „Na skróty” do L",
+      "reason": "Za mały cel, poniżej WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Akcje",
+      "element": "Na skróty",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.6089480679947883,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 9,
+   "issues_after": 2,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Akcje” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Akcje",
+      "element": "Kontynuuj",
+      "value": "Akcja"
+     },
+     {
+      "title": "Przenieś „Historia” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Zgłoszenie",
+      "element": "Historia",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Pokaż więcej” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,81",
+      "op": "move_zone",
+      "screen": "Akcja",
+      "element": "Pokaż więcej",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Zgłoś się” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Akcja",
+      "element": "Zgłoś się",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.9813284690026194,
+   "raw": 3,
+   "resolved": 3,
+   "issues_before": 3,
+   "issues_after": 0,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przenieś „Zaproś znajomych” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Akcje",
+      "element": "Zaproś znajomych",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Regulamin” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,74",
+      "op": "move_zone",
+      "screen": "Zgłoszenie",
+      "element": "Regulamin",
+      "value": "bottom"
+     },
+     {
+      "title": "Zwiększ przycisk „Zacznij” do L",
+      "reason": "Za mały cel, poniżej WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Zacznij",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.4945669009975973,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 10,
+   "issues_after": 6,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 6,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Akcje” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Akcje",
+      "element": "Kontynuuj",
+      "value": "Zgłoszenie"
+     },
+     {
+      "title": "Przesuń „Notatki” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 5,54",
+      "op": "move_zone",
+      "screen": "Akcje",
+      "element": "Notatki",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Historia” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Historia",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Zaproś znajomych” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,81",
+      "op": "move_zone",
+      "screen": "Zgłoszenie",
+      "element": "Zaproś znajomych",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.381031188000634,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 9,
+   "issues_after": 3,
+   "dead_before": 2,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Plan” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Plan",
+      "element": "Kontynuuj",
+      "value": "Bieg"
+     },
+     {
+      "title": "Dodaj przejście z „Bieg” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Bieg",
+      "element": "Kontynuuj",
+      "value": "Analiza"
+     },
+     {
+      "title": "Przenieś „Historia” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Bieg",
+      "element": "Historia",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Ustawienia” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Bieg",
+      "element": "Ustawienia",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.393827590996807,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 9,
+   "issues_after": 4,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 5,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Plan” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Plan",
+      "element": "Dalej",
+      "value": "Analiza"
+     },
+     {
+      "title": "Przesuń „Profil” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,81",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Profil",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Ustaw cel” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Ustaw cel",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Sortuj” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Analiza",
+      "element": "Sortuj",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.4493000090005808,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 8,
+   "issues_after": 2,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 5,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Bieg” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Bieg",
+      "element": "Dalej",
+      "value": "Analiza"
+     },
+     {
+      "title": "Przenieś „Ustaw cel” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Ustaw cel",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Tryb ciemny” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Plan",
+      "element": "Tryb ciemny",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Kategorie” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Plan",
+      "element": "Kategorie",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.354077664000215,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 6,
+   "issues_after": 0,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Start” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Start",
+      "element": "Kontynuuj",
+      "value": "Bieg"
+     },
+     {
+      "title": "Przenieś „Ulubione” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Ulubione",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Zobacz analizę” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,74",
+      "op": "move_zone",
+      "screen": "Analiza",
+      "element": "Zobacz analizę",
+      "value": "bottom"
+     },
+     {
+      "title": "Zwiększ przycisk „Start biegu” do L",
+      "reason": "Za mały cel, poniżej WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Bieg",
+      "element": "Start biegu",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.5709465430045384,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 2,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przenieś „Zobacz analizę” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Analiza",
+      "element": "Zobacz analizę",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Powiadomienia” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Powiadomienia",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Powiadomienia” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Analiza",
+      "element": "Powiadomienia",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Pomiń” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Pomiń",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 0.7501572540058987,
+   "raw": 1,
+   "resolved": 1,
+   "issues_before": 1,
+   "issues_after": 0,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 1,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Zwiększ przycisk „Pokaż plan” do L",
+      "reason": "Cel dotykowy poniżej 44 px, WCAG 2.1.2",
+      "op": "resize",
+      "screen": "Plan",
+      "element": "Pokaż plan",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.423227819999738,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 10,
+   "issues_after": 4,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 6,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Start” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Start",
+      "element": "Przejdź dalej",
+      "value": "Plan"
+     },
+     {
+      "title": "Przenieś „Ulubione” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Plan",
+      "element": "Ulubione",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Zaproś znajomych” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 5,54",
+      "op": "move_zone",
+      "screen": "Analiza",
+      "element": "Zaproś znajomych",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Sortuj” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Analiza",
+      "element": "Sortuj",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.4744168680044822,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 3,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 5,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przenieś „Filtry” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Filtry",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Tryb ciemny” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,81",
+      "op": "move_zone",
+      "screen": "Analiza",
+      "element": "Tryb ciemny",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Szukaj” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Analiza",
+      "element": "Szukaj",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Kategorie” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,74",
+      "op": "move_zone",
+      "screen": "Analiza",
+      "element": "Kategorie",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.8145840430006501,
+   "raw": 3,
+   "resolved": 3,
+   "issues_before": 6,
+   "issues_after": 1,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 2,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Plan” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Plan",
+      "element": "Dalej",
+      "value": "Bieg"
+     },
+     {
+      "title": "Przenieś „Zobacz analizę” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Analiza",
+      "element": "Zobacz analizę",
+      "value": "bottom"
+     },
+     {
+      "title": "Powiększ „Ustaw cel” do 56 px",
+      "reason": "Cel dotykowy poniżej 44 px, WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Ustaw cel",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.3397485739988042,
+   "raw": 2,
+   "resolved": 2,
+   "issues_before": 2,
+   "issues_after": 0,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 2,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Powiększ „Pokaż plan” do 64 px",
+      "reason": "Cel dotykowy poniżej 44 px, WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Plan",
+      "element": "Pokaż plan",
+      "value": "L"
+     },
+     {
+      "title": "Powiększ „Start biegu” do 56 px",
+      "reason": "Cel dotykowy poniżej 44 px, WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Bieg",
+      "element": "Start biegu",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.4940912219972233,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 6,
+   "issues_after": 2,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 5,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przenieś „Zapisz się” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Zapis",
+      "element": "Zapisz się",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Historia” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Zapis",
+      "element": "Historia",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Polecane” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Zapis",
+      "element": "Polecane",
+      "value": "bottom"
+     },
+     {
+      "title": "Powiększ „Szukaj szkół” do 56 px",
+      "reason": "Cel dotykowy poniżej 44 px, WCAG 2.5.5",
+      "op": "resize",
+      "screen": "Start",
+      "element": "Szukaj szkół",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.434300330001861,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 11,
+   "issues_after": 8,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 7,
+   "fw_after": 4,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Porównanie” dalej",
+      "reason": "Ekran nieosiągalny dla użytkownika",
+      "op": "add_transition",
+      "screen": "Porównanie",
+      "element": "Dalej",
+      "value": "Zapis"
+     },
+     {
+      "title": "Przenieś „Tryb ciemny” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Zapis",
+      "element": "Tryb ciemny",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Historia” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Zapis",
+      "element": "Historia",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Szukaj” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,81",
+      "op": "move_zone",
+      "screen": "Porównanie",
+      "element": "Szukaj",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.7976386299997102,
+   "raw": 3,
+   "resolved": 3,
+   "issues_before": 5,
+   "issues_after": 0,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 1,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Start” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Start",
+      "element": "Przejdź dalej",
+      "value": "Szkoły"
+     },
+     {
+      "title": "Przenieś „Zapisz się” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Zapis",
+      "element": "Zapisz się",
+      "value": "bottom"
+     },
+     {
+      "title": "Schowaj nadmiar opcji w „Więcej",
+      "reason": "10 opcji wydłuża decyzję (Hick)",
+      "op": "group_options",
+      "screen": "Szkoły",
+      "element": "Kategorie",
+      "value": ""
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.4371140919975005,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 8,
+   "issues_after": 2,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Szkoły” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Szkoły",
+      "element": "Dalej",
+      "value": "Zapis"
+     },
+     {
+      "title": "Przenieś „Polecane” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Polecane",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Szukaj szkół” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Szukaj szkół",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Pokaż więcej” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,74",
+      "op": "move_zone",
+      "screen": "Szkoły",
+      "element": "Pokaż więcej",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.4328379610014963,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 6,
+   "issues_after": 2,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 5,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przesuń „Pomoc” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,81",
+      "op": "move_zone",
+      "screen": "Zapis",
+      "element": "Pomoc",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Regulamin” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,81 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Zapis",
+      "element": "Regulamin",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Tryb ciemny” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,74",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Tryb ciemny",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Profil” do strefy kciuka",
+      "reason": "Indeks Fittsa 4,74 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Porównanie",
+      "element": "Profil",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.7550542230019346,
+   "raw": 3,
+   "resolved": 3,
+   "issues_before": 5,
+   "issues_after": 2,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 1,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Porównanie” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Porównanie",
+      "element": "Kontynuuj",
+      "value": "Zapis"
+     },
+     {
+      "title": "Przesuń „Filtry” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,74",
+      "op": "move_zone",
+      "screen": "Porównanie",
+      "element": "Filtry",
+      "value": "bottom"
+     },
+     {
+      "title": "Powiększ „Filtry” do 60 px",
+      "reason": "Cel dotykowy poniżej 44 px",
+      "op": "resize",
+      "screen": "Porównanie",
+      "element": "Filtry",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.337393901005271,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 2,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Połącz „Porównanie” z kolejnym ekranem",
+      "reason": "Ekran bez wyjścia, brak kontroli użytkownika",
+      "op": "add_transition",
+      "screen": "Porównanie",
+      "element": "Przejdź dalej",
+      "value": "Zapis"
+     },
+     {
+      "title": "Przenieś „Tagi” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Porównanie",
+      "element": "Tagi",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Historia” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 5,54",
+      "op": "move_zone",
+      "screen": "Zapis",
+      "element": "Historia",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Zapisz się” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,81",
+      "op": "move_zone",
+      "screen": "Zapis",
+      "element": "Zapisz się",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.8914960420006537,
+   "raw": 3,
+   "resolved": 3,
+   "issues_before": 7,
+   "issues_after": 3,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Porównanie” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Porównanie",
+      "element": "Kontynuuj",
+      "value": "Zapis"
+     },
+     {
+      "title": "Przenieś „Zaproś znajomych” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Zaproś znajomych",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Język” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Porównanie",
+      "element": "Język",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.452752536999469,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 9,
+   "issues_after": 2,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Dodaj przejście z „Porównanie” dalej",
+      "reason": "Ślepa uliczka zatrzymuje użytkownika",
+      "op": "add_transition",
+      "screen": "Porównanie",
+      "element": "Przejdź dalej",
+      "value": "Zapis"
+     },
+     {
+      "title": "Przesuń „Szukaj szkół” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 5,54",
+      "op": "move_zone",
+      "screen": "Start",
+      "element": "Szukaj szkół",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Porównaj” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Szkoły",
+      "element": "Porównaj",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Język” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Porównanie",
+      "element": "Język",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.490296190000663,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 3,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 6,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Przesuń „Polecane” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 5,54",
+      "op": "move_zone",
+      "screen": "Szkoły",
+      "element": "Polecane",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Oceń aplikację” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Porównanie",
+      "element": "Oceń aplikację",
+      "value": "bottom"
+     },
+     {
+      "title": "Przenieś „Ulubione” do strefy kciuka",
+      "reason": "Indeks Fittsa 5,54 powyżej 4,5",
+      "op": "move_zone",
+      "screen": "Porównanie",
+      "element": "Ulubione",
+      "value": "bottom"
+     },
+     {
+      "title": "Przesuń „Regulamin” na dół ekranu",
+      "reason": "Trudny cel, ID Fittsa 4,81",
+      "op": "move_zone",
+      "screen": "Zapis",
+      "element": "Regulamin",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.9695871880030609,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 3,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 7,
+   "fw_after": 3,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Move Search into the thumb zone",
+      "reason": "Fitts index 5.54 above 4.5",
+      "op": "move_zone",
+      "screen": "Home",
+      "element": "Search",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Terms to the bottom",
+      "reason": "Hard target, Fitts ID 4.81",
+      "op": "move_zone",
+      "screen": "Invoice",
+      "element": "Terms",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Help into the thumb zone",
+      "reason": "Fitts index 4.81 above 4.5",
+      "op": "move_zone",
+      "screen": "Sent",
+      "element": "Help",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Categories into the thumb zone",
+      "reason": "Fitts index 4.81 above 4.5",
+      "op": "move_zone",
+      "screen": "Sent",
+      "element": "Categories",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.929207243003475,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 7,
+   "issues_after": 0,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Add a way forward from Home",
+      "reason": "Dead end stops the user",
+      "op": "add_transition",
+      "screen": "Home",
+      "element": "Go on",
+      "value": "Preview"
+     },
+     {
+      "title": "Move Preview into the thumb zone",
+      "reason": "Fitts index 4.81 above 4.5",
+      "op": "move_zone",
+      "screen": "Preview",
+      "element": "Preview",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Show more into the thumb zone",
+      "reason": "Fitts index 4.74 above 4.5",
+      "op": "move_zone",
+      "screen": "Preview",
+      "element": "Show more",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Invite friends into the thumb zone",
+      "reason": "Fitts index 4.74 above 4.5",
+      "op": "move_zone",
+      "screen": "Sent",
+      "element": "Invite friends",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.9432985610037576,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 8,
+   "issues_after": 2,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 6,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Move Shortcut to the bottom",
+      "reason": "Hard target, Fitts ID 5.54",
+      "op": "move_zone",
+      "screen": "Home",
+      "element": "Shortcut",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Show more to the bottom",
+      "reason": "Hard target, Fitts ID 4.81",
+      "op": "move_zone",
+      "screen": "Invoice",
+      "element": "Show more",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Preview into the thumb zone",
+      "reason": "Fitts index 4.81 above 4.5",
+      "op": "move_zone",
+      "screen": "Preview",
+      "element": "Preview",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Sort into the thumb zone",
+      "reason": "Fitts index 4.81 above 4.5",
+      "op": "move_zone",
+      "screen": "Preview",
+      "element": "Sort",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.9373226530005923,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 11,
+   "issues_after": 6,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 8,
+   "fw_after": 5,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Add a way forward from Preview",
+      "reason": "Dead end stops the user",
+      "op": "add_transition",
+      "screen": "Preview",
+      "element": "Continue",
+      "value": "Sent"
+     },
+     {
+      "title": "Move Share into the thumb zone",
+      "reason": "Fitts index 5.54 above 4.5",
+      "op": "move_zone",
+      "screen": "Invoice",
+      "element": "Share",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Sort into the thumb zone",
+      "reason": "Fitts index 5.54 above 4.5",
+      "op": "move_zone",
+      "screen": "Preview",
+      "element": "Sort",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Send invoice into the thumb zone",
+      "reason": "Fitts index 5.54 above 4.5",
+      "op": "move_zone",
+      "screen": "Sent",
+      "element": "Send invoice",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.9407106270009535,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 10,
+   "issues_after": 5,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 8,
+   "fw_after": 5,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Add a way forward from Preview",
+      "reason": "Dead end stops the user",
+      "op": "add_transition",
+      "screen": "Preview",
+      "element": "Continue",
+      "value": "Sent"
+     },
+     {
+      "title": "Move Help into the thumb zone",
+      "reason": "Fitts index 5.54 above 4.5",
+      "op": "move_zone",
+      "screen": "Home",
+      "element": "Help",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Terms into the thumb zone",
+      "reason": "Fitts index 5.54 above 4.5",
+      "op": "move_zone",
+      "screen": "Preview",
+      "element": "Terms",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Sort into the thumb zone",
+      "reason": "Fitts index 4.81 above 4.5",
+      "op": "move_zone",
+      "screen": "Preview",
+      "element": "Sort",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.8905812070006505,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 5,
+   "issues_after": 1,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 4,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Move Filters into the thumb zone",
+      "reason": "Fitts index 4.81 above 4.5",
+      "op": "move_zone",
+      "screen": "Home",
+      "element": "Filters",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Dark mode into the thumb zone",
+      "reason": "Fitts index 4.81 above 4.5",
+      "op": "move_zone",
+      "screen": "Home",
+      "element": "Dark mode",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Sort into the thumb zone",
+      "reason": "Fitts index 4.74 above 4.5",
+      "op": "move_zone",
+      "screen": "Home",
+      "element": "Sort",
+      "value": "bottom"
+     },
+     {
+      "title": "Make New invoice larger",
+      "reason": "Touch target below 44 px",
+      "op": "resize",
+      "screen": "Home",
+      "element": "New invoice",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.8990022609941661,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 12,
+   "issues_after": 6,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 8,
+   "fw_after": 5,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Add a way forward from Preview",
+      "reason": "Dead end stops the user",
+      "op": "add_transition",
+      "screen": "Preview",
+      "element": "Continue",
+      "value": "Sent"
+     },
+     {
+      "title": "Move Notifications into the thumb zone",
+      "reason": "Fitts index 5.54 above 4.5",
+      "op": "move_zone",
+      "screen": "Home",
+      "element": "Notifications",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Search to the bottom",
+      "reason": "Hard target, Fitts ID 5.54",
+      "op": "move_zone",
+      "screen": "Invoice",
+      "element": "Search",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Add item to the bottom",
+      "reason": "Hard target, Fitts ID 5.54",
+      "op": "move_zone",
+      "screen": "Invoice",
+      "element": "Add item",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 0.9533395439939341,
+   "raw": 2,
+   "resolved": 2,
+   "issues_before": 2,
+   "issues_after": 0,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 1,
+   "fw_after": 0,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Move Preview to the bottom",
+      "reason": "Hard target, Fitts ID 5.54",
+      "op": "move_zone",
+      "screen": "Preview",
+      "element": "Preview",
+      "value": "bottom"
+     },
+     {
+      "title": "Increase Preview target size",
+      "reason": "Touch target below 44 px",
+      "op": "resize",
+      "screen": "Preview",
+      "element": "Preview",
+      "value": "L"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.9297425110053155,
+   "raw": 4,
+   "resolved": 4,
+   "issues_before": 10,
+   "issues_after": 4,
+   "dead_before": 1,
+   "dead_after": 0,
+   "fw_before": 5,
+   "fw_after": 2,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Add a way forward from Invoice",
+      "reason": "Dead end stops the user",
+      "op": "add_transition",
+      "screen": "Invoice",
+      "element": "Continue",
+      "value": "Preview"
+     },
+     {
+      "title": "Move Show more into the thumb zone",
+      "reason": "Fitts index 5.54 above 4.5",
+      "op": "move_zone",
+      "screen": "Invoice",
+      "element": "Show more",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Settings into the thumb zone",
+      "reason": "Fitts index 5.54 above 4.5",
+      "op": "move_zone",
+      "screen": "Preview",
+      "element": "Settings",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Notifications into the thumb zone",
+      "reason": "Fitts index 4.81 above 4.5",
+      "op": "move_zone",
+      "screen": "Home",
+      "element": "Notifications",
+      "value": "bottom"
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 1.8920206670009065,
+   "raw": 4,
+   "resolved": 3,
+   "issues_before": 6,
+   "issues_after": 3,
+   "dead_before": 0,
+   "dead_after": 0,
+   "fw_before": 3,
+   "fw_after": 1,
+   "answer": {
+    "suggestions": [
+     {
+      "title": "Move Profile into the thumb zone",
+      "reason": "Fitts index 5.54 above 4.5",
+      "op": "move_zone",
+      "screen": "Home",
+      "element": "Profile",
+      "value": "bottom"
+     },
+     {
+      "title": "Move Shortcut into the thumb zone",
+      "reason": "Fitts index 5.54 above 4.5",
+      "op": "move_zone",
+      "screen": "Invoice",
+      "element": "Shortcut",
+      "value": "bottom"
+     },
+     {
+      "title": "Increase the size of Terms",
+      "reason": "Touch target below 44 px",
+      "op": "resize",
+      "screen": "Preview",
+      "element": "Terms",
+      "value": "L"
+     },
+     {
+      "title": "Move Add item to the bottom",
+      "reason": "Hard target, Fitts ID 6.85",
+      "op": "move_zone",
+      "screen": "Invoice",
+      "element": "Add item",
+      "value": "bottom"
+     }
+    ]
+   }
+  }
+ ],
+ "flow": [
+  {
+   "valid": true,
+   "latency": 2.391179900005227,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 1.0,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [],
+      "elements": [
+       {
+        "label": "Wybierz salon",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Kalendarz"
+       },
+       {
+        "label": "Udostępnij",
+        "type": "button",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Kalendarz",
+      "kind": "step",
+      "features": [
+       "Kalendarz terminów"
+      ],
+      "elements": [
+       {
+        "label": "Zarezerwuj",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Potwierdzenie"
+       },
+       {
+        "label": "Pokaż więcej",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Potwierdzenie",
+      "kind": "goal",
+      "features": [
+       "Potwierdzenie wizyty"
+      ],
+      "elements": [
+       {
+        "label": "Wyślij SMS",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 4.382195559999673,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 1.0,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [],
+      "elements": [
+       {
+        "label": "Zacznij",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Profil"
+       },
+       {
+        "label": "Oceń aplikację",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Profil",
+      "kind": "step",
+      "features": [
+       "Profil salonu"
+      ],
+      "elements": [
+       {
+        "label": "Wybierz salon",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Rezerwacja"
+       },
+       {
+        "label": "Oceń aplikację",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Filtry",
+        "type": "select",
+        "size": "M",
+        "zone": "center",
+        "options": 4,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Rezerwacja",
+      "kind": "step",
+      "features": [
+       "Potwierdzenie wizyty"
+      ],
+      "elements": [
+       {
+        "label": "Zarezerwuj",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Sukces"
+       },
+       {
+        "label": "Powiadomienia",
+        "type": "toggle",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Pomoc",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Sukces",
+      "kind": "goal",
+      "features": [
+       "Potwierdzenie wizyty"
+      ],
+      "elements": [
+       {
+        "label": "Zaproś znajomych",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Powiadomienia",
+        "type": "toggle",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Pomoc",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 4.034567829003208,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 0.75,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [],
+      "elements": [
+       {
+        "label": "Wybierz miasto",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Salony"
+       },
+       {
+        "label": "Notatki",
+        "type": "input",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Salony",
+      "kind": "step",
+      "features": [
+       "Wyszukiwarka salonów"
+      ],
+      "elements": [
+       {
+        "label": "Znajdź salon",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Profil"
+       },
+       {
+        "label": "Udostępnij",
+        "type": "button",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Pokaż więcej",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Profil",
+      "kind": "step",
+      "features": [
+       "Profil salonu"
+      ],
+      "elements": [
+       {
+        "label": "Oceń",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Terminy"
+       },
+       {
+        "label": "Udostępnij",
+        "type": "button",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Tryb ciemny",
+        "type": "toggle",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Terminy",
+      "kind": "goal",
+      "features": [
+       "Kalendarz terminów"
+      ],
+      "elements": [
+       {
+        "label": "Zarezerwuj",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Pokaż więcej",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.4764351310004713,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 1.0,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [],
+      "elements": [
+       {
+        "label": "Zacznij",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Pomiar"
+       },
+       {
+        "label": "Profil",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Pomiar",
+      "kind": "step",
+      "features": [
+       "Szybki pomiar"
+      ],
+      "elements": [
+       {
+        "label": "Zapisz",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Dziennik"
+       },
+       {
+        "label": "Udostępnij",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Dziennik",
+      "kind": "step",
+      "features": [
+       "Dziennik pomiarów"
+      ],
+      "elements": [
+       {
+        "label": "Dodaj posiłek",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Raport"
+       },
+       {
+        "label": "Udostępnij",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Raport",
+      "kind": "goal",
+      "features": [
+       "Raport dla lekarza"
+      ],
+      "elements": [
+       {
+        "label": "Pokaż raport",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Pokaż więcej",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.3943918889999622,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 1.0,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [],
+      "elements": [
+       {
+        "label": "Dalej",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Pomiar"
+       },
+       {
+        "label": "Notatki",
+        "type": "input",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Pomiar",
+      "kind": "step",
+      "features": [
+       "Szybki pomiar"
+      ],
+      "elements": [
+       {
+        "label": "Mierz",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Wynik"
+       },
+       {
+        "label": "Pokaż więcej",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Wynik",
+      "kind": "step",
+      "features": [
+       "Szybki pomiar"
+      ],
+      "elements": [
+       {
+        "label": "Zapisz",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Raport"
+       },
+       {
+        "label": "Pokaż więcej",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Raport",
+      "kind": "goal",
+      "features": [
+       "Raport dla lekarza"
+      ],
+      "elements": [
+       {
+        "label": "Pokaż raport",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Profil",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 4.010107029003848,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 0.75,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [],
+      "elements": [
+       {
+        "label": "Zacznij",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Profil"
+       },
+       {
+        "label": "Notatki",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Profil",
+      "kind": "step",
+      "features": [
+       "Profil zdrowia"
+      ],
+      "elements": [
+       {
+        "label": "Profil",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Pomiar"
+       },
+       {
+        "label": "Notatki",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Pokaż więcej",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Pomiar",
+      "kind": "step",
+      "features": [
+       "Szybki pomiar"
+      ],
+      "elements": [
+       {
+        "label": "Pomiar",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Dziennik"
+       },
+       {
+        "label": "Notatki",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Pokaż więcej",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Dziennik",
+      "kind": "goal",
+      "features": [
+       "Dziennik pomiarów"
+      ],
+      "elements": [
+       {
+        "label": "Zapisz",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Notatki",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.941824037996412,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 0.75,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [],
+      "elements": [
+       {
+        "label": "Zacznij",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Akcje"
+       },
+       {
+        "label": "Pomoc",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Akcje",
+      "kind": "step",
+      "features": [
+       "Lista akcji"
+      ],
+      "elements": [
+       {
+        "label": "Wybierz akcję",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Szczegóły"
+       },
+       {
+        "label": "Szukaj",
+        "type": "input",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Notatki",
+        "type": "input",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Szczegóły",
+      "kind": "step",
+      "features": [
+       "Szczegóły akcji"
+      ],
+      "elements": [
+       {
+        "label": "Pokaż więcej",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Potwierdzenie"
+       },
+       {
+        "label": "Udostępnij",
+        "type": "button",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Potwierdzenie",
+      "kind": "goal",
+      "features": [
+       "Potwierdzenie udziału"
+      ],
+      "elements": [
+       {
+        "label": "Potwierdź",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Udostępnij",
+        "type": "button",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.9841145090031205,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 0.6666666666666666,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Powitanie",
+      "kind": "start",
+      "features": [],
+      "elements": [
+       {
+        "label": "Dalej",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Akcje"
+       },
+       {
+        "label": "Powiadomienia",
+        "type": "toggle",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Ulubione",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Akcje",
+      "kind": "step",
+      "features": [
+       "Szczegóły akcji"
+      ],
+      "elements": [
+       {
+        "label": "Wybierz akcję",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Szczegóły"
+       },
+       {
+        "label": "Ulubione",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Szczegóły",
+      "kind": "step",
+      "features": [
+       "Szczegóły akcji"
+      ],
+      "elements": [
+       {
+        "label": "Szukaj",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Potwierdzenie"
+       },
+       {
+        "label": "Ulubione",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Potwierdzenie",
+      "kind": "goal",
+      "features": [
+       "Potwierdzenie udziału"
+      ],
+      "elements": [
+       {
+        "label": "Potwierdź",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Ulubione",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 4.00862088699796,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 1.0,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [],
+      "elements": [
+       {
+        "label": "Wybierz akcję",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Akcje"
+       },
+       {
+        "label": "Oceń aplikację",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Akcje",
+      "kind": "step",
+      "features": [
+       "Lista akcji"
+      ],
+      "elements": [
+       {
+        "label": "Pokaż akcje",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Szczegóły"
+       },
+       {
+        "label": "Zaproś znajomych",
+        "type": "button",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Udostępnij",
+        "type": "button",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Szczegóły",
+      "kind": "step",
+      "features": [
+       "Szczegóły akcji"
+      ],
+      "elements": [
+       {
+        "label": "Szczegóły",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Potwierdzenie"
+       },
+       {
+        "label": "Oceń aplikację",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Potwierdzenie",
+      "kind": "goal",
+      "features": [
+       "Potwierdzenie udziału"
+      ],
+      "elements": [
+       {
+        "label": "Potwierdź udział",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Pokaż więcej",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 4.019225805001042,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 1.0,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Cel biegowy"
+      ],
+      "elements": [
+       {
+        "label": "Zacznij",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Trening"
+       },
+       {
+        "label": "Pokaż więcej",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Profil",
+        "type": "input",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Zaproś znajomych",
+        "type": "button",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Trening",
+      "kind": "step",
+      "features": [
+       "Plan treningowy"
+      ],
+      "elements": [
+       {
+        "label": "Zaproś znajomych",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Bieg"
+       },
+       {
+        "label": "Oceń aplikację",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Bieg",
+      "kind": "goal",
+      "features": [
+       "Śledzenie biegu",
+       "Analiza biegu"
+      ],
+      "elements": [
+       {
+        "label": "Biegnij",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Pokaż więcej",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Udostępnij",
+        "type": "button",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Ustawienia",
+        "type": "input",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.559600522996334,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 1.0,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Cel biegowy"
+      ],
+      "elements": [
+       {
+        "label": "Zacznij",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Plan"
+       },
+       {
+        "label": "Notatki",
+        "type": "input",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Pokaż więcej",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Plan",
+      "kind": "step",
+      "features": [
+       "Plan treningowy"
+      ],
+      "elements": [
+       {
+        "label": "Wybierz plan",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Bieg"
+       },
+       {
+        "label": "Oceń aplikację",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Notatki",
+        "type": "input",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Bieg",
+      "kind": "goal",
+      "features": [
+       "Analiza biegu"
+      ],
+      "elements": [
+       {
+        "label": "Uruchom bieg",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Udostępnij",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Oceń aplikację",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.8641930790035985,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 1.0,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Plan treningowy"
+      ],
+      "elements": [
+       {
+        "label": "Zacznij",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Trening"
+       },
+       {
+        "label": "Udostępnij",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Trening",
+      "kind": "step",
+      "features": [
+       "Plan treningowy",
+       "Śledzenie biegu"
+      ],
+      "elements": [
+       {
+        "label": "Rozpocznij bieg",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Bieg"
+       },
+       {
+        "label": "Notatki",
+        "type": "input",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Oceń aplikację",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Bieg",
+      "kind": "step",
+      "features": [
+       "Śledzenie biegu"
+      ],
+      "elements": [
+       {
+        "label": "Udostępnij",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Analiza"
+       },
+       {
+        "label": "Powiadomienia",
+        "type": "toggle",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Analiza",
+      "kind": "goal",
+      "features": [
+       "Analiza biegu"
+      ],
+      "elements": [
+       {
+        "label": "Zaproś znajomych",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Oceń aplikację",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.8667930279989378,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 1.0,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [],
+      "elements": [
+       {
+        "label": "Wybierz miasto",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Szkoły"
+       },
+       {
+        "label": "Oceń aplikację",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Szkoły",
+      "kind": "step",
+      "features": [
+       "Adres zamieszkania"
+      ],
+      "elements": [
+       {
+        "label": "Szukaj",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Porównanie"
+       },
+       {
+        "label": "Udostępnij",
+        "type": "button",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Pokaż więcej",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Porównanie",
+      "kind": "step",
+      "features": [
+       "Porównanie szkół"
+      ],
+      "elements": [
+       {
+        "label": "Porównaj",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Dzień otwarty"
+       },
+       {
+        "label": "Oceń aplikację",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Dzień otwarty",
+      "kind": "goal",
+      "features": [
+       "Dzień otwarty"
+      ],
+      "elements": [
+       {
+        "label": "Zapisz się",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Pokaż więcej",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.7917001899986644,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": false,
+   "targets_valid": true,
+   "must_coverage": 1.0,
+   "issues": 1,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [],
+      "elements": [
+       {
+        "label": "Wybierz miasto",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Szkoły"
+       },
+       {
+        "label": "Filtry",
+        "type": "input",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Szkoły",
+      "kind": "step",
+      "features": [
+       "Adres zamieszkania"
+      ],
+      "elements": [
+       {
+        "label": "Szukaj",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Wyniki"
+       },
+       {
+        "label": "Sortuj",
+        "type": "select",
+        "size": "M",
+        "zone": "center",
+        "options": 4,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Wyniki",
+      "kind": "step",
+      "features": [
+       "Lista szkół"
+      ],
+      "elements": [
+       {
+        "label": "Pokaż więcej",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Szkoły"
+       },
+       {
+        "label": "Zaproś znajomych",
+        "type": "button",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Regulamin",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Dzień otwarty",
+      "kind": "goal",
+      "features": [
+       "Dzień otwarty"
+      ],
+      "elements": [
+       {
+        "label": "Zarezerwuj",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Pokaż więcej",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 4.438623440997617,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 1.0,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [
+       "Adres zamieszkania"
+      ],
+      "elements": [
+       {
+        "label": "Wybierz lokalizację",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Szkoły"
+       },
+       {
+        "label": "Sortuj",
+        "type": "select",
+        "size": "M",
+        "zone": "center",
+        "options": 4,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Szkoły",
+      "kind": "step",
+      "features": [
+       "Lista szkół"
+      ],
+      "elements": [
+       {
+        "label": "Pokaż szkoły",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Porównanie"
+       },
+       {
+        "label": "Filtry",
+        "type": "input",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Pomoc",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Porównanie",
+      "kind": "step",
+      "features": [
+       "Porównanie szkół"
+      ],
+      "elements": [
+       {
+        "label": "Porównaj",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Dzień otwarty"
+       },
+       {
+        "label": "Udostępnij",
+        "type": "button",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Tryb ciemny",
+        "type": "toggle",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Dzień otwarty",
+      "kind": "goal",
+      "features": [
+       "Dzień otwarty"
+      ],
+      "elements": [
+       {
+        "label": "Zapisz się",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Regulamin",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Pomoc",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 2.7039160510030342,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 1.0,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Welcome",
+      "kind": "start",
+      "features": [
+       "Invoice builder"
+      ],
+      "elements": [
+       {
+        "label": "Get started",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Invoice"
+       },
+       {
+        "label": "Notifications",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Invoice",
+      "kind": "step",
+      "features": [
+       "Invoice builder"
+      ],
+      "elements": [
+       {
+        "label": "Create invoice",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Payment"
+       },
+       {
+        "label": "Help",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Profile",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Payment",
+      "kind": "goal",
+      "features": [
+       "Payment tracking"
+      ],
+      "elements": [
+       {
+        "label": "Send now",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Terms",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.495972577999055,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 1.0,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [],
+      "elements": [
+       {
+        "label": "Get Started",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Client list"
+       },
+       {
+        "label": "Help",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Client list",
+      "kind": "step",
+      "features": [
+       "Client list"
+      ],
+      "elements": [
+       {
+        "label": "Add client",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Invoice builder"
+       },
+       {
+        "label": "Settings",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Sort",
+        "type": "select",
+        "size": "M",
+        "zone": "center",
+        "options": 4,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Invoice builder",
+      "kind": "step",
+      "features": [
+       "Invoice builder"
+      ],
+      "elements": [
+       {
+        "label": "Create invoice",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Payment tracking"
+       },
+       {
+        "label": "Dark mode",
+        "type": "toggle",
+        "size": "M",
+        "zone": "center",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Payment tracking",
+      "kind": "goal",
+      "features": [
+       "Payment tracking"
+      ],
+      "elements": [
+       {
+        "label": "Send invoice",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Profile",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "valid": true,
+   "latency": 3.2074035679979715,
+   "screens_ok": true,
+   "one_start_goal": true,
+   "goal_reachable": true,
+   "targets_valid": true,
+   "must_coverage": 1.0,
+   "issues": 0,
+   "dead_ends": 0,
+   "answer": {
+    "screens": [
+     {
+      "name": "Start",
+      "kind": "start",
+      "features": [],
+      "elements": [
+       {
+        "label": "Continue",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Client list"
+       },
+       {
+        "label": "Help",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Client list",
+      "kind": "step",
+      "features": [
+       "Client list"
+      ],
+      "elements": [
+       {
+        "label": "Add client",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Invoice preview"
+       },
+       {
+        "label": "Settings",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Invoice preview",
+      "kind": "step",
+      "features": [
+       "Invoice preview"
+      ],
+      "elements": [
+       {
+        "label": "Send invoice",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": "Payment tracking"
+       },
+       {
+        "label": "Help",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     },
+     {
+      "name": "Payment tracking",
+      "kind": "goal",
+      "features": [
+       "Payment tracking"
+      ],
+      "elements": [
+       {
+        "label": "Mark as paid",
+        "type": "button",
+        "size": "L",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       },
+       {
+        "label": "Profile",
+        "type": "link",
+        "size": "S",
+        "zone": "bottom",
+        "options": 1,
+        "target": ""
+       }
+      ]
+     }
+    ]
+   }
+  }
+ ],
+ "quiz": [
+  {
+   "question": "Jaki minimalny rozmiar celu dotykowego wymaga WCAG 2.2 SC 2.5.8 (poziom AA)?",
+   "correct": false
+  },
+  {
+   "question": "Jaki rozmiar celu wymaga WCAG SC 2.5.5 Target Size (Enhanced, AAA)?",
+   "correct": false
+  },
+  {
+   "question": "Jaki minimalny cel dotykowy zaleca Material Design?",
+   "correct": true
+  },
+  {
+   "question": "Jaki minimalny obszar dotyku zalecają Apple Human Interface Guidelines?",
+   "correct": false
+  },
+  {
+   "question": "Zgodnie z prawem Fittsa czas wskazania celu rośnie, gdy…",
+   "correct": true
+  },
+  {
+   "question": "Prawo Hicka–Hymana mówi, że czas decyzji rośnie wraz z liczbą opcji…",
+   "correct": false
+  },
+  {
+   "question": "Ile wynosi typowy czas operatora M (przygotowanie mentalne) w modelu KLM?",
+   "correct": true
+  },
+  {
+   "question": "Gdzie na telefonie trzymanym jedną ręką najłatwiej sięgnąć kciukiem?",
+   "correct": true
+  },
+  {
+   "question": "Którą heurystykę Nielsena łamie ekran bez wyjścia (ślepa uliczka)?",
+   "correct": true
+  },
+  {
+   "question": "Ile elementów według Millera (1956) mieści się zwykle w pamięci krótkotrwałej?",
+   "correct": true
+  },
+  {
+   "question": "Jaki minimalny kontrast tekstu zwykłego wymaga WCAG 1.4.3 (AA)?",
+   "correct": true
+  },
+  {
+   "question": "Jaki minimalny kontrast dużego tekstu wymaga WCAG 1.4.3 (AA)?",
+   "correct": false
+  },
+  {
+   "question": "Jaki kontrast wymaga WCAG 1.4.11 dla elementów nietekstowych (np. obramowanie pola)?",
+   "correct": false
+  },
+  {
+   "question": "Jaka jest kolejność faz Double Diamond (Design Council)?",
+   "correct": true
+  },
+  {
+   "question": "Co oznacza litera W w metodzie MoSCoW?",
+   "correct": true
+  },
+  {
+   "question": "Jak najlepiej naprawić ekran, z którego nie da się przejść dalej?",
+   "correct": true
+  },
+  {
+   "question": "Na czym polega stopniowe ujawnianie (progressive disclosure)?",
+   "correct": true
+  },
+  {
+   "question": "Którego kryterium WCAG dotyczy widoczny wskaźnik fokusu klawiatury?",
+   "correct": true
+  },
+  {
+   "question": "Ilu ewaluatorów zaleca Nielsen do oceny heurystycznej?",
+   "correct": true
+  },
+  {
+   "question": "Ile pytań ma kwestionariusz SUS (System Usability Scale)?",
+   "correct": false
+  },
+  {
+   "question": "Jaki powinien być dobry komunikat błędu według heurystyk Nielsena?",
+   "correct": true
+  },
+  {
+   "question": "Co mówi zasada bliskości (Gestalt)?",
+   "correct": true
+  },
+  {
+   "question": "Dlaczego placeholder nie powinien zastępować etykiety pola?",
+   "correct": false
+  },
+  {
+   "question": "Czego wymaga WCAG 2.2 SC 2.5.7 Dragging Movements?",
+   "correct": true
+  },
+  {
+   "question": "Czego wymaga WCAG 2.2 SC 3.3.8 Accessible Authentication (Minimum)?",
+   "correct": true
+  },
+  {
+   "question": "Przy jakiej szerokości treść musi się przełamać bez przewijania w poziomie (WCAG 1.4.10 Reflow)?",
+   "correct": false
+  }
+ ]
+}
