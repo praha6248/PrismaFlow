@@ -20,7 +20,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-os.environ.setdefault("OLLAMA_HOST", "100.89.78.124:11434")
+os.environ.setdefault("OLLAMA_HOST", "127.0.0.1:11434")
 
 from flows import ROOT, apply_all, audit, draft_metrics, resolve
 

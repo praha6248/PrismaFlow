@@ -82,9 +82,9 @@ git clone --depth 1 https://github.com/ggml-org/llama.cpp vendor/llama.cpp
 cmake -S vendor/llama.cpp -B vendor/llama.cpp/build -DGGML_CUDA=OFF && cmake --build vendor/llama.cpp/build --target llama-quantize -j
 .venv/bin/python scrape_bibliography.py
 .venv/bin/python scrape_corpus.py
-OLLAMA_HOST=100.89.78.124:11434 .venv/bin/python distill_knowledge.py --limit 320
+OLLAMA_HOST=127.0.0.1:11434 .venv/bin/python distill_knowledge.py --limit 320
 .venv/bin/python build_dataset.py
-curl -s http://100.89.78.124:11434/api/generate -d '{"model":"local/gemma3-12b","keep_alive":0}'
+curl -s http://127.0.0.1:11434/api/generate -d '{"model":"local/gemma3-12b","keep_alive":0}'
 .venv/bin/python train.py
 ./export.sh
 .venv/bin/python evaluate.py local/gemma3-4b-ux
