@@ -311,7 +311,7 @@ export function DefineView({ projectId, onBack, onDone, notify }: Props) {
     <>
       <IconButton
         onClick={onBack}
-        title={t("Wróć do mapy")}
+        title={t("Wróć do tablicy notatek")}
         left={41}
         top={102}
       >

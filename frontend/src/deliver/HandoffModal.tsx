@@ -11,9 +11,10 @@ interface Props {
 }
 
 export function HandoffModal({ handoff, onClose, onRestart }: Props) {
-  const [tab, setTab] = useState<"figma" | "claude">("figma");
+  const [tab, setTab] = useState<"report" | "figma" | "claude">("report");
   const [copied, setCopied] = useState(false);
-  const text = tab === "figma" ? handoff.figma_prompt : handoff.claude_md;
+  const text =
+    tab === "report" ? handoff.report : tab === "figma" ? handoff.figma_prompt : handoff.claude_md;
 
   const copy = async () => {
     try {
@@ -57,6 +58,7 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
           >
             {(
               [
+                ["report", t("Raport z badań")],
                 ["figma", "Figma prompt"],
                 ["claude", "CLAUDE.md"],
               ] as const
@@ -83,7 +85,7 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
             onClick={onClose}
             className="text-haze hover:text-plum"
             style={{ marginLeft: u(8) }}
-            aria-label="Zamknij"
+            aria-label={t("Zamknij")}
           >
             <X style={{ width: u(9), height: u(9) }} />
           </button>
@@ -109,9 +111,12 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
           <span
             className="min-w-0 flex-1 truncate text-haze"
             style={{ fontSize: "var(--text-small)" }}
-            title={handoff.directory}
+            title={`${handoff.directory} · ${t("prototyp-figma.svg przeciągnij do Figmy")}`}
           >
-            {t("Zapisano:")} {handoff.directory}
+            {t("Zapisano w {dir}:", { dir: handoff.directory })}{" "}
+            {handoff.files.join(", ")}
+            {!handoff.files.includes("raport.pdf") &&
+              ` · ${t("PDF: otwórz raport.html i wydrukuj do PDF")}`}
           </span>
           <button
             type="button"

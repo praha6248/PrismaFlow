@@ -245,7 +245,7 @@ export function ChoiceBar({
             marginTop: u(4.5),
             fontSize: "var(--text-body)",
             lineHeight: 1.15,
-            color: value ? "#573476" : "var(--color-haze)",
+            color: value ? "var(--color-ink)" : "var(--color-haze)",
           }}
         >
           {value ?? placeholder}

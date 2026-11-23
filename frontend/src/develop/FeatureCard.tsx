@@ -2,9 +2,20 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { CircleHelp, GripVertical, X } from "lucide-react";
 import { useId, useState, type KeyboardEvent } from "react";
+import { createPortal } from "react-dom";
 import { u } from "../components/ui";
 import type { Feature, Priority } from "../types";
-import { plural, t } from "../i18n";
+import { number, plural, t } from "../i18n";
+
+const IMPACTS = [0.25, 0.5, 1, 2, 3];
+const IMPACT_LABELS: Record<number, string> = {
+  0.25: t("minimalny"),
+  0.5: t("mały"),
+  1: t("średni"),
+  2: t("duży"),
+  3: t("ogromny"),
+};
+const EFFORTS = [0.5, 1, 2, 3, 4, 6, 8];
 
 export const PRIORITY_STYLES: Record<
   Priority,
@@ -49,6 +60,7 @@ interface ViewProps {
   overlay?: boolean;
   onRename?: (title: string) => void;
   onDelete?: () => void;
+  onRice?: (patch: { impact?: number; effort?: number }) => void;
   handleProps?: Record<string, unknown>;
 }
 
@@ -58,8 +70,12 @@ export function FeatureCardView({
   overlay,
   onRename,
   onDelete,
+  onRice,
   handleProps,
 }: ViewProps) {
+  const [riceAt, setRiceAt] = useState<{ left: number; top: number } | null>(null);
+  const riceOpen = riceAt !== null;
+  const rice = feature.rice;
   const style = PRIORITY_STYLES[feature.priority];
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(feature.title);
@@ -174,13 +190,13 @@ export function FeatureCardView({
       </div>
       <div
         className="absolute flex items-center"
-        style={{ left: u(5.5), top: u(40.5), gap: u(7) }}
+        style={{ left: u(5.5), top: u(40.5), gap: u(4) }}
       >
         <span
           className="flex items-center justify-center"
           style={{
             height: u(11.7),
-            minWidth: u(53),
+            minWidth: u(48),
             padding: `0 ${u(4)}`,
             borderRadius: u(3.5),
             fontSize: "var(--text-small)",
@@ -188,8 +204,30 @@ export function FeatureCardView({
             color: style.color,
           }}
         >
-          Popyt {feature.demand}/100
+          {t("Popyt {value}/100", { value: feature.demand })}
         </span>
+        {rice && (
+          <button
+            type="button"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              const rect = e.currentTarget.getBoundingClientRect();
+              setRiceAt(riceAt ? null : { left: rect.left, top: rect.bottom + 4 });
+            }}
+            title={t("RICE = zasięg × wpływ × pewność ÷ nakład")}
+            className="flex items-center justify-center font-semibold text-ink hover:underline"
+            style={{
+              height: u(11.7),
+              padding: `0 ${u(3)}`,
+              borderRadius: u(3.5),
+              fontSize: "var(--text-small)",
+              background: "#f3ecfa",
+            }}
+          >
+            RICE {number(rice.score, 1)}
+          </button>
+        )}
         <button type="button" aria-label={t("Pokaż dowody, na których to oparto")}
           aria-describedby={showEvidence ? tooltipId : undefined}
           className="flex items-center justify-center rounded-full text-haze hover:text-plum"
@@ -202,6 +240,63 @@ export function FeatureCardView({
           onKeyDown={e => { e.stopPropagation(); if (e.key === "Escape") setShowEvidence(false); }}>
           <CircleHelp size={16} />
         </button>
+        {riceOpen && rice && createPortal(
+          <div
+            onPointerDown={(e) => e.stopPropagation()}
+            className="fixed z-50 flex flex-col bg-white text-ink"
+            style={{
+              left: riceAt.left,
+              top: riceAt.top,
+              width: u(150),
+              padding: u(6),
+              gap: u(3),
+              borderRadius: u(6),
+              boxShadow: `0 ${u(3)} ${u(12)} rgba(170, 120, 210, 0.3)`,
+              fontSize: "var(--text-small)",
+              cursor: "default",
+            }}
+          >
+            <span>{t("Zasięg: {n} dowodów z puli", { n: rice.reach })}</span>
+            <span>{t("Pewność: {n}% (dowody i wywiady)", { n: Math.round(rice.confidence * 100) })}</span>
+            <label className="flex items-center" style={{ gap: u(3) }}>
+              {t("Wpływ")}
+              <select
+                value={rice.impact}
+                onChange={(e) => onRice?.({ impact: Number(e.target.value) })}
+                disabled={!onRice}
+                className="ml-auto rounded border border-[#eadff3] bg-white"
+              >
+                {IMPACTS.map((v) => (
+                  <option key={v} value={v}>
+                    {number(v, v < 1 ? 2 : 0)} · {IMPACT_LABELS[v]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex items-center" style={{ gap: u(3) }}>
+              {t("Nakład (osobotygodnie)")}
+              <select
+                value={rice.effort}
+                onChange={(e) => onRice?.({ effort: Number(e.target.value) })}
+                disabled={!onRice}
+                className="ml-auto rounded border border-[#eadff3] bg-white"
+              >
+                {EFFORTS.map((v) => (
+                  <option key={v} value={v}>
+                    {number(v, v < 1 ? 1 : 0)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              type="button"
+              onClick={() => setRiceAt(null)}
+              className="self-end text-pink-text hover:underline"
+            >
+              {t("Zamknij")}
+            </button>
+          </div>
+        , document.body)}
         {showEvidence && (
           <span role="tooltip" id={tooltipId}
             className="pointer-events-none absolute bottom-full left-0 z-10 mb-1 whitespace-nowrap rounded-md bg-plum px-2 py-1 text-white"
@@ -218,12 +313,14 @@ interface SortableProps {
   feature: Feature;
   onRename: (feature: Feature, title: string) => void;
   onDelete: (feature: Feature) => void;
+  onRice: (feature: Feature, patch: { impact?: number; effort?: number }) => void;
 }
 
 export function SortableFeatureCard({
   feature,
   onRename,
   onDelete,
+  onRice,
 }: SortableProps) {
   const {
     attributes,
@@ -250,6 +347,7 @@ export function SortableFeatureCard({
         dragging={isDragging}
         onRename={(title) => onRename(feature, title)}
         onDelete={() => onDelete(feature)}
+        onRice={(patch) => onRice(feature, patch)}
         handleProps={{ ...attributes, ...listeners }}
       />
     </div>

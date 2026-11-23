@@ -25,9 +25,11 @@ import type {
   Handoff,
   ScreenKind,
   Suggestion,
+  TestsState,
 } from "../types";
 import { AuditPanel } from "./AuditPanel";
 import { HandoffModal } from "./HandoffModal";
+import { TestsPanel } from "./TestsPanel";
 import {
   ScreenNode,
   type ScreenActions,
@@ -361,6 +363,8 @@ function Studio({ projectId, notify, onRestart }: Props) {
     at: number;
   } | null>(null);
   const [handoff, setHandoff] = useState<Handoff | null>(null);
+  const [showTests, setShowTests] = useState(false);
+  const [tests, setTests] = useState<TestsState | null>(null);
   const [handoffBusy, setHandoffBusy] = useState(false);
   const saveTimer = useRef<number | undefined>(undefined);
   const dirty = useRef(false);
@@ -607,6 +611,7 @@ function Studio({ projectId, notify, onRestart }: Props) {
     }
   };
 
+  const testsState = tests ?? state?.tests;
   const persona = state?.persona;
   const subtitle = `${persona ? `${persona.name} · ${persona.focus} · ` : ""}${t("Połącz ekrany i dopracuj doświadczenie")}`;
   const transitions = audit?.transitions ?? 0;
@@ -737,6 +742,8 @@ function Studio({ projectId, notify, onRestart }: Props) {
             onDismiss={dismiss}
             onHandoff={generateHandoff}
             onFocusScreen={focusScreen}
+            tests={testsState}
+            onOpenTests={() => setShowTests(true)}
           />
         )}
       </div>
@@ -750,6 +757,15 @@ function Studio({ projectId, notify, onRestart }: Props) {
       </p>
 
 
+      {showTests && (
+        <TestsPanel
+          projectId={projectId}
+          flow={flow}
+          onClose={() => setShowTests(false)}
+          onChanged={setTests}
+          notify={notify}
+        />
+      )}
       {handoff && (
         <HandoffModal
           handoff={handoff}

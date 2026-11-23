@@ -137,7 +137,7 @@ export interface Problem {
 }
 
 export interface Persona {
-  profile?: Partial<Record<"situation" | "device" | "goal" | "workaround" | "barrier" | "success" | "question", string>>;
+  profile?: Partial<Record<"situation" | "device" | "goal" | "workaround" | "barrier" | "success" | "question" | "quote_source", string>>;
   id: number;
   project_id: number;
   problem_id: number;
@@ -174,6 +174,17 @@ export interface Feature {
   pool: number;
   demand: number;
   origin: "user" | "ai";
+  impact: number;
+  effort: number;
+  rice?: Rice;
+}
+
+export interface Rice {
+  reach: number;
+  impact: number;
+  confidence: number;
+  effort: number;
+  score: number;
 }
 
 export interface ChosenPersona extends Persona {
@@ -184,6 +195,7 @@ export interface DevelopState {
   project: Project;
   problem: Problem | null;
   persona: ChosenPersona | null;
+  hmw: string;
   features: Feature[];
 }
 
@@ -287,11 +299,14 @@ export interface DeliverState {
   flow: Flow;
   audit: FlowAudit;
   suggestions: Suggestion[];
+  tests: TestsState;
 }
 
 export interface Handoff {
   figma_prompt: string;
   claude_md: string;
+  report: string;
+  files: string[];
   directory: string;
 }
 
@@ -357,4 +372,110 @@ export interface SetupState {
   ollama: { ok: boolean; url: string; download: string };
   memory_gb: number | null;
   models: SetupModel[];
+}
+
+export type NoteSource = "evidence" | "note" | "interview" | "test";
+
+export interface BoardNote {
+  id: string;
+  text: string;
+  source: NoteSource;
+  label: string;
+  url?: string | null;
+  theme: string | null;
+}
+
+export interface Theme {
+  id: string;
+  name: string;
+  insight: string;
+}
+
+export interface BoardState {
+  project: Project;
+  notes: BoardNote[];
+  themes: Theme[];
+  clustered_at: number | null;
+}
+
+export interface NoteRef {
+  text: string;
+  source: NoteSource;
+  label: string;
+  url?: string | null;
+}
+
+export interface EmpathyItem {
+  text: string;
+  from: NoteRef | null;
+}
+
+export interface JourneyStage {
+  phase: "before" | "during" | "after";
+  name: string;
+  action: string;
+  thought: string;
+  emotion: number;
+  pain: string;
+  from: NoteRef | null;
+}
+
+export interface EmpathyMap {
+  says: EmpathyItem[];
+  thinks: EmpathyItem[];
+  does: EmpathyItem[];
+  feels: EmpathyItem[];
+  journey: JourneyStage[];
+  hmw: string[];
+  hmw_chosen: string;
+}
+
+export interface EmpathyState {
+  project: Project;
+  problem: Problem | null;
+  persona: ChosenPersona | null;
+  map: EmpathyMap | null;
+}
+
+export interface TestTask {
+  id: string;
+  goal: string;
+  goal_name: string;
+  scenario: string;
+  optimal: string[];
+  attempts: number;
+  successes: number;
+  seconds: number | null;
+  predicted: number | null;
+  extra_steps: number;
+  detours: { screen: string; count: number }[];
+  quotes: { participant: string; quote: string; success: boolean }[];
+}
+
+export interface TestResult {
+  task: string;
+  success: boolean;
+  seconds: number;
+  path: string[];
+  quote: string;
+}
+
+export interface TestSession {
+  id: string;
+  participant: string;
+  results: TestResult[];
+  created_at: number;
+}
+
+export type TestIssue =
+  | { kind: "success"; task: string; successes: number; attempts: number }
+  | { kind: "slow"; task: string; ratio: number }
+  | { kind: "detour"; task: string; screen: string; count: number };
+
+export interface TestsState {
+  tasks: TestTask[];
+  sessions: TestSession[];
+  issues: TestIssue[];
+  participants: number;
+  start: string | null;
 }

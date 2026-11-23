@@ -6,24 +6,28 @@ import { Header } from "./components/Header";
 import { Toast } from "./components/Toast";
 import { DefineView } from "./define/DefineView";
 import { ValidateView } from "./validate/ValidateView";
+import { BoardView } from "./research/BoardView";
+import { EmpathyView } from "./research/EmpathyView";
 import { DeliverView } from "./deliver/DeliverView";
 import { DevelopView } from "./develop/DevelopView";
 import { DiscoverView } from "./discover/DiscoverView";
 import { PHASES, type Phase } from "./types";
 
+type Sub = "board" | "validate" | "empathy";
+
 interface Route {
   projectId: number | null;
   phase: Phase;
-  validate?: boolean;
+  sub?: Sub;
 }
 
 function parseHash(): Route {
   const match = window.location.hash.match(
-    /^#\/p\/(\d+)(?:\/(define|validate|develop|deliver))?/,
+    /^#\/p\/(\d+)(?:\/(define|board|validate|empathy|develop|deliver))?/,
   );
   if (!match) return { projectId: null, phase: "discover" };
-  if (match[2] === "validate")
-    return { projectId: Number(match[1]), phase: "define", validate: true };
+  if (match[2] === "board" || match[2] === "validate" || match[2] === "empathy")
+    return { projectId: Number(match[1]), phase: "define", sub: match[2] };
   return {
     projectId: Number(match[1]),
     phase: (match[2] as Phase | undefined) ?? "discover",
@@ -32,7 +36,7 @@ function parseHash(): Route {
 
 function hashFor(route: Route): string {
   if (route.projectId === null) return "";
-  if (route.validate) return `#/p/${route.projectId}/validate`;
+  if (route.sub) return `#/p/${route.projectId}/${route.sub}`;
   return route.phase === "discover"
     ? `#/p/${route.projectId}`
     : `#/p/${route.projectId}/${route.phase}`;
@@ -80,7 +84,7 @@ export function App() {
   }, [route.projectId, route.phase, navigate]);
 
   const advance = useCallback(
-    async (phase: Phase) => {
+    async (phase: Phase, sub?: Sub) => {
       if (route.projectId === null) return;
       const projectId = route.projectId;
       if (PHASES.indexOf(phase) > PHASES.indexOf(reached)) {
@@ -92,7 +96,7 @@ export function App() {
           return;
         }
       }
-      navigate({ projectId, phase });
+      navigate({ projectId, phase, sub });
     },
     [route.projectId, reached, navigate, notify],
   );
@@ -122,32 +126,54 @@ export function App() {
           <DiscoverView
             projectId={projectId}
             onCreated={(id) => navigate({ projectId: id, phase: "discover" })}
-            onOpenDefine={() => advance("define")}
+            onOpenDefine={() => advance("define", "board")}
             notify={notify}
           />
         )}
         {route.phase !== "discover" && (
           <div className="stage">
             {route.phase === "define" &&
-              route.validate &&
+              route.sub === "board" &&
+              projectId !== null && (
+                <BoardView
+                  key={projectId}
+                  projectId={projectId}
+                  onBack={() => navigate({ projectId, phase: "discover" })}
+                  onDone={() => navigate({ projectId, phase: "define" })}
+                  notify={notify}
+                />
+              )}
+            {route.phase === "define" &&
+              route.sub === "validate" &&
               projectId !== null && (
                 <ValidateView
                   key={projectId}
                   projectId={projectId}
                   onBack={() => navigate({ projectId, phase: "define" })}
+                  onDone={() => navigate({ projectId, phase: "define", sub: "empathy" })}
+                  notify={notify}
+                />
+              )}
+            {route.phase === "define" &&
+              route.sub === "empathy" &&
+              projectId !== null && (
+                <EmpathyView
+                  key={projectId}
+                  projectId={projectId}
+                  onBack={() => navigate({ projectId, phase: "define", sub: "validate" })}
                   onDone={() => advance("develop")}
                   notify={notify}
                 />
               )}
             {route.phase === "define" &&
-              !route.validate &&
+              !route.sub &&
               projectId !== null && (
                 <DefineView
                   key={projectId}
                   projectId={projectId}
-                  onBack={() => navigate({ projectId, phase: "discover" })}
+                  onBack={() => navigate({ projectId, phase: "define", sub: "board" })}
                   onDone={() =>
-                    navigate({ projectId, phase: "define", validate: true })
+                    navigate({ projectId, phase: "define", sub: "validate" })
                   }
                   notify={notify}
                 />

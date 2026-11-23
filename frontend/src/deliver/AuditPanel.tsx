@@ -8,7 +8,8 @@ import {
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { u } from "../components/ui";
-import type { FlowAudit, Suggestion } from "../types";
+import type { FlowAudit, Suggestion, TestsState } from "../types";
+import { issueText } from "./TestsPanel";
 import { ZONE_LABELS } from "./ScreenNode";
 import { number, plural, t } from "../i18n";
 
@@ -86,6 +87,8 @@ interface Props {
   onDismiss: (s: Suggestion) => void;
   onHandoff: () => void;
   onFocusScreen: (screenId: string) => void;
+  tests?: TestsState;
+  onOpenTests: () => void;
 }
 
 export function AuditPanel({
@@ -98,6 +101,8 @@ export function AuditPanel({
   onDismiss,
   onHandoff,
   onFocusScreen,
+  tests,
+  onOpenTests,
 }: Props) {
   const c = audit.constants;
   const hick = audit.hick[0];
@@ -274,6 +279,47 @@ export function AuditPanel({
               ),
             )}
           </div>
+        </div>
+
+        <div
+          className="shrink-0"
+          style={{
+            borderRadius: u(5),
+            background: "#ffffff",
+            border: `${u(0.5)} solid #eee6f5`,
+            padding: `${u(4.5)} ${u(6)}`,
+          }}
+        >
+          <div className="text-ink" style={{ fontSize: "var(--text-small)" }}>
+            {tests?.participants
+              ? t("Zaobserwowane u {n}", {
+                  n: `${tests.participants} ${plural(tests.participants, "osoby", "osób", "osób")}`,
+                })
+              : t("Jeszcze nie testowano z ludźmi")}
+          </div>
+          <div
+            className="flex flex-col"
+            style={{ gap: u(2), marginTop: u(2.5), fontSize: "var(--text-small)", lineHeight: 1.4, color: "var(--color-muted)" }}
+          >
+            {!tests?.participants && (
+              <span>{t("Metryki powyżej to przewidywania. Sprawdź prototyp z 5 osobami.")}</span>
+            )}
+            {tests?.participants && !tests.issues.length ? (
+              <span>{t("Każde zadanie ukończyło co najmniej 80% osób.")}</span>
+            ) : null}
+            {tests?.issues.slice(0, 4).map((issue, i) => (
+              <span key={i}>{issueText(issue)}</span>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={onOpenTests}
+            disabled={audit.screens === 0}
+            className="text-pink-text hover:underline disabled:opacity-50"
+            style={{ fontSize: "var(--text-small)", marginTop: u(3) }}
+          >
+            {tests?.participants ? t("Wyniki i kolejny test") : t("Przeprowadź test z użytkownikiem")}
+          </button>
         </div>
 
         <button
@@ -535,7 +581,7 @@ export function AuditPanel({
           {handoffBusy ? t("Generuję…") : t("Generuj Handoff")}
         </span>
         <span style={{ fontSize: "var(--text-small)", opacity: 0.9, marginTop: u(1.5) }}>
-          Figma + Claude
+          {t("Figma · Claude · raport z badań")}
         </span>
       </button>
     </div>

@@ -19,6 +19,11 @@ import type {
   Stage,
   ValidateState,
   SetupState,
+  BoardState,
+  EmpathyState,
+  NoteSource,
+  TestResult,
+  TestsState,
 } from "./types";
 
 export class ApiError extends Error {
@@ -159,7 +164,7 @@ export const api = {
     }),
   updateFeature: (
     id: number,
-    patch: Partial<Pick<Feature, "title" | "description" | "priority">>,
+    patch: Partial<Pick<Feature, "title" | "description" | "priority" | "impact" | "effort">>,
   ) =>
     request<Feature>(`/features/${id}`, { method: "PATCH", body: json(patch) }),
   orderFeatures: (
@@ -199,6 +204,61 @@ export const api = {
     }),
   handoff: (projectId: number) =>
     request<Handoff>(`/projects/${projectId}/handoff`, { method: "POST" }),
+  board: (projectId: number) => request<BoardState>(`/projects/${projectId}/board`),
+  addNotes: (projectId: number, text: string, source: NoteSource, label = "", theme: string | null = null) =>
+    request<BoardState>(`/projects/${projectId}/board/notes`, {
+      method: "POST",
+      body: json({ text, source, label, theme }),
+    }),
+  moveNote: (projectId: number, noteId: string, theme: string | null) =>
+    request<BoardState>(`/projects/${projectId}/board/notes/${noteId}`, {
+      method: "PATCH",
+      body: json({ theme }),
+    }),
+  removeNote: (projectId: number, noteId: string) =>
+    request<BoardState>(`/projects/${projectId}/board/notes/${noteId}`, { method: "DELETE" }),
+  addTheme: (projectId: number, name: string) =>
+    request<BoardState>(`/projects/${projectId}/board/themes`, {
+      method: "POST",
+      body: json({ name }),
+    }),
+  updateTheme: (projectId: number, themeId: string, patch: { name?: string; insight?: string }) =>
+    request<BoardState>(`/projects/${projectId}/board/themes/${themeId}`, {
+      method: "PATCH",
+      body: json(patch),
+    }),
+  removeTheme: (projectId: number, themeId: string) =>
+    request<BoardState>(`/projects/${projectId}/board/themes/${themeId}`, { method: "DELETE" }),
+  clusterBoard: (projectId: number) =>
+    request<Job>(`/projects/${projectId}/board/cluster`, { method: "POST" }),
+  empathy: (projectId: number) => request<EmpathyState>(`/projects/${projectId}/empathy`),
+  generateEmpathy: (projectId: number) =>
+    request<Job>(`/projects/${projectId}/empathy`, { method: "POST" }),
+  chooseHmw: (projectId: number, text: string) =>
+    request<EmpathyState>(`/projects/${projectId}/hmw`, {
+      method: "PUT",
+      body: json({ text }),
+    }),
+  tests: (projectId: number) => request<TestsState>(`/projects/${projectId}/tests`),
+  planTests: (projectId: number) =>
+    request<Job>(`/projects/${projectId}/tests/plan`, { method: "POST" }),
+  updateTask: (projectId: number, taskId: string, scenario: string) =>
+    request<TestsState>(`/projects/${projectId}/tests/tasks/${taskId}`, {
+      method: "PATCH",
+      body: json({ scenario }),
+    }),
+  addSession: (projectId: number, participant: string, results: TestResult[]) =>
+    request<TestsState>(`/projects/${projectId}/tests/sessions`, {
+      method: "POST",
+      body: json({ participant, results }),
+    }),
+  removeSession: (projectId: number, sessionId: string) =>
+    request<TestsState>(`/projects/${projectId}/tests/sessions/${sessionId}`, { method: "DELETE" }),
+  sendFinding: (projectId: number, text: string, target: "board" | "backlog") =>
+    request<{ target: string }>(`/projects/${projectId}/findings`, {
+      method: "POST",
+      body: json({ text, target }),
+    }),
   choosePersona: (personaId: number, option: number) =>
     request<DefineState>(`/personas/${personaId}/choose`, {
       method: "POST",

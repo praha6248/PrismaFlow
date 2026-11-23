@@ -81,6 +81,7 @@ interface ColumnProps {
   features: Feature[];
   onRename: (feature: Feature, title: string) => void;
   onDelete: (feature: Feature) => void;
+  onRice: (feature: Feature, patch: { impact?: number; effort?: number }) => void;
 }
 
 function Column({
@@ -89,6 +90,7 @@ function Column({
   features,
   onRename,
   onDelete,
+  onRice,
 }: ColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id: priority });
   const style = PRIORITY_STYLES[priority];
@@ -158,6 +160,7 @@ function Column({
               feature={feature}
               onRename={onRename}
               onDelete={onDelete}
+              onRice={onRice}
             />
           ))}
         </SortableContext>
@@ -428,6 +431,31 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
     }
   };
 
+  const updateRice = async (feature: Feature, patch: { impact?: number; effort?: number }) => {
+    try {
+      const updated = await api.updateFeature(feature.id, patch);
+      setBoard((current) => ({
+        ...current,
+        [updated.priority]: current[updated.priority].map((f) =>
+          f.id === updated.id ? updated : f,
+        ),
+      }));
+    } catch (error) {
+      notify((error as Error).message);
+    }
+  };
+
+  const sortByRice = () => {
+    const next = Object.fromEntries(
+      COLUMNS.map((c) => [
+        c,
+        [...board[c]].sort((a, b) => (b.rice?.score ?? 0) - (a.rice?.score ?? 0)),
+      ]),
+    ) as typeof board;
+    setBoard(next);
+    persist(next);
+  };
+
   const remove = async (feature: Feature) => {
     setBoard((current) => ({
       ...current,
@@ -471,9 +499,11 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
   const mustCount = board.must.length;
   const busy = jobStage !== null;
   const persona = state?.persona;
-  const subtitle = persona
-    ? `${persona.name} · ${persona.focus} · ${t("Zakres pierwszej wersji")}`
-    : t("Zakres pierwszej wersji");
+  const subtitle = state?.hmw
+    ? state.hmw
+    : persona
+      ? `${persona.name} · ${persona.focus} · ${t("Zakres pierwszej wersji")}`
+      : t("Zakres pierwszej wersji");
   const scope = `${inScope} ${plural(inScope, "funkcja", "funkcje", "funkcji")} · ${t("{count} w MVP", { count: `${mustCount} ${plural(mustCount, "niezbędna", "niezbędne", "niezbędnych")}` })}`;
 
   return (
@@ -494,7 +524,15 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
           className="text-haze"
           style={{ fontSize: "var(--text-small)", marginTop: u(5) }}
         >
-          {t("Przeciągnij karty między kolumnami MoSCoW.")}
+          {t("Przeciągnij karty między kolumnami MoSCoW.")}{" "}
+          <button
+            type="button"
+            onClick={sortByRice}
+            disabled={busy || !all.length}
+            className="text-pink-text underline disabled:opacity-50"
+          >
+            {t("Sortuj według RICE")}
+          </button>
         </div>
       </div>
 
@@ -560,6 +598,7 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
             features={busy ? [] : board[priority]}
             onRename={rename}
             onDelete={remove}
+            onRice={updateRice}
           />
         ))}
         <DragOverlay
@@ -597,7 +636,7 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
       )}
       <FooterNote top={436}>
         {t(
-          "Popyt = odsetek dowodów z mapy (Google, Stack Exchange, Lemmy) wspierających funkcję × 100 · propozycje lokalnego modelu do weryfikacji",
+          "Popyt = odsetek dowodów wspierających funkcję · RICE = zasięg × wpływ × pewność ÷ nakład · kliknij RICE, aby zmienić ocenę",
         )}
       </FooterNote>
     </>

@@ -421,7 +421,7 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
           placeholder={t(
             "Przeprowadź co najmniej 5 rozmów z osobami z grupy docelowej",
           )}
-          action={t("Przejdź do Develop")}
+          action={t("Dalej: mapa empatii")}
           disabled={!state}
           onConfirm={onDone}
         />
