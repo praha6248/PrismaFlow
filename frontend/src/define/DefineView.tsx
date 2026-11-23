@@ -1,4 +1,4 @@
-import { ArrowLeft, RefreshCw } from "lucide-react";
+import { ArrowLeft, MessageSquareQuote, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, waitForJob } from "../api";
 import {
@@ -13,6 +13,7 @@ import {
 import type { DefineState } from "../types";
 import { PersonaCard } from "./PersonaCard";
 import { ProblemCard } from "./ProblemCard";
+import { QuotesDialog } from "./QuotesDialog";
 import { t } from "../i18n";
 
 const STAGE_TEXT: Record<string, string> = {
@@ -73,6 +74,7 @@ export function DefineView({ projectId, onBack, onDone, notify }: Props) {
     option: number;
   } | null>(null);
   const [saving, setSaving] = useState(false);
+  const [quoting, setQuoting] = useState(false);
   const started = useRef(false);
 
   const run = useCallback(
@@ -211,10 +213,34 @@ export function DefineView({ projectId, onBack, onDone, notify }: Props) {
     else run("personas");
   };
 
+  const busy = job !== null;
+  const quotesButton = (
+    <>
+      {!busy && (
+        <IconButton onClick={() => setQuoting(true)} title={t("Wklej cytaty z forów")} left={536.6} top={102}>
+          <MessageSquareQuote style={{ width: u(8), height: u(8) }} />
+        </IconButton>
+      )}
+      {quoting && (
+        <QuotesDialog
+          projectId={projectId}
+          onClose={() => setQuoting(false)}
+          notify={notify}
+          onAdded={(added) =>
+            notify(
+              added
+                ? t("Dodano cytaty: {count}. Wygeneruj ponownie, aby ich użyć.", { count: added })
+                : t("Te cytaty już są w projekcie."),
+            )
+          }
+        />
+      )}
+    </>
+  );
+
   const country = state
     ? (COUNTRY_NAMES[state.project.geo] ?? state.project.geo)
     : "";
-  const busy = job !== null;
   const progressTitle =
     job?.kind === "personas"
       ? t("Tworzę persony…")
@@ -234,6 +260,7 @@ export function DefineView({ projectId, onBack, onDone, notify }: Props) {
         >
           <ArrowLeft style={{ width: u(9), height: u(9) }} />
         </IconButton>
+        {quotesButton}
         {!busy && personas.length > 0 && (
           <IconButton
             onClick={regenerate}
@@ -317,6 +344,7 @@ export function DefineView({ projectId, onBack, onDone, notify }: Props) {
       >
         <ArrowLeft style={{ width: u(9), height: u(9) }} />
       </IconButton>
+      {quotesButton}
       {!busy && problems.length > 0 && (
         <IconButton
           onClick={regenerate}

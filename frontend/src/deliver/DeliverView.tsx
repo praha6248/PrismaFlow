@@ -33,6 +33,7 @@ import { CaseStudyModal } from "./CaseStudyModal";
 import { TestsPanel } from "./TestsPanel";
 import {
   ScreenNode,
+  newElement,
   type ScreenActions,
   type ScreenFlowNode,
 } from "./ScreenNode";
@@ -493,21 +494,10 @@ function Studio({ projectId, notify, onRestart }: Props) {
               ),
             })),
         })),
-      addElement: (id) =>
+      addElement: (id, type) =>
         mapScreen(id, (s) => ({
           ...s,
-          elements: [
-            ...s.elements,
-            {
-              id: newId("e"),
-              label: t("Nowy przycisk"),
-              type: "button",
-              size: "L",
-              zone: "bottom",
-              options: 1,
-              target: null,
-            },
-          ],
+          elements: [...s.elements, newElement(newId("e"), type)],
         })),
       updateElement: (screenId, elementId, patch: Partial<FlowElement>) =>
         mapScreen(screenId, (s) => ({

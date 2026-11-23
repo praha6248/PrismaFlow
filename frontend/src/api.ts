@@ -1,5 +1,6 @@
 import { locale } from "./i18n";
 import type {
+  PastedQuote,
   DefineState,
   DeliverState,
   DevelopState,
@@ -208,6 +209,14 @@ export const api = {
     request<Handoff>(`/projects/${projectId}/handoff`, { method: "POST" }),
   caseStudy: (projectId: number) =>
     request<Job>(`/projects/${projectId}/case-study`, { method: "POST" }),
+  quotes: (projectId: number) => request<{ quotes: PastedQuote[] }>(`/projects/${projectId}/quotes`),
+  addQuotes: (projectId: number, text: string, url: string | null) =>
+    request<{ added: number; quotes: PastedQuote[] }>(`/projects/${projectId}/quotes`, {
+      method: "POST",
+      body: json({ text, url }),
+    }),
+  removeQuote: (projectId: number, evidenceId: number) =>
+    request<{ quotes: PastedQuote[] }>(`/projects/${projectId}/quotes/${evidenceId}`, { method: "DELETE" }),
   board: (projectId: number) => request<BoardState>(`/projects/${projectId}/board`),
   addNotes: (projectId: number, text: string, source: NoteSource, label = "", theme: string | null = null) =>
     request<BoardState>(`/projects/${projectId}/board/notes`, {

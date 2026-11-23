@@ -6,7 +6,7 @@ import re
 from enum import Enum
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class NodeKind(str, Enum):
@@ -366,7 +366,7 @@ class FeatureOrder(BaseModel):
     items: list[FeatureOrderItem]
 
 
-ElementType = Literal["button", "link", "select", "input", "toggle", "list"]
+ElementType = Literal["button", "link", "select", "input", "toggle", "list", "checkbox", "radio", "tabs", "slider", "text"]
 ElementSize = Literal["S", "M", "L"]
 ElementZone = Literal["top", "center", "bottom"]
 ScreenKind = Literal["start", "step", "goal"]
@@ -382,6 +382,18 @@ class FlowElement(BaseModel):
     zone: ElementZone = "center"
     options: int = Field(default=1, ge=1, le=50)
     target: str | None = None
+    items: list[str] = Field(default_factory=list, description="Named choices of a list, select, radio group or tabs")
+
+    @field_validator("items")
+    @classmethod
+    def _items(cls, value: list[str]) -> list[str]:
+        return [" ".join(item.split())[:40] for item in value if item and item.strip()][:20]
+
+    @model_validator(mode="after")
+    def _options_from_items(self) -> "FlowElement":
+        if len(self.items) >= 2:
+            self.options = len(self.items)
+        return self
 
 
 class FlowScreen(BaseModel):
@@ -637,6 +649,14 @@ class BoardNoteCreate(BaseModel):
     source: Literal["note", "interview", "test"] = "note"
     label: str = Field(default="", max_length=80)
     theme: str | None = None
+
+
+class QuoteCreate(BaseModel):
+    """Forum quotes pasted by the user; blank lines separate quotes."""
+
+    text: str = Field(min_length=1, max_length=20_000)
+    url: str | None = Field(default=None, max_length=500)
+    place: str = Field(default="", max_length=80)
 
 
 class BoardNoteUpdate(BaseModel):

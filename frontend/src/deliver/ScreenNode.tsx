@@ -24,14 +24,40 @@ export const TYPE_LABELS: Record<ElementType, string> = {
   input: "Input",
   toggle: "Toggle",
   list: t("Lista"),
+  checkbox: "Checkbox",
+  radio: t("Jedna z opcji"),
+  tabs: t("Zakładki"),
+  slider: t("Suwak"),
+  text: t("Tekst"),
 };
+export const CHOICE_TYPES: ElementType[] = ["list", "select", "radio", "tabs"];
+const ADD_ORDER: ElementType[] = ["button", "link", "input", "toggle", "checkbox", "select", "radio", "list", "tabs", "slider", "text"];
+
+const PRESETS: Record<ElementType, Omit<FlowElement, "id">> = {
+  button: { label: t("Nowy przycisk"), type: "button", size: "L", zone: "bottom", options: 1, target: null },
+  link: { label: t("Nowy link"), type: "link", size: "M", zone: "center", options: 1, target: null },
+  input: { label: t("Pole tekstowe"), type: "input", size: "M", zone: "center", options: 1, target: null },
+  toggle: { label: t("Przełącznik"), type: "toggle", size: "M", zone: "center", options: 1, target: null },
+  checkbox: { label: t("Zgoda"), type: "checkbox", size: "M", zone: "center", options: 1, target: null },
+  select: { label: t("Wybierz"), type: "select", size: "M", zone: "center", options: 3, target: null, items: [t("Opcja 1"), t("Opcja 2"), t("Opcja 3")] },
+  radio: { label: t("Wybierz jedno"), type: "radio", size: "M", zone: "center", options: 2, target: null, items: [t("Opcja 1"), t("Opcja 2")] },
+  list: { label: t("Lista"), type: "list", size: "M", zone: "center", options: 3, target: null, items: [t("Pozycja 1"), t("Pozycja 2"), t("Pozycja 3")] },
+  tabs: { label: t("Zakładki"), type: "tabs", size: "M", zone: "top", options: 3, target: null, items: [t("Wszystko"), t("Ulubione"), t("Historia")] },
+  slider: { label: t("Zakres"), type: "slider", size: "M", zone: "center", options: 1, target: null },
+  text: { label: t("Opis ekranu"), type: "text", size: "M", zone: "top", options: 1, target: null },
+};
+
+export function newElement(id: string, type: ElementType): FlowElement {
+  const preset = PRESETS[type];
+  return { ...preset, id, items: preset.items ? [...preset.items] : [] };
+}
 const KIND_ORDER: ScreenKind[] = ["step", "goal", "start"];
 
 export interface ScreenActions {
   rename: (screenId: string, name: string) => void;
   cycleKind: (screenId: string, kind: ScreenKind) => void;
   remove: (screenId: string) => void;
-  addElement: (screenId: string) => void;
+  addElement: (screenId: string, type: ElementType) => void;
   updateElement: (
     screenId: string,
     elementId: string,
@@ -60,11 +86,15 @@ function InlineText({
   onCommit,
   className,
   style,
+  maxLength = 60,
+  placeholder,
 }: {
   value: string;
   onCommit: (v: string) => void;
   className?: string;
   style?: React.CSSProperties;
+  maxLength?: number;
+  placeholder?: string;
 }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
@@ -86,7 +116,7 @@ function InlineText({
       <input
         autoFocus
         value={draft}
-        maxLength={60}
+        maxLength={maxLength}
         onChange={(e) => setDraft(e.target.value)}
         onBlur={commit}
         onKeyDown={onKey}
@@ -105,7 +135,7 @@ function InlineText({
       }}
       title={t("Kliknij dwukrotnie, aby zmienić")}
     >
-      {value}
+      {value || placeholder}
     </span>
   );
 }
@@ -175,11 +205,18 @@ function ElementRow({
         />
         <select
           value={element.type}
-          onChange={(e) =>
+          onChange={(e) => {
+            const type = e.target.value as ElementType;
+            const items =
+              CHOICE_TYPES.includes(type) && !(element.items ?? []).length
+                ? (PRESETS[type].items ?? [])
+                : element.items;
             actions.updateElement(screenId, element.id, {
-              type: e.target.value as ElementType,
-            })
-          }
+              type,
+              items,
+              options: (items ?? []).length >= 2 ? (items ?? []).length : element.options,
+            });
+          }}
           className="nodrag cursor-pointer appearance-none bg-transparent text-right text-haze outline-none"
           style={{ fontSize: 7.5 }}
         >
@@ -221,7 +258,7 @@ function ElementRow({
           width={70}
           warn={flagged && element.zone !== "bottom"}
         />
-        {(element.type === "list" || element.type === "select") && (
+        {CHOICE_TYPES.includes(element.type) && !(element.items ?? []).length && (
           <label
             className="flex items-center text-haze"
             style={{ fontSize: 7.5, gap: 2 }}
@@ -247,6 +284,29 @@ function ElementRow({
           </label>
         )}
       </div>
+      {CHOICE_TYPES.includes(element.type) && (
+        <div className="flex items-center text-haze" style={{ gap: 3, marginTop: 4, fontSize: 7.5 }}>
+          <span className="shrink-0">{t("Opcje:")}</span>
+          <InlineText
+            value={(element.items ?? []).join(", ")}
+            placeholder={t("dodaj, po przecinku")}
+            maxLength={400}
+            onCommit={(text) => {
+              const items = text
+                .split(",")
+                .map((item) => item.trim())
+                .filter(Boolean)
+                .slice(0, 20);
+              actions.updateElement(screenId, element.id, {
+                items,
+                options: items.length >= 2 ? items.length : element.options,
+              });
+            }}
+            className="flex-1 text-mauve"
+            style={{ fontSize: 7.5 }}
+          />
+        </div>
+      )}
       <Handle
         type="source"
         id={element.id}
@@ -267,6 +327,7 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
   const { screen, index, features, deadEnd, unreachable, flagged, actions } =
     data;
   const [over, setOver] = useState(false);
+  const [adding, setAdding] = useState(false);
   const linked = features.filter((f) => screen.feature_ids.includes(f.id));
   const tag =
     screen.kind === "start"
@@ -462,19 +523,49 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
           actions={actions}
         />
       ))}
-      <button
-        type="button"
-        onClick={() => actions.addElement(screen.id)}
-        className="nodrag flex w-full items-center justify-center text-haze transition-colors hover:text-plum"
-        style={{
-          fontSize: 7.5,
-          gap: 3,
-          padding: "5px 0 6px",
-          borderTop: "1px solid #f3edf8",
-        }}
-      >
-        <Plus size={8} /> element
-      </button>
+      {adding ? (
+        <div
+          className="nodrag flex flex-wrap justify-center"
+          style={{ gap: 3, padding: "5px 6px 6px", borderTop: "1px solid #f3edf8" }}
+        >
+          {ADD_ORDER.map((type) => (
+            <button
+              key={type}
+              type="button"
+              onClick={() => {
+                actions.addElement(screen.id, type);
+                setAdding(false);
+              }}
+              className="rounded-full bg-[#f7f3fb] text-mauve transition-colors hover:bg-[#fde8f8] hover:text-plum"
+              style={{ fontSize: 7.5, padding: "2px 6px" }}
+            >
+              {TYPE_LABELS[type]}
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => setAdding(false)}
+            className="text-haze hover:text-plum"
+            aria-label={t("Zamknij")}
+          >
+            <X size={8} />
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setAdding(true)}
+          className="nodrag flex w-full items-center justify-center text-haze transition-colors hover:text-plum"
+          style={{
+            fontSize: 7.5,
+            gap: 3,
+            padding: "5px 0 6px",
+            borderTop: "1px solid #f3edf8",
+          }}
+        >
+          <Plus size={8} /> element
+        </button>
+      )}
     </div>
   );
 }

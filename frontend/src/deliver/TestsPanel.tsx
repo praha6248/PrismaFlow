@@ -41,6 +41,201 @@ interface Props {
   notify: (message: string) => void;
 }
 
+const STATEFUL = new Set(["input", "toggle", "checkbox", "radio", "select", "tabs", "slider"]);
+
+function PrototypeElement({
+  element,
+  onTap,
+}: {
+  element: FlowElement;
+  onTap: (element: FlowElement) => void;
+}) {
+  const [on, setOn] = useState(false);
+  const [picked, setPicked] = useState(0);
+  const items = element.items?.length
+    ? element.items
+    : Array.from({ length: Math.max(1, element.options) }, (_, i) => `${element.label} ${i + 1}`);
+  const pad = `${u(element.size === "L" ? 5 : element.size === "M" ? 3.5 : 2)} ${u(4)}`;
+  const small = { fontSize: "var(--text-small)" } as const;
+  const go = () => {
+    if (element.target || !STATEFUL.has(element.type)) onTap(element);
+  };
+
+  if (element.type === "text")
+    return (
+      <span className="text-mauve" style={{ ...small, lineHeight: 1.35 }}>
+        {element.label}
+      </span>
+    );
+  if (element.type === "input")
+    return (
+      <input
+        placeholder={element.label}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") go();
+        }}
+        className="rounded border border-[#e4d6ec] bg-white text-ink outline-none focus:border-pink"
+        style={{ ...small, padding: pad }}
+      />
+    );
+  if (element.type === "toggle" || element.type === "checkbox")
+    return (
+      <button
+        type="button"
+        onClick={() => {
+          setOn((v) => !v);
+          go();
+        }}
+        className="flex items-center justify-between text-left text-ink"
+        style={{ ...small, gap: u(3), padding: `${u(1.5)} 0` }}
+      >
+        {element.type === "checkbox" && (
+          <span
+            className="flex shrink-0 items-center justify-center rounded-sm text-on-pink"
+            style={{
+              width: u(5.5),
+              height: u(5.5),
+              border: "1px solid #d9c6ec",
+              background: on ? "var(--color-pink-button)" : "#fff",
+              fontSize: 8,
+            }}
+          >
+            {on ? "✓" : ""}
+          </span>
+        )}
+        <span className="flex-1">{element.label}</span>
+        {element.type === "toggle" && (
+          <span
+            className="relative shrink-0 rounded-full transition-colors"
+            style={{ width: u(11), height: u(6), background: on ? "var(--color-pink-button)" : "#e4d6ec" }}
+          >
+            <span
+              className="absolute rounded-full bg-white transition-all"
+              style={{ top: u(0.75), left: on ? u(5.75) : u(0.75), width: u(4.5), height: u(4.5) }}
+            />
+          </span>
+        )}
+      </button>
+    );
+  if (element.type === "slider")
+    return (
+      <label className="flex flex-col text-ink" style={{ ...small, gap: u(1) }}>
+        {element.label}
+        <input type="range" onMouseUp={go} className="accent-pink-500" />
+      </label>
+    );
+  if (element.type === "select")
+    return (
+      <label className="flex flex-col text-mauve" style={{ ...small, gap: u(1) }}>
+        {element.label}
+        <select
+          value={picked}
+          onChange={(e) => {
+            setPicked(Number(e.target.value));
+            go();
+          }}
+          className="rounded border border-[#e4d6ec] bg-white text-ink outline-none"
+          style={{ ...small, padding: pad }}
+        >
+          {items.map((item, i) => (
+            <option key={i} value={i}>
+              {item}
+            </option>
+          ))}
+        </select>
+      </label>
+    );
+  if (element.type === "radio")
+    return (
+      <div className="flex flex-col text-ink" style={{ ...small, gap: u(1.5) }}>
+        <span className="text-mauve">{element.label}</span>
+        {items.map((item, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => {
+              setPicked(i);
+              go();
+            }}
+            className="flex items-center text-left"
+            style={{ gap: u(2.5) }}
+          >
+            <span
+              className="shrink-0 rounded-full"
+              style={{
+                width: u(5),
+                height: u(5),
+                border: picked === i ? `${u(1.5)} solid var(--color-pink-button)` : "1px solid #d9c6ec",
+              }}
+            />
+            {item}
+          </button>
+        ))}
+      </div>
+    );
+  if (element.type === "tabs")
+    return (
+      <div className="flex" style={{ gap: u(2) }}>
+        {items.map((item, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => {
+              setPicked(i);
+              go();
+            }}
+            className="flex-1 truncate rounded-full"
+            style={{
+              ...small,
+              padding: `${u(2)} ${u(2)}`,
+              background: picked === i ? "var(--color-pink-button)" : "#f4eff8",
+              color: picked === i ? "var(--color-on-pink)" : "var(--color-ink)",
+            }}
+          >
+            {item}
+          </button>
+        ))}
+      </div>
+    );
+  if (element.type === "list")
+    return (
+      <div className="flex flex-col overflow-hidden rounded bg-[#f4eff8]">
+        {items.map((item, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={go}
+            className="text-left text-ink hover:bg-[#ede4f4]"
+            style={{ ...small, padding: pad, borderTop: i ? "1px solid #ffffff" : undefined }}
+          >
+            {item}
+          </button>
+        ))}
+      </div>
+    );
+  const primary = element.type === "button" && element.target;
+  return (
+    <button
+      type="button"
+      onClick={go}
+      className={
+        element.type === "link"
+          ? "text-left text-pink-text underline"
+          : primary
+            ? "rounded font-semibold text-on-pink"
+            : "rounded bg-[#f4eff8] text-left text-ink"
+      }
+      style={{
+        ...small,
+        padding: element.type === "link" ? 0 : pad,
+        background: primary ? "var(--color-pink-button)" : undefined,
+      }}
+    >
+      {element.label}
+    </button>
+  );
+}
+
 function Phone({
   flow,
   screenId,
@@ -76,30 +271,9 @@ function Phone({
             >
               {screen.elements
                 .filter((e) => e.zone === zone)
-                .map((element) => {
-                  const primary = element.type === "button" && element.target;
-                  return (
-                    <button
-                      key={element.id}
-                      type="button"
-                      onClick={() => onTap(element)}
-                      className={
-                        element.type === "link"
-                          ? "text-left text-pink-text underline"
-                          : primary
-                            ? "rounded font-semibold text-on-pink"
-                            : "rounded bg-[#f4eff8] text-left text-ink"
-                      }
-                      style={{
-                        fontSize: "var(--text-small)",
-                        padding: element.type === "link" ? 0 : `${u(element.size === "L" ? 5 : element.size === "M" ? 3.5 : 2)} ${u(4)}`,
-                        background: primary ? "var(--color-pink-button)" : undefined,
-                      }}
-                    >
-                      {element.label}
-                    </button>
-                  );
-                })}
+                .map((element) => (
+                  <PrototypeElement key={`${screen.id}-${element.id}`} element={element} onTap={onTap} />
+                ))}
             </div>
           ))}
         </>

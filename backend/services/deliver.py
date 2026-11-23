@@ -85,7 +85,8 @@ def graph(flow: Flow) -> nx.DiGraph:
     return g
 
 
-CHOICE_TYPES = ("list", "select")
+CHOICE_TYPES = ("list", "select", "radio", "tabs")
+STATIC_TYPES = ("text",)
 ACTION_TYPES = ("button", "link")
 
 
@@ -155,7 +156,7 @@ def klm_time(flow: Flow, path: list[str]) -> dict[str, Any] | None:
 
 def target_sizes(flow: Flow) -> dict[str, Any]:
     """Check touch target sizes against WCAG 2.2 (2.5.8 AA: 24 px, 2.5.5 AAA: 44 px)."""
-    elements = [(s, e) for s in flow.screens for e in s.elements]
+    elements = [(s, e) for s in flow.screens for e in s.elements if e.type not in STATIC_TYPES]
     small = [
         {
             "screen_id": s.id,
@@ -413,6 +414,7 @@ def apply_suggestion(flow: Flow, suggestion: dict[str, Any]) -> Flow:
         )
     elif op == "group_options" and element is not None and element.options > 5:
         element.options = 5
+        element.items = element.items[:5]
         screen.elements.append(FlowElement(id=_id("e"), label="Więcej", type="link", size="M", zone="center", options=1))
     elif op == "group_options":
         keep = [e for e in screen.elements if e.target or e.size == "L"]

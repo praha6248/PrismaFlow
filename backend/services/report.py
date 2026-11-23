@@ -287,6 +287,8 @@ def prototype_svg(flow: Flow, style: dict[str, Any] | None = None) -> str:
             parts.append(f'<g id="{escape(element.id)}">')
             if element.type == "link":
                 parts.append(f'<text x="{x + 24}" y="{ey + h / 2 + 5}" font-size="15" fill="{primary}" text-decoration="underline">{escape(element.label)}</text>')
+            elif element.type == "text":
+                parts.append(f'<text x="{x + 24}" y="{ey + h / 2 + 5}" font-size="15" fill="{text_color}">{escape(element.label)}</text>')
             else:
                 parts.append(f'<rect x="{x + 24}" y="{ey}" width="{SCREEN_W - 48}" height="{h}" rx="{radius}" fill="{fill}"/>')
                 parts.append(f'<text x="{x + 40}" y="{ey + h / 2 + 5}" font-size="15" fill="{color}">{escape(element.label)}</text>')

@@ -17,6 +17,7 @@ from ..retrieval import Retriever, graph_boost
 from .discover import LANGUAGE_NAMES, StructuredLLM, normalize_label
 from .translate import trend_queries
 from .jobs import ProgressFn, WarnFn
+from .quotes import pasted_quotes, quote_notes
 from .research import board_lines, quote_from_notes, real_notes
 
 PROBLEM_SYSTEM = """You are a product strategist running the Define phase of the Double Diamond.
@@ -163,6 +164,11 @@ def cited(ids: list[int], pool: dict[int, Any], limit: int = 5) -> list[int]:
     return [i for i in dict.fromkeys(ids) if i in pool][:limit]
 
 
+def pasted(item: dict[str, Any]) -> bool:
+    """Whether an evidence item is a forum quote the user pasted by hand."""
+    return bool((item.get("meta") or {}).get("pasted"))
+
+
 class DefineService:
     """Coordinates evidence retrieval, the local LLM and Google Trends for the Define phase."""
 
@@ -205,6 +211,8 @@ class DefineService:
             lines.append(f"- {node['label']} [{node['kind'] or 'idea'}] — related: {related or 'none'}")
 
         evidence: OrderedDict[int, dict[str, Any]] = OrderedDict()
+        for item in pasted_quotes(self.db, project_id)[:16]:
+            evidence.setdefault(item["id"], item)
         for item in self.db.evidence_for_nodes([*focus_ids, *(neighbour_ids - focus_ids)], per_node=5):
             evidence.setdefault(item["id"], item)
         query = self._query(focus)
@@ -279,7 +287,7 @@ class DefineService:
             (index, key)
             for index, draft in enumerate(drafts)
             for key in cited([draft.quote_id, *draft.evidence_ids], evidence)
-            if supports_problem(evidence[key], {"title": draft.title, "keyword": draft.trend_keyword})
+            if pasted(evidence[key]) or supports_problem(evidence[key], {"title": draft.title, "keyword": draft.trend_keyword})
         ]
         approved: list[list[int]] = [[] for _ in drafts]
         if pairs:
@@ -380,10 +388,10 @@ class DefineService:
         groups = [n["label"] for n in nodes if n["kind"] == "target_group"]
         await self._prepare(project_id, warn)
         _, _, evidence = self._context(project_id)
-        relevant = [(key, item) for key, item in evidence.items() if supports_problem(item, problem)]
+        relevant = [(key, item) for key, item in evidence.items() if pasted(item) or supports_problem(item, problem)]
         pool = dict(relevant[:24])
         lines = [f"[{item['id']}] ({item['source']}) {item['title']}" for item in pool.values()]
-        notes = real_notes(self.db, project_id)
+        notes = real_notes(self.db, project_id) + quote_notes(self.db, project_id)
         prompt = "\n".join(
             [
                 f'Niche: "{project["seed"]}"',
@@ -394,7 +402,7 @@ class DefineService:
                 *(
                     [
                         "",
-                        "Notes from real people (interviews, the founder's notes, usability tests). When a persona matches",
+                        "Notes from real people (interviews, the founder's notes, usability tests, forum posts the founder pasted). When a persona matches",
                         "one of them, copy its quote word for word from these notes instead of writing a new one:",
                         *[f"- ({n['source']}{', ' + n['label'] if n.get('label') else ''}) {n['text'][:300]}" for n in notes[:20]],
                     ]

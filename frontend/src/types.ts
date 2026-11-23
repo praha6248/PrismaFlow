@@ -201,7 +201,17 @@ export interface DevelopState {
 }
 
 export type ElementType =
-  "button" | "link" | "select" | "input" | "toggle" | "list";
+  | "button"
+  | "link"
+  | "select"
+  | "input"
+  | "toggle"
+  | "list"
+  | "checkbox"
+  | "radio"
+  | "tabs"
+  | "slider"
+  | "text";
 export type ElementSize = "S" | "M" | "L";
 export type ElementZone = "top" | "center" | "bottom";
 export type ScreenKind = "start" | "step" | "goal";
@@ -214,6 +224,7 @@ export interface FlowElement {
   zone: ElementZone;
   options: number;
   target: string | null;
+  items?: string[];
 }
 
 export interface FlowScreen {
@@ -496,4 +507,12 @@ export interface TestsState {
   issues: TestIssue[];
   participants: number;
   start: string | null;
+}
+
+export interface PastedQuote {
+  id: number;
+  title: string;
+  body: string | null;
+  url: string | null;
+  meta: { platform: string };
 }

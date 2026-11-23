@@ -40,6 +40,8 @@ export function PersonaCard({
 }: Props) {
   const [expanded, setExpanded] = useState(false);
   const selected = selectedOption !== null;
+  const source = persona.profile?.quote_source ?? "";
+  const forum = source.startsWith("forum:") ? source.slice(6) || "forum" : "";
   return (
     <Card
       index={index}
@@ -89,6 +91,7 @@ export function PersonaCard({
           <p className="mb-4 text-haze">{persona.role}</p>
           <p className="mb-2 text-sm font-medium text-mauve">{t("Hipoteza do sprawdzenia w badaniu")}</p>
           <blockquote className="whitespace-pre-wrap break-words font-serif text-2xl leading-snug">„{persona.quote}”</blockquote>
+          {forum && <p className="mt-2 text-sm text-haze">{t("Cytat z forum: {place}", { place: forum })}</p>}
           <dl className="mt-5 grid gap-4">
             {(Object.keys(profileFields) as (keyof typeof profileFields)[]).map(key =>
               persona.profile?.[key] && <div key={key}>
@@ -110,7 +113,7 @@ export function PersonaCard({
           fontSize: "var(--text-title)",
           lineHeight: u(14.2),
         }}
-        title={persona.quote}
+        title={forum ? `${persona.quote} — ${t("Cytat z forum: {place}", { place: forum })}` : persona.quote}
       >
         „{persona.quote}”
       </p>

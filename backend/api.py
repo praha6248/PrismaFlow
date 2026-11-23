@@ -33,12 +33,13 @@ from .models import (
     ProjectCreate,
     ProjectUpdate,
     QualityUpdate,
+    QuoteCreate,
 )
 from . import gemini_client
 from .claude_client import HybridLLM, QualityConfig
 from .ollama_client import OllamaClient
 from .services.setup import memory_gb, setup_status
-from .services import discover
+from .services import discover, quotes
 from .services.define import DefineService, define_state
 from .services.validate import ValidateService
 from .services.deliver import DeliverService
@@ -254,6 +255,23 @@ def create_app(
     def remove_interview(project_id: int, interview_id: str) -> dict:
         """Delete a logged interview."""
         return validate.remove_interview(project_id, interview_id)
+
+    @api.get("/projects/{project_id}/quotes")
+    def list_quotes(project_id: int) -> dict:
+        """Forum quotes the user pasted into the project."""
+        return {"quotes": quotes.pasted_quotes(database, project_id)}
+
+    @api.post("/projects/{project_id}/quotes", status_code=201)
+    def add_quotes(project_id: int, body: QuoteCreate) -> dict:
+        """Store pasted forum quotes as community evidence; blank lines separate quotes."""
+        if database.get_project(project_id) is None:
+            raise HTTPException(404, "project not found")
+        return bad_request(lambda: quotes.add_quotes(database, project_id, body.text, body.url, body.place))
+
+    @api.delete("/projects/{project_id}/quotes/{evidence_id}")
+    def remove_quote(project_id: int, evidence_id: int) -> dict:
+        """Delete a pasted forum quote."""
+        return quotes.remove_quote(database, project_id, evidence_id)
 
     @api.get("/projects/{project_id}/define")
     def get_define(project_id: int) -> dict:
