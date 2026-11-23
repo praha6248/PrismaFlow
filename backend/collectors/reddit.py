@@ -1,7 +1,7 @@
 """Reddit search through the official OAuth API.
 
-Used only when PRISMFLOW_REDDIT_CLIENT_ID is set: an approved "installed app" needs only the
-client id, a "script" or "web app" also needs PRISMFLOW_REDDIT_CLIENT_SECRET. Without
+Used only when PRISMAFLOW_REDDIT_CLIENT_ID is set: an approved "installed app" needs only the
+client id, a "script" or "web app" also needs PRISMAFLOW_REDDIT_CLIENT_SECRET. Without
 credentials, community evidence comes from Stack Exchange and Lemmy instead.
 """
 
@@ -58,7 +58,7 @@ async def _throttled(call):
 
 def credentials_configured() -> bool:
     """Tell whether the user supplied Reddit API credentials."""
-    return bool(os.environ.get("PRISMFLOW_REDDIT_CLIENT_ID"))
+    return bool(os.environ.get("PRISMAFLOW_REDDIT_CLIENT_ID"))
 
 
 def _clean(text: str, limit: int) -> str:
@@ -103,7 +103,7 @@ async def _access_token(client: httpx.AsyncClient, client_id: str) -> str:
     global _token
     if _token and _token[1] > time.time() + 60:
         return _token[0]
-    secret = os.environ.get("PRISMFLOW_REDDIT_CLIENT_SECRET", "")
+    secret = os.environ.get("PRISMAFLOW_REDDIT_CLIENT_SECRET", "")
     if secret:
         grant = {"grant_type": "client_credentials"}
     else:
@@ -139,9 +139,9 @@ async def _get_json(client: httpx.AsyncClient, url: str, params: dict[str, Any],
 
 
 async def _fetch_oauth(client: httpx.AsyncClient, query: str, limit: int) -> list[dict[str, Any]]:
-    client_id = os.environ.get("PRISMFLOW_REDDIT_CLIENT_ID", "")
+    client_id = os.environ.get("PRISMAFLOW_REDDIT_CLIENT_ID", "")
     if not client_id:
-        raise CollectorUnavailable("PRISMFLOW_REDDIT_CLIENT_ID is not set")
+        raise CollectorUnavailable("PRISMAFLOW_REDDIT_CLIENT_ID is not set")
     headers = {"User-Agent": settings.user_agent, "Authorization": f"bearer {await _access_token(client, client_id)}"}
     params = {"q": query, "limit": 25, "sort": "relevance", "t": "year", "raw_json": 1}
     data = await _get_json(client, OAUTH_ENDPOINT, params, headers)

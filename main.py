@@ -1,4 +1,4 @@
-"""PrismFlow desktop entry point: starts the local API and opens a GTK WebKit window."""
+"""PrismaFlow desktop entry point: starts the local API and opens a GTK WebKit window."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ os.environ.setdefault("PYWEBVIEW_GUI", "gtk")
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
     """Parse command-line options."""
-    parser = argparse.ArgumentParser(prog="prismflow", description="Local-first product discovery studio.")
+    parser = argparse.ArgumentParser(prog="prismaflow", description="Local-first product discovery studio.")
     parser.add_argument("--port", type=int, default=None, help="serve the API on a fixed port")
     parser.add_argument("--server-only", action="store_true", help="run the backend without opening a window")
     parser.add_argument("--dev", metavar="URL", help="load the UI from a Vite dev server instead of the bundle")
@@ -29,7 +29,7 @@ def main(argv: list[str] | None = None) -> int:
     server = BackgroundServer(port=args.port)
 
     if args.server_only:
-        print(f"PrismFlow API listening on http://{server.host}:{server.port}", flush=True)
+        print(f"PrismaFlow API listening on http://{server.host}:{server.port}", flush=True)
         server.run_blocking()
         return 0
 
@@ -39,7 +39,7 @@ def main(argv: list[str] | None = None) -> int:
 
     window_url = args.dev or url
     webview.create_window(
-        "PrismFlow",
+        "PrismaFlow",
         window_url,
         width=1344,
         height=954,

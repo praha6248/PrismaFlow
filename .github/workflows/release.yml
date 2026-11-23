@@ -33,15 +33,15 @@ jobs:
         run: .venv/bin/python -m pytest -q
       - name: PyInstaller
         working-directory: packaging
-        run: ../.venv/bin/pyinstaller --noconfirm --distpath ../dist --workpath ../build prismflow.spec
+        run: ../.venv/bin/pyinstaller --noconfirm --distpath ../dist --workpath ../build prismaflow.spec
       - name: Archive
-        run: tar -C dist -czf PrismFlow-linux-x86_64.tar.gz PrismFlow
+        run: tar -C dist -czf PrismaFlow-linux-x86_64.tar.gz PrismaFlow
       - uses: actions/upload-artifact@v5
         with:
-          name: PrismFlow-linux-x86_64
-          path: PrismFlow-linux-x86_64.tar.gz
+          name: PrismaFlow-linux-x86_64
+          path: PrismaFlow-linux-x86_64.tar.gz
       - name: GitHub release
         if: startsWith(github.ref, 'refs/tags/')
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" PrismFlow-linux-x86_64.tar.gz --generate-notes --title "PrismFlow $GITHUB_REF_NAME"
+        run: gh release create "$GITHUB_REF_NAME" PrismaFlow-linux-x86_64.tar.gz --generate-notes --title "PrismaFlow $GITHUB_REF_NAME"

@@ -7,13 +7,13 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
-APP_NAME = "PrismFlow"
+APP_NAME = "PrismaFlow"
 
 
 def load_user_env() -> None:
-    """Load KEY=VALUE pairs from ~/.config/PrismFlow/prismflow.env without overriding the environment."""
+    """Load KEY=VALUE pairs from ~/.config/PrismaFlow/prismaflow.env without overriding the environment."""
     base = os.environ.get("XDG_CONFIG_HOME") or str(Path.home() / ".config")
-    path = Path(base) / APP_NAME / "prismflow.env"
+    path = Path(base) / APP_NAME / "prismaflow.env"
     if not path.is_file():
         return
     for line in path.read_text(encoding="utf-8").splitlines():
@@ -37,7 +37,7 @@ def resource_root() -> Path:
 
 def data_dir() -> Path:
     """Return the persistent per-user data directory, outside any temporary bundle."""
-    override = os.environ.get("PRISMFLOW_DATA_DIR")
+    override = os.environ.get("PRISMAFLOW_DATA_DIR")
     if override:
         path = Path(override).expanduser()
     else:
@@ -68,7 +68,7 @@ UI_LOCALE = "pl_PL"
 
 def system_language() -> tuple[str, str]:
     """Return the default content (language, country), following the UI locale unless overridden."""
-    raw = os.environ.get("PRISMFLOW_LOCALE") or UI_LOCALE
+    raw = os.environ.get("PRISMAFLOW_LOCALE") or UI_LOCALE
     code = raw.split(".", 1)[0].replace("-", "_")
     parts = code.split("_")
     lang = (parts[0] or "en").lower()
@@ -110,13 +110,13 @@ class Settings:
     """Immutable application settings."""
 
     ollama_url: str = field(default_factory=lambda: normalize_host(os.environ.get("OLLAMA_HOST", "")))
-    model: str | None = field(default_factory=lambda: os.environ.get("PRISMFLOW_MODEL") or None)
-    trend_anchor: str = field(default_factory=lambda: os.environ.get("PRISMFLOW_TREND_ANCHOR", "calendar"))
+    model: str | None = field(default_factory=lambda: os.environ.get("PRISMAFLOW_MODEL") or None)
+    trend_anchor: str = field(default_factory=lambda: os.environ.get("PRISMAFLOW_TREND_ANCHOR", "calendar"))
     cache_ttl_seconds: int = 60 * 60 * 24 * 3
     negative_cache_ttl_seconds: int = 60 * 30
     http_timeout: float = 12.0
     llm_timeout: float = 240.0
-    user_agent: str = "PrismFlow/0.1 (local-first product discovery desktop app)"
+    user_agent: str = "PrismaFlow/0.1 (local-first product discovery desktop app)"
     language: str = field(default_factory=lambda: system_language()[0])
     country: str = field(default_factory=lambda: system_language()[1])
 

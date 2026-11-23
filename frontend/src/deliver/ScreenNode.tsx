@@ -210,7 +210,7 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
 
   const onDrop = (event: DragEvent) => {
     setOver(false);
-    const id = Number(event.dataTransfer.getData("application/x-prismflow-feature"));
+    const id = Number(event.dataTransfer.getData("application/x-prismaflow-feature"));
     if (id) {
       event.preventDefault();
       actions.dropFeature(screen.id, id);
@@ -221,7 +221,7 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
     <div
       data-screen-id={screen.id}
       onDragOver={(e) => {
-        if (e.dataTransfer.types.includes("application/x-prismflow-feature")) {
+        if (e.dataTransfer.types.includes("application/x-prismaflow-feature")) {
           e.preventDefault();
           setOver(true);
         }

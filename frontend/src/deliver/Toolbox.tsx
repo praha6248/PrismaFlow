@@ -35,7 +35,7 @@ export function Toolbox({ features, screens, selectedId, onFocusScreen, onAddScr
               key={feature.id}
               draggable
               onDragStart={(event) => {
-                event.dataTransfer.setData("application/x-prismflow-feature", String(feature.id));
+                event.dataTransfer.setData("application/x-prismaflow-feature", String(feature.id));
                 event.dataTransfer.effectAllowed = "copy";
               }}
               className="relative shrink-0 cursor-grab active:cursor-grabbing"

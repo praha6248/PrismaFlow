@@ -1,20 +1,20 @@
 # UX/UI bibliography
 
-Sources behind the PrismFlow audit (Deliver phase) and the `local/gemma3-4b-ux` fine-tune.
-The training data in `training/` does not copy any of these texts. It is made of rules I wrote myself from them and of worked examples computed by the app's own audit. The **Rule used** line under each source says how PrismFlow applies it.
+Sources behind the PrismaFlow audit (Deliver phase) and the `local/gemma3-4b-ux` fine-tune.
+The training data in `training/` does not copy any of these texts. It is made of rules I wrote myself from them and of worked examples computed by the app's own audit. The **Rule used** line under each source says how PrismaFlow applies it.
 
 Citations were checked against publisher pages, DOIs and author pages in November 2026.
 
 ## Pointing, choice and task time
 
 1. **Fitts, P. M. (1954).** The information capacity of the human motor system in controlling the amplitude of movement. *Journal of Experimental Psychology, 47*(6), 381–391. https://doi.org/10.1037/h0055392
-   Rule used: movement time grows with the index of difficulty ID = log2(2D/W). PrismFlow computes ID from the target width (S/M/L = 24/40/56 px) and the thumb distance (bottom/center/top = 120/320/560 px). It flags ID > 4.5.
+   Rule used: movement time grows with the index of difficulty ID = log2(2D/W). PrismaFlow computes ID from the target width (S/M/L = 24/40/56 px) and the thumb distance (bottom/center/top = 120/320/560 px). It flags ID > 4.5.
 
 2. **MacKenzie, I. S. (1992).** Fitts' law as a research and design tool in human-computer interaction. *Human–Computer Interaction, 7*(1), 91–139. https://doi.org/10.1207/s15327051hci0701_3. Open copy: https://www.yorku.ca/mack/HCI1992.pdf
    Rule used: the linear form MT = a + b·ID, with a = 0.1 s and b = 0.15 s/bit in the app. MacKenzie also argues that the target size is what designers should change first.
 
 3. **Bi, X., Li, Y., & Zhai, S. (2013).** FFitts law: Modeling finger touch with Fitts' law. In *Proc. CHI 2013* (pp. 1363–1372). ACM. https://doi.org/10.1145/2470654.2466180. Open copy: https://research.google/pubs/ffitts-law-modeling-finger-touch-with-fitts-law/
-   Rule used: on touch screens the finger adds its own endpoint spread, so targets well below ~7–10 mm are much harder to hit than classic Fitts predicts. This is why PrismFlow treats S (24 px) as a minor-link size only.
+   Rule used: on touch screens the finger adds its own endpoint spread, so targets well below ~7–10 mm are much harder to hit than classic Fitts predicts. This is why PrismaFlow treats S (24 px) as a minor-link size only.
 
 4. **Hick, W. E. (1952).** On the rate of gain of information. *Quarterly Journal of Experimental Psychology, 4*(1), 11–26. https://doi.org/10.1080/17470215208416600
 
@@ -37,7 +37,7 @@ Citations were checked against publisher pages, DOIs and author pages in Novembe
 10. **W3C (2023).** *Web Content Accessibility Guidelines (WCAG) 2.2.* W3C Recommendation, 5 October 2023. https://www.w3.org/TR/WCAG22/
     - SC 2.5.8 Target Size (Minimum), Level AA: at least 24 × 24 CSS px, unless one of the exceptions applies (spacing, an equivalent control, inline, user agent, essential). https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum
     - SC 2.5.5 Target Size (Enhanced), Level AAA: at least 44 × 44 CSS px. https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced
-    Rule used: PrismFlow reports AA (≥ 24 px) and AAA (≥ 44 px) coverage. It counts a navigating control below 44 px as an issue and fixes it with a resize to L.
+    Rule used: PrismaFlow reports AA (≥ 24 px) and AAA (≥ 44 px) coverage. It counts a navigating control below 44 px as an issue and fixes it with a resize to L.
 
 11. **Google.** *Material Design 3: Accessibility — designing for touch targets* (48 × 48 dp minimum). https://m3.material.io/foundations/designing/structure ; Android accessibility help: https://support.google.com/accessibility/android/answer/7101858
 

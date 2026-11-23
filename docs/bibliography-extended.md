@@ -3,7 +3,7 @@
 Collected automatically by `training/scrape_bibliography.py` from the OpenAlex catalogue (CC0 metadata).
 For each query the most cited matching works are listed: 505 unique works in total.
 Only metadata is stored here. Read the works through their DOI or open-access link.
-The curated core list, with the rules PrismFlow uses, is in [bibliography.md](bibliography.md).
+The curated core list, with the rules PrismaFlow uses, is in [bibliography.md](bibliography.md).
 
 ## Pointing, Fitts' law and touch input
 

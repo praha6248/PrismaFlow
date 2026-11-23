@@ -34,7 +34,7 @@ class BackgroundServer:
             lifespan="off",
         )
         self._server = uvicorn.Server(config)
-        self._thread = threading.Thread(target=self._server.run, name="prismflow-api", daemon=True)
+        self._thread = threading.Thread(target=self._server.run, name="prismaflow-api", daemon=True)
 
     @property
     def url(self) -> str:

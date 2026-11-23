@@ -1,6 +1,6 @@
 # Fine-tuning report: `local/gemma3-4b-ux`
 
-A LoRA fine-tune of Gemma 3 4B instruct for the PrismFlow Deliver phase: audit-driven flow fixes (`SuggestionSet`) and first flow drafts (`FlowDraft`), plus UX/UI knowledge distilled from openly licensed sources.
+A LoRA fine-tune of Gemma 3 4B instruct for the PrismaFlow Deliver phase: audit-driven flow fixes (`SuggestionSet`) and first flow drafts (`FlowDraft`), plus UX/UI knowledge distilled from openly licensed sources.
 
 ## Setup
 
@@ -68,7 +68,7 @@ Held-out answer loss on the Deliver tasks fell from 1.58 to 0.022 (optimise) and
 
 ## How the app uses it
 
-`backend/config.py` defines `TASK_MODELS = {"deliver": ("local/gemma3-4b-ux",)}`. `OllamaClient.structured(..., task="deliver")` picks `local/gemma3-4b-ux` when it is installed, and otherwise falls back to the usual `PREFERRED_MODELS` order. `PRISMFLOW_MODEL` still overrides everything. Every other phase keeps using `local/gemma3-12b`.
+`backend/config.py` defines `TASK_MODELS = {"deliver": ("local/gemma3-4b-ux",)}`. `OllamaClient.structured(..., task="deliver")` picks `local/gemma3-4b-ux` when it is installed, and otherwise falls back to the usual `PREFERRED_MODELS` order. `PRISMAFLOW_MODEL` still overrides everything. Every other phase keeps using `local/gemma3-12b`.
 
 ## Reproduce
 

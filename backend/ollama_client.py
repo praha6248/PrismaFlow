@@ -83,7 +83,7 @@ class OllamaClient:
     async def model_for(self, task: str | None) -> str:
         """Pick a task-specific model when one is installed, otherwise the general model.
 
-        An explicitly requested model (PRISMFLOW_MODEL) always wins.
+        An explicitly requested model (PRISMAFLOW_MODEL) always wins.
         """
         if not task or self.requested_model or task not in TASK_MODELS:
             return await self.resolve_model()

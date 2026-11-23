@@ -31,7 +31,7 @@ export function Header({ active, reached, onHome, onNavigate }: Props) {
           className="font-serif text-ink"
           style={{ marginLeft: "calc(var(--u) * 7.5)", fontSize: "calc(var(--u) * 14.6)", lineHeight: 1 }}
         >
-          PrismFlow
+          PrismaFlow
         </span>
       </button>
 

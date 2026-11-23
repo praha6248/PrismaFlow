@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent
 DOCS = ROOT.parent / "docs" / "bibliography-extended.md"
 OUT = ROOT / "corpus" / "openalex.json"
 API = "https://api.openalex.org/works"
-HEADERS = {"User-Agent": "PrismFlow-bibliography/0.1 (local research script)"}
+HEADERS = {"User-Agent": "PrismaFlow-bibliography/0.1 (local research script)"}
 PER_TOPIC = 12
 
 TOPICS = {
@@ -124,7 +124,7 @@ def main() -> None:
         "Collected automatically by `training/scrape_bibliography.py` from the OpenAlex catalogue (CC0 metadata).",
         f"For each query the most cited matching works are listed: {len(items)} unique works in total.",
         "Only metadata is stored here. Read the works through their DOI or open-access link.",
-        "The curated core list, with the rules PrismFlow uses, is in [bibliography.md](bibliography.md).",
+        "The curated core list, with the rules PrismaFlow uses, is in [bibliography.md](bibliography.md).",
         "",
     ]
     for topic in TOPICS:

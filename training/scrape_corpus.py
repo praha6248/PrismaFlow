@@ -25,7 +25,7 @@ from bs4 import BeautifulSoup
 ROOT = Path(__file__).resolve().parent
 RAW = ROOT / "corpus" / "raw"
 MANIFEST = ROOT / "corpus" / "manifest.json"
-AGENT = "PrismFlow-corpus/0.1 (local research script)"
+AGENT = "PrismaFlow-corpus/0.1 (local research script)"
 DELAY = 0.6
 
 W3C = "W3C Software and Document License"

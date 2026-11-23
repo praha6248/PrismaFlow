@@ -1,4 +1,4 @@
-"""LoRA fine-tune of a copy of Gemma 3 4B instruct on the PrismFlow Deliver tasks and UX knowledge.
+"""LoRA fine-tune of a copy of Gemma 3 4B instruct on the PrismaFlow Deliver tasks and UX knowledge.
 
 Loss is computed on the assistant answer only. Held-out losses of the base and the tuned model are
 written to out/losses.json; the merged bf16 model is saved to out/merged for GGUF conversion.

@@ -47,9 +47,9 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name="prismflow",
+    name="prismaflow",
     console=False,
     strip=False,
     upx=False,
 )
-coll = COLLECT(exe, a.binaries, a.datas, strip=False, upx=False, name="PrismFlow")
+coll = COLLECT(exe, a.binaries, a.datas, strip=False, upx=False, name="PrismaFlow")

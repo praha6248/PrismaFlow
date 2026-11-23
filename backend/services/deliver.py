@@ -399,7 +399,7 @@ def _documents_dir() -> Path:
     except (OSError, subprocess.SubprocessError):
         out = ""
     path = Path(out) if out and Path(out).is_dir() and Path(out) != Path.home() else None
-    return (path or data_dir()) / "PrismFlow"
+    return (path or data_dir()) / "PrismaFlow"
 
 
 def slug(text: str) -> str:
@@ -672,7 +672,7 @@ def handoff_documents(state: dict[str, Any]) -> tuple[str, str]:
         [
             f"# {project['name']} — brief implementacyjny",
             "",
-            "Dokument wygenerowany przez PrismFlow (Double Diamond: Discover → Define → Develop → Deliver).",
+            "Dokument wygenerowany przez PrismaFlow (Double Diamond: Discover → Define → Develop → Deliver).",
             "",
             "## Problem i persona",
             f"- Problem: {problem['title'] + ' — ' + problem['description'] if problem else '—'}",

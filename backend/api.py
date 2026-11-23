@@ -52,7 +52,7 @@ def create_app(
     deliver = deliver_service or DeliverService(database, ollama)
     jobs = JobRegistry()
 
-    app = FastAPI(title="PrismFlow", version="0.1.0", docs_url="/api/docs", openapi_url="/api/openapi.json")
+    app = FastAPI(title="PrismaFlow", version="0.1.0", docs_url="/api/docs", openapi_url="/api/openapi.json")
     app.state.db = database
     app.state.jobs = jobs
     api = APIRouter(prefix="/api")
