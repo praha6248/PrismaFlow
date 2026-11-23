@@ -209,12 +209,11 @@ button {
 }
 
 :root[data-theme="white"] .card {
-  background: #fdfbff;
+  background: transparent;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
-  box-shadow:
-    0 calc(var(--u) * 2) calc(var(--u) * 12) rgba(120, 70, 180, 0.14),
-    inset 0 0 0 calc(var(--u) * 0.5) #ece2f7;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 :root[data-theme="white"] .stage {
