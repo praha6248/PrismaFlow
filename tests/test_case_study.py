@@ -23,9 +23,11 @@ class StoryLLM:
     def __init__(self, fail: bool = False) -> None:
         self.fail = fail
         self.prompts: list[str] = []
+        self.tasks: list[str | None] = []
 
-    async def structured(self, schema: Any, system: str, prompt: str, **_: Any) -> Any:
+    async def structured(self, schema: Any, system: str, prompt: str, **kwargs: Any) -> Any:
         self.prompts.append(prompt)
+        self.tasks.append(kwargs.get("task"))
         if self.fail:
             raise OllamaError("offline")
         assert schema is CaseStudyDraft
@@ -122,6 +124,7 @@ def test_case_study_is_grounded_in_project_data(tmp_path) -> None:
     result = state["result"]
     markdown = result["markdown"]
     assert "35%" not in markdown and "Konwersja wzrosła o 35%." in result["removed"]
+    assert llm.tasks == ["case_study"]
     assert "Zadanie ukończyła 1 z 2 osób." in markdown
     assert "# Plan treningu bez zgadywania" in markdown
     assert "sukces 1 z 2 (50%)" in markdown and "„Szybko poszło” _(P1)_" in markdown

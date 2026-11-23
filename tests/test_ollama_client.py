@@ -26,6 +26,12 @@ def test_deliver_prefers_the_ux_fine_tune_when_installed() -> None:
     assert asyncio.run(llm.model_for("deliver")) == "local/gemma3-4b-ux:latest"
 
 
+def test_case_study_prefers_its_fine_tune_when_installed() -> None:
+    llm = client(["local/gemma3-12b:latest", "local/gemma3-4b-ux:latest", "local/gemma3-4b-case:latest"])
+    assert asyncio.run(llm.model_for("case_study")) == "local/gemma3-4b-case:latest"
+    assert asyncio.run(client(["local/gemma3-12b:latest", "local/gemma3-4b-ux:latest"]).model_for("case_study")) == "local/gemma3-12b:latest"
+
+
 def test_other_tasks_keep_the_general_preference() -> None:
     llm = client(["local/gemma3-12b:latest", "local/gemma3-4b-ux:latest"])
     assert asyncio.run(llm.model_for(None)) == "local/gemma3-12b:latest"

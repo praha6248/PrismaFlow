@@ -1,9 +1,11 @@
-"""Openly licensed public-sector case studies as a style corpus for the case study narratives.
+"""Real UX case studies as a local style corpus for the case study narratives.
 
-Reads raw HTML fetched earlier with the PrismaFlow User-Agent (robots.txt honoured), keeps only pages from
-*.blog.gov.uk (Open Government Licence v3.0), digital.gov and blog.18f.org (US federal works, public domain),
-and stores plain text with attribution outside the repository. It then measures the house style the narrative
-templates in build_case_study.py follow: sentence length, voice, sentence openers and section headings.
+Reads the page list in corpus.json (designers' own portfolio case studies, all rights reserved, plus
+public-sector case studies under the Open Government Licence v3.0 or in the US public domain) and extracts
+headings and paragraphs per section. Everything derived from the pages stays next to the corpus, outside the
+repository: plain text, style statistics and a phrasebook of section lead-ins that recur across several
+authors. build_case_study.py reads the phrasebook and statistics from there; nothing quoted from a page is
+written into the repository.
 """
 
 from __future__ import annotations
@@ -11,123 +13,127 @@ from __future__ import annotations
 import argparse
 import json
 import re
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
-from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 
-ROOT = Path(__file__).resolve().parent
-DEFAULT_OUT = Path.home() / ".local/share/PrismaFlow/training-data/case-studies"
+DEFAULT_CORPUS = Path.home() / ".local/share/PrismaFlow-training/case-studies"
 
-LICENCES = {
-    "blog.gov.uk": ("Open Government Licence v3.0", "Contains public sector information licensed under the Open Government Licence v3.0."),
-    "digital.gov": ("US public domain", "Work of the US General Services Administration, not subject to copyright in the United States."),
-    "blog.18f.org": ("US public domain", "Work of 18F (US General Services Administration) staff, not subject to copyright in the United States."),
+SECTIONS = {
+    "summary": r"overview|summary|tl;?dr|introduction|about the project|project brief|background|the brief",
+    "context": r"problem|challenge|context|opportunity|goal|why|statement",
+    "research": r"research|survey|interview|competit|discover|audit|benchmark|insight|findings|data",
+    "synthesis": r"persona|affinity|journey|empathy|synthes|define|how might|mental model|user needs|pain",
+    "ideation": r"ideat|brainstorm|priorit|feature|moscow|scope|mvp|crazy|sketch|concept",
+    "design": r"design|flow|wirefram|prototyp|architecture|sitemap|ui|visual|style|solution|iteration|hi-?fi|lo-?fi",
+    "testing": r"test|usability|validat|feedback|evaluat",
+    "outcomes": r"outcome|result|impact|metric|measur",
+    "reflection": r"reflect|learn|takeaway|retro|next step|what'?s next|conclusion|lesson|future|liked|lacked|longed",
 }
+SKIP = re.compile(r"(?i)cookie|subscribe|all rights reserved|powered by|back to top|let'?s (talk|connect|work)|contact me|©")
 
 
-def licence(url: str) -> tuple[str, str] | None:
-    host = urlparse(url).hostname or ""
-    if host.endswith(".blog.gov.uk"):
-        return LICENCES["blog.gov.uk"]
-    if host in ("digital.gov", "blog.18f.org"):
-        return LICENCES[host]
+def section_of(heading: str) -> str | None:
+    text = heading.lower()
+    for key, pattern in SECTIONS.items():
+        if re.search(pattern, text):
+            return key
     return None
 
 
-def article(html: str) -> tuple[str, list[tuple[int, str]], list[str]]:
-    """Title, headings and paragraphs of the main post body."""
+def extract(html: str) -> list[tuple[str | None, str]]:
+    """(section, paragraph) pairs in page order; the section is taken from the closest heading above."""
     soup = BeautifulSoup(html, "lxml")
-    for tag in soup(["script", "style", "nav", "header", "footer", "aside", "form", "noscript"]):
+    for tag in soup(["script", "style", "nav", "header", "footer", "aside", "form", "noscript", "svg"]):
         tag.decompose()
     root = soup.find("article") or soup.find("main") or soup.body or soup
-    title = (soup.find("h1").get_text(" ", strip=True) if soup.find("h1") else "")
-    headings, paragraphs = [], []
-    for node in root.find_all(["h2", "h3", "p", "li"]):
+    current, out, seen = None, [], set()
+    for node in root.find_all(["h1", "h2", "h3", "h4", "h5", "h6", "p", "li"]):
         text = re.sub(r"\s+", " ", node.get_text(" ", strip=True))
-        if not text:
+        if not text or text in seen or SKIP.search(text):
             continue
-        if node.name in ("h2", "h3"):
-            headings.append((int(node.name[1]), text))
-        elif len(text.split()) >= 8 and not re.search(r"(?i)cookie|subscribe|share this|sharing and comments|leave a comment", text):
-            paragraphs.append(text)
-    return title, headings, paragraphs
+        seen.add(text)
+        if node.name.startswith("h") and len(text.split()) <= 12:
+            current = section_of(text) or current
+        elif len(text.split()) >= 8:
+            out.append((current, text))
+    return out
 
 
 def sentences(text: str) -> list[str]:
-    return [s for s in re.split(r"(?<=[.!?])\s+(?=[A-Z“\"‘])", text) if len(s.split()) >= 3]
+    return [s.strip() for s in re.split(r"(?<=[.!?])\s+(?=[A-Z“\"‘])", text) if len(s.split()) >= 4]
 
 
-def style(docs: list[dict]) -> dict:
-    """Corpus-level style measures used to shape the target narratives."""
-    all_sentences = [s for d in docs for p in d["paragraphs"] for s in sentences(p)]
-    lengths = sorted(len(s.split()) for s in all_sentences)
-    openers = Counter(" ".join(s.split()[:2]).strip(",").lower() for s in all_sentences)
-    we = sum(1 for s in all_sentences if re.search(r"\b(we|our|us)\b", s, re.I))
-    i_voice = sum(1 for s in all_sentences if re.search(r"\bI\b", s))
-    ratio = sum(1 for s in all_sentences if re.search(r"\b\d+ (of|out of) \d+\b", s))
-    percent = sum(1 for s in all_sentences if "%" in s or "per cent" in s or "percent" in s)
-    hedges = Counter(m.lower() for s in all_sentences for m in re.findall(r"\b(some|most|many|few|several|often|sometimes|all|every|none)\b", s, re.I))
-    claims = Counter(m.lower() for s in all_sentences for m in re.findall(r"\b(we found|we learned|we learnt|we saw|we noticed|we heard|we tested|we changed|we will|we’ll|we're going to|next steps?|what we learned)\b", s, re.I))
-    headings = Counter(h.lower() for d in docs for _, h in d["headings"])
-    return {
-        "documents": len(docs),
-        "words": sum(len(p.split()) for d in docs for p in d["paragraphs"]),
-        "sentences": len(all_sentences),
-        "sentence_words_median": lengths[len(lengths) // 2] if lengths else 0,
-        "sentence_words_p90": lengths[int(len(lengths) * 0.9)] if lengths else 0,
-        "first_person_plural_share": round(we / max(1, len(all_sentences)), 3),
-        "first_person_singular_share": round(i_voice / max(1, len(all_sentences)), 3),
-        "x_of_y_sentences": ratio,
-        "percent_sentences": percent,
-        "quantifiers": dict(hedges.most_common(12)),
-        "finding_phrases": dict(claims.most_common(15)),
-        "top_openers": dict(openers.most_common(30)),
-        "top_headings": dict(headings.most_common(30)),
-    }
+def lead_in(sentence: str) -> str | None:
+    """The opening clause of a sentence when it is a short, fact-free connective."""
+    match = re.match(r"^([A-Z][^,;:]{3,40})[,:]\s", sentence)
+    if not match:
+        return None
+    clause = match.group(1)
+    if re.search(r"\d|[A-Z]", clause[1:]) or len(clause.split()) > 6:
+        return None
+    return clause
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--raw", type=Path, required=True, help="folder with the fetched HTML pages")
-    parser.add_argument("--index", type=Path, required=True, help="structure3.json listing the fetched URLs")
-    parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    parser.add_argument("--corpus", type=Path, default=DEFAULT_CORPUS, help="folder with corpus.json and pages/")
     args = parser.parse_args()
-    args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / "text").mkdir(exist_ok=True)
+    pages = json.loads((args.corpus / "corpus.json").read_text(encoding="utf-8"))
+    (args.corpus / "text").mkdir(exist_ok=True)
 
-    docs, manifest, skipped = [], [], []
-    for page in json.loads(args.index.read_text(encoding="utf-8")):
-        url = page["url"]
-        terms = licence(url)
-        path = args.raw / (re.sub(r"\W+", "_", url)[-80:] + ".html")
-        if page.get("status") != 200 or not path.exists():
-            skipped.append({"url": url, "reason": "not fetched"})
+    per_section: dict[str, list[str]] = defaultdict(list)
+    leads: dict[str, Counter] = defaultdict(Counter)
+    lead_docs: dict[tuple[str, str], set[str]] = defaultdict(set)
+    kinds: dict[str, list[str]] = defaultdict(list)
+    manifest = []
+    for page in pages:
+        path = Path(page["file"])
+        if not path.exists():
             continue
-        if not terms:
-            skipped.append({"url": url, "reason": "licence not open"})
-            continue
-        title, headings, paragraphs = article(path.read_text(encoding="utf-8", errors="replace"))
-        words = sum(len(p.split()) for p in paragraphs)
-        if words < 300:
-            skipped.append({"url": url, "reason": f"too short ({words} words)"})
-            continue
-        slug = re.sub(r"\W+", "-", urlparse(url).path).strip("-")[-90:] or "index"
-        name = f"{urlparse(url).hostname}--{slug}.txt"
-        body = "\n\n".join([f"# {title}", *[f"{'#' * level} {text}" for level, text in headings], *paragraphs])
-        (args.out / "text" / name).write_text(f"Source: {url}\nLicence: {terms[0]}\nAttribution: {terms[1]}\n\n{body}\n", encoding="utf-8")
-        docs.append({"url": url, "title": title, "headings": headings, "paragraphs": paragraphs})
-        manifest.append({"url": url, "title": title, "licence": terms[0], "attribution": terms[1], "file": f"text/{name}", "words": words})
+        pairs = extract(path.read_text(encoding="utf-8", errors="replace"))
+        name = path.stem + ".txt"
+        (args.corpus / "text" / name).write_text(
+            f"Source: {page['url']}\nLicence: {page['license']}\n\n" + "\n\n".join(f"[{s or '-'}] {p}" for s, p in pairs) + "\n", encoding="utf-8"
+        )
+        for section, paragraph in pairs:
+            for sentence in sentences(paragraph):
+                kinds[page["kind"]].append(sentence)
+                if section:
+                    per_section[section].append(sentence)
+                    clause = lead_in(sentence)
+                    if clause:
+                        leads[section][clause.lower()] += 1
+                        lead_docs[(section, clause.lower())].add(page["url"])
+        manifest.append({"url": page["url"], "kind": page["kind"], "licence": page["license"], "paragraphs": len(pairs), "text": f"text/{name}"})
 
-    stats = style(docs)
-    (args.out / "manifest.json").write_text(json.dumps({"documents": manifest, "skipped": skipped}, indent=1, ensure_ascii=False), encoding="utf-8")
-    (args.out / "style.json").write_text(json.dumps(stats, indent=1, ensure_ascii=False), encoding="utf-8")
-    (ROOT / "corpus" / "case_study_style.json").write_text(json.dumps(stats, indent=1, ensure_ascii=False), encoding="utf-8")
-    (ROOT / "corpus" / "case_study_manifest.json").write_text(
-        json.dumps([{k: d[k] for k in ("url", "title", "licence", "words")} for d in manifest], indent=1, ensure_ascii=False), encoding="utf-8"
-    )
-    print(f"kept {len(manifest)} documents, {stats['words']} words; skipped {len(skipped)}")
+    def measures(rows: list[str]) -> dict:
+        lengths = sorted(len(s.split()) for s in rows) or [0]
+        return {
+            "sentences": len(rows),
+            "sentence_words_median": lengths[len(lengths) // 2],
+            "sentence_words_p90": lengths[int(len(lengths) * 0.9)],
+            "we_share": round(sum(1 for s in rows if re.search(r"\b(we|our|us)\b", s, re.I)) / max(1, len(rows)), 3),
+            "i_share": round(sum(1 for s in rows if re.search(r"\b(I|my|me)\b", s)) / max(1, len(rows)), 3),
+            "x_of_y_share": round(sum(1 for s in rows if re.search(r"\b\d+ (of|out of) \d+\b", s)) / max(1, len(rows)), 3),
+            "number_share": round(sum(1 for s in rows if re.search(r"\d", s)) / max(1, len(rows)), 3),
+        }
+
+    style = {
+        "pages": len(manifest),
+        "by_kind": {kind: measures(rows) for kind, rows in kinds.items()},
+        "by_section": {key: measures(rows) for key, rows in per_section.items()},
+    }
+    phrasebook = {
+        section: [clause for clause, count in counter.most_common() if len(lead_docs[(section, clause)]) >= 2][:15]
+        for section, counter in leads.items()
+    }
+    (args.corpus / "manifest.json").write_text(json.dumps(manifest, indent=1, ensure_ascii=False), encoding="utf-8")
+    (args.corpus / "style.json").write_text(json.dumps(style, indent=1, ensure_ascii=False), encoding="utf-8")
+    (args.corpus / "phrasebook.json").write_text(json.dumps(phrasebook, indent=1, ensure_ascii=False), encoding="utf-8")
+    print(json.dumps(style, indent=1))
+    print(json.dumps(phrasebook, indent=1, ensure_ascii=False))
 
 
 if __name__ == "__main__":

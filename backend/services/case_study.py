@@ -526,6 +526,7 @@ class CaseStudyService:
                 SYSTEM.format(language=LANGUAGE_NAMES.get(project["language"], "the project's language")),
                 sheet,
                 temperature=0.3,
+                task="case_study",
             )
             draft = CaseStudyDraft.model_validate(draft.model_dump())
         except (OllamaError, ValueError, TypeError, AttributeError) as exc:

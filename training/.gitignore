@@ -2,6 +2,9 @@ corpus/raw/
 *.gguf
 *.log
 out/
-vendor/
-.venv/
-weights/
+vendor
+.venv
+weights
+data/case_*.jsonl
+corpus/case_study_*.json
+results/case_study/

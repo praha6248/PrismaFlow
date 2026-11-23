@@ -140,6 +140,7 @@ PREFERRED_MODELS = (
 
 TASK_MODELS = {
     "deliver": ("local/gemma3-4b-ux",),
+    "case_study": ("local/gemma3-4b-case",),
 }
 
 

@@ -113,6 +113,61 @@ OLLAMA_HOST=127.0.0.1:11434 .venv/bin/python distill_mc.py --limit 400
 .venv/bin/python evaluate.py local/gemma3-4b-ux2
 ```
 
+## Round 3: `local/gemma3-4b-case` for the case study narrative
+
+Goal: the Deliver case study (`backend/services/case_study.py`) asks a local model to write short narrative per section from a fact sheet. The app already drops sentences with numbers that are not in the sheet, but `gemma3-12b` still made qualitative claims the data does not support. This round trains a 4B to write only what the facts carry.
+
+### Data
+
+- **Style corpus (local only):** 39 real case studies listed in `~/.local/share/PrismaFlow-training/case-studies/corpus.json`. 27 come from designers' own portfolios (all rights reserved) and 12 from public-sector teams (OGL v3 / US public domain). `case_corpus.py` extracts sections and measures style. Everything it derives (text, `style.json`, phrasebook) stays next to the corpus, outside the repository; no corpus sentence is copied into targets or code. Measured: median sentence 16 words in portfolios and 18 in public-sector posts; portfolios speak as "I" (24% of sentences), public-sector posts as "we" (50%); only 9–15% of sentences carry a number. The targets keep the app's first person plural and follow the recurring moves: purpose before method in research, the persona as the reference for later decisions, findings stated as what people did, numbers with their denominator, lessons and concrete next tests at the end.
+- **Pairs (`build_case_study.py`):** input = the exact `SYSTEM` prompt and `fact_sheet()` output; output = `CaseStudyDraft` JSON. Facts come from synthetic projects over the 28 training niches, run through the app's own `audit()`, `usability.summarize()` and `case_study_facts()`, with each phase randomly missing (negative examples: no claims about missing data). Projects 2, 4, 7, 8 and 9 come from a backup copy of the user's database. Every target passes the app's number filter with nothing removed and `claims.py` with no flags. 402 training pairs (332 PL, 70 EN); 31 held out (30 from the 6 held-out niches + real project 5). The jsonl files contain local project data and are git-ignored.
+- **Claim check (`claims.py`):** flags "all touch targets meet 44 px" when they do not, smooth/successful/intuitive tasks when tests show failures, confirmed/validated without confirmed interview hypotheses, measured outcomes or iterations, "well received", team/timeline, statements about missing interviews or tests, and quoting the model-written persona quote. It runs on the text left after the number filter.
+
+### Training
+
+LoRA r = 16 on `gemma-3-4b-it` as in round 1, bf16, 2 epochs, 101 steps, 29.8 min, 10.7 GiB peak (logits computed only at answer positions). Held-out answer loss 2.60 → 0.035. `train.py` gained `--train-file`, `--test-files` and an optional `--qlora` (4-bit base, merged into bf16 on the CPU) for when the GPU is shared; the reported model was trained in bf16 after `gemma3-12b` was unloaded.
+
+### Results (`evaluate_case_study.py`, app path `OllamaClient.structured`, temperature 0.3; project 5 run 5×)
+
+| Metric | gemma3-4b (base) | **gemma3-4b-case** | gemma3-12b |
+|---|---|---|---|
+| Synthetic held-out (30): schema valid | 36.7% | 96.7% | 100% |
+| Sentences removed by the number filter | 1 | 2 | 0 |
+| Unsupported-claim flags (total) | 36 (on 11 valid texts) | **2** | 104 |
+| Texts with nothing removed and no flags | 1 of 11 valid | **86.7%** | 3.3% |
+| Sections left empty although the sheet has facts (mean) | 0.55 | 0.27 | 0 |
+| Narrative length (chars, mean) | 2392 | 1372 | 3102 |
+| Project 5 (5 runs): schema valid | 0% | 100% | 100% |
+| Project 5: sentences removed | — | 0 | 0 |
+| Project 5: claim flags | — | **0** | 17 |
+| Project 5: mean latency | — | **4.9 s** | 26.0 s |
+
+The base 4B often failed: 19 of 30 synthetic requests and all 5 project 5 runs ended in Ollama 500 errors (GPU shared with a training job at the time) or JSON cut off mid-string; a rerun on a free GPU stalled on the same unterminated output, so its row covers the valid answers only. 12B flags by rule (synthetic): smooth/intuitive 55, missing tests mentioned 27, validated/confirmed 14, outcomes 2, all targets 44 px 2, other 4. Latency on the synthetic set is not comparable: the 4B-case run shared the GPU with a training job (58 s mean), the 12B did not.
+
+**Manual check on project 5** (data: touch targets 4 of 10 at 44 px, task “Wynik” 1 of 2, 4 themes with one note each, persona quote written by the model):
+
+- `gemma3-12b`: in 4 of 5 runs it says it ensured touch targets of at least 44 px (once followed by "not all elements met it"). Every run calls the solution "intuitive" (2–5 times), although only 1 of 2 people finished the task. Other unsupported claims: "the 85 web signals confirmed the concerns", "all these features were deemed essential" (the backlog has Must 3, Should 2, Could 2), "financial losses", and listing RICE scores the facts already print. The flag counter is a lower bound; the manual reading matches it.
+- `gemma3-4b-case`: the number filter removed nothing in any run. It states "only 4 of 10 touch targets reach 44 px; the smaller ones need enlarging", "1 of 2", the dead taps on “Regulamin” and “Notatki”, and that part of the empathy map is assumption. One unsupported claim that the checker missed: in 4 of 5 runs it says the theme “Ograniczenia finansowe…” has the most notes, while every theme has one; the fifth run got it right ("each theme rests on a single note"). Two runs copy the truncated persona role ("uprawia warzywa z…").
+
+### Honest reading
+
+- **Much more grounded, much less prose.** The fine-tune states what the data says, including what is weak, and stays quiet about missing phases. The 12B writes 2.3× more text and fills it with overclaims. The 4B's narrative is plain and close to the house style of the targets; it reads as a careful research summary, not as a portfolio story.
+- **Targets are templated.** Gold narratives are composed by rules from the facts, so the model learns those phrasings. Real designer case studies informed the moves and tone, not the wording. Unusual projects may get generic sentences.
+- **The claim checker is rule-based** and misses comparative claims such as "the theme with the most notes" when there is a tie; manual reading remains necessary.
+- **Single run per model** except project 5; small differences are noise.
+
+**Decision:** `TASK_MODELS["case_study"] = ("local/gemma3-4b-case",)`; `CaseStudyService.generate` passes `task="case_study"`, falling back to the general model when the fine-tune is not installed.
+
+Reproduce (the corpus and the database copy stay outside the repo):
+
+```bash
+.venv/bin/python case_corpus.py
+.venv/bin/python build_case_study.py --db <backup copy of workspace.db>
+.venv/bin/python train.py --name case --train-file case_train.jsonl --test-files case_test.jsonl --knowledge-share 0 --max-len 3072
+./export.sh gemma3-4b-case out/case
+.venv/bin/python evaluate_case_study.py local/gemma3-4b-case
+```
+
 ## Reproduce (round 1)
 
 ```bash

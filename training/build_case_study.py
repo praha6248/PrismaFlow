@@ -2,9 +2,11 @@
 
 Facts come from synthetic projects over the training niches and from a copy of real PrismaFlow projects.
 Every synthetic project goes through the app's own code: the Deliver audit, the usability test summary,
-case_study_facts() and fact_sheet(). The target narrative is composed from those facts only, in the house
-style measured on the licensed public-sector corpus (case_corpus.py): first person plural, short sentences,
-findings stated plainly, numbers with their denominator, lessons and next steps at the end. Sections whose
+case_study_facts() and fact_sheet(). The target narrative is composed from those facts only. Its style follows
+the moves measured on the local corpus of real designer and public-sector case studies (case_corpus.py):
+purpose before method in research, the persona as the reference for later decisions, findings stated as what
+people did, numbers with their denominator, lessons learned and concrete next tests at the end, sentences of
+about 15-18 words. No corpus text is copied; the app's first person plural is kept. Sections whose
 data is missing get no claims about it. Each target passes the app's number filter with nothing removed and
 the qualitative claim check in claims.py with no flags.
 """
@@ -372,8 +374,11 @@ class Writer:
             majority = count * 2 > len(evidence)
             if majority and top == "autocomplete":
                 out.append(self.pick(
-                    ["Większość sygnałów z sieci to podpowiedzi wyszukiwarki: pokazują, czego ludzie szukają, ale nie potwierdzają potrzeb."],
-                    ["Most web signals are search suggestions: they show what people look for, not what they need."]))
+                    ["Większość sygnałów z sieci to podpowiedzi wyszukiwarki: pokazują, czego ludzie szukają, ale nie potwierdzają potrzeb.",
+                     "Żeby zrozumieć, czego ludzie szukają w niszy „{s}”, zebraliśmy sygnały z sieci; większość to podpowiedzi wyszukiwarki, więc mówią o pytaniach, a nie o potrzebach."],
+                    ["Most web signals are search suggestions: they show what people look for, not what they need.",
+                     "To understand what people look for in {s}, we collected web signals; most are search suggestions, so they tell us about questions, not needs."],
+                    s=self.c["project"]["seed"]))
             elif majority and top == "community":
                 out.append(self.pick(
                     ["Większość sygnałów pochodzi z dyskusji w społecznościach, więc opisuje doświadczenia kilku osób, a nie całej grupy."],
@@ -441,6 +446,10 @@ class Writer:
                 out.append(self.pick(["Część mapy empatii to wciąż założenia, a nie dane z badań."], ["Part of the empathy map is still assumption rather than research data."]))
             else:
                 out.append(self.pick(["Każdy element mapy empatii ma źródło w badaniach."], ["Every item on the empathy map traces back to research."]))
+        if persona and themes and len(out) < 3 and chance(self.rng, 0.4):
+            out.append(self.pick(
+                ["Z tych tematów powstała persona {n}, która była punktem odniesienia przy kolejnych decyzjach."],
+                ["These themes shaped the persona {n}, who served as the reference for later decisions."], n=persona["name"]))
         if persona and not (persona.get("profile") or {}).get("quote_source") and len(out) < 3 and chance(self.rng, 0.5):
             out.append(self.pick(["Cytat persony napisał model, więc nie traktujemy go jak wypowiedzi użytkownika."], ["The persona quote was written by the model, so we do not treat it as something a user said."]))
         return " ".join(out[:3])
@@ -515,6 +524,11 @@ class Writer:
                 ["Nikt z {a} uczestników nie ukończył zadania „{g}”, więc droga do celu wymaga przebudowy."],
                 ["None of the {a} participants completed “{g}”, so the way to the goal needs rework."],
                 g=worst["goal_name"], a=worst["attempts"]))
+        elif rate < 0.8 and chance(self.rng, 0.3):
+            out.append(self.pick(
+                ["Uczestnicy mieli dotrzeć do ekranu „{g}”; udało się to tylko {s} z {a} osób."],
+                ["Participants had to reach “{g}”; only {s} of {a} managed it."],
+                g=worst["goal_name"], s=worst["successes"], a=worst["attempts"]))
         elif rate < 0.8:
             out.append(self.pick(
                 ["Zadanie „{g}” ukończyło tylko {s} z {a} osób, więc droga do celu nie jest oczywista.", "Najsłabiej wypadło zadanie „{g}”: ukończyło je {s} z {a} osób."],
@@ -569,13 +583,19 @@ class Writer:
                 ["Choć zadanie „{g}” się udawało, trwało za długo, więc skrócimy drogę do celu."],
                 ["Even when “{g}” succeeded it took too long, so we will shorten the path to the goal."], g=slow[0]["task"]))
         if misclicks:
-            out.append(self.pick(["Elementy klikane bez efektu trzeba podpiąć albo usunąć."], ["Elements tapped with no effect need a target or should go."]))
+            out.append(self.pick(
+                ["Elementy klikane bez efektu trzeba podpiąć albo usunąć.", "W kolejnej rundzie porównamy ekran „{s}” z wersją bez elementów, które nic nie robią."],
+                ["Elements tapped with no effect need a target or should go.", "In the next round we will compare “{s}” with a version without the elements that do nothing."],
+                s=misclicks[0]["screen"]))
         if targets.get("total") and targets.get("aaa", 0) < targets["total"]:
             out.append(self.pick(["Mniejsze cele dotykowe powiększymy do 44 px."], ["We will enlarge the smaller touch targets to 44 px."]))
         if tasks:
+            small = (self.c.get("tests") or {}).get("participants", 0) < 5
             out.append(self.pick(
-                ["Po poprawkach powtórzymy test, najlepiej z większą liczbą uczestników.", "Kolejnym krokiem jest druga runda testów po poprawkach."],
-                ["After the fixes we will run the test again, ideally with more participants.", "Next we will run a second test round after the fixes."]))
+                ["Po poprawkach powtórzymy test, najlepiej z większą liczbą uczestników.", "Kolejnym krokiem jest druga runda testów po poprawkach."]
+                + (["Wnioski trzeba jeszcze sprawdzić w kolejnej rundzie z większą grupą uczestników."] if small else []),
+                ["After the fixes we will run the test again, ideally with more participants.", "Next we will run a second test round after the fixes."]
+                + (["These findings still need checking in another round with more participants."] if small else [])))
         elif (self.c.get("flow") or {}).get("screens"):
             out.append(self.pick(["Kolejnym krokiem jest test użyteczności przepływu z prawdziwymi użytkownikami."], ["Next we will run a usability test of the flow with real users."]))
         research = self.f["gaps"]["research"]
