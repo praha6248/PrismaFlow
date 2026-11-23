@@ -8,9 +8,10 @@ from statistics import mean
 import re
 from typing import Any
 
-from ..collectors import CollectorUnavailable, community, trends
+from ..collectors import CollectorUnavailable, trends
 from ..ollama_client import OllamaError
 from ..database import Database
+from ..evidence import supports_problem
 from ..models import PersonaSet, ProblemSet, RelevantItems
 from ..retrieval import Retriever, graph_boost
 from .discover import LANGUAGE_NAMES, StructuredLLM, normalize_label
@@ -133,19 +134,6 @@ def summarize_trend(dates: list[str], series: list[float], anchor: str, anchor_r
     }
 
 
-def supports_persona(item: dict[str, Any], problem: dict[str, Any]) -> bool:
-    """Require a discussion related to the selected problem before citing it for a persona."""
-    if item["source"] not in ("community", "reddit"):
-        return False
-    text = " ".join((item["title"], item.get("body") or "", (item.get("meta") or {}).get("original") or ""))
-    title_terms = community.terms(problem["title"])
-    keyword_terms = community.terms(problem.get("keyword") or "")
-    qualifiers = [term for term in title_terms if term in community.SHORT_TERMS]
-    if qualifiers and not community.relevant(text, qualifiers, 1):
-        return False
-    return community.relevant(text, title_terms, 0.4) or community.relevant(text, keyword_terms, 0.5)
-
-
 def define_state(db: Database, project_id: int) -> dict[str, Any]:
     """Return everything the Define screens need."""
     project = db.get_project(project_id)
@@ -158,7 +146,7 @@ def define_state(db: Database, project_id: int) -> dict[str, Any]:
         seen: set[str] = set()
         item["evidence"] = []
         for e in db.evidence_by_ids(item["evidence_ids"]):
-            if "role" in item and chosen and not supports_persona(e, chosen):
+            if "role" in item and chosen and not supports_problem(e, chosen):
                 continue
             key = e["title"].casefold()
             if key not in seen:
@@ -291,6 +279,7 @@ class DefineService:
             (index, key)
             for index, draft in enumerate(drafts)
             for key in cited([draft.quote_id, *draft.evidence_ids], evidence)
+            if supports_problem(evidence[key], {"title": draft.title, "keyword": draft.trend_keyword})
         ]
         approved: list[list[int]] = [[] for _ in drafts]
         if pairs:
@@ -391,7 +380,7 @@ class DefineService:
         groups = [n["label"] for n in nodes if n["kind"] == "target_group"]
         await self._prepare(project_id, warn)
         _, _, evidence = self._context(project_id)
-        relevant = [(key, item) for key, item in evidence.items() if supports_persona(item, problem)]
+        relevant = [(key, item) for key, item in evidence.items() if supports_problem(item, problem)]
         pool = dict(relevant[:24])
         lines = [f"[{item['id']}] ({item['source']}) {item['title']}" for item in pool.values()]
         notes = real_notes(self.db, project_id)

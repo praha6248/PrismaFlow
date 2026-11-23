@@ -10,6 +10,8 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Iterator
 
+from .evidence import supports_problem
+
 SCHEMA_VERSION = 8
 
 SCHEMA = """
@@ -577,12 +579,10 @@ class Database:
         item["chosen"] = bool(item["chosen"])
         item["node_ids"] = json.loads(item["node_ids"])
         item["evidence_ids"] = json.loads(item["evidence_ids"])
-        # Previous versions stored search suggestions as problem quotes and citations.
-        if item["quote_source"] == "autocomplete":
+        evidence = self.evidence_by_ids(item["evidence_ids"])
+        item["evidence_ids"] = [e["id"] for e in evidence if supports_problem(e, item)]
+        if item["quote"] and not supports_problem({"source": item["quote_source"], "title": item["quote"]}, item):
             item["quote"] = item["quote_source"] = None
-        item["evidence_ids"] = [
-            e["id"] for e in self.evidence_by_ids(item["evidence_ids"]) if e["source"] in ("community", "reddit")
-        ]
         item["trend"] = json.loads(item["trend"]) if item["trend"] else None
         return item
 

@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import asyncio
 import html
-import math
 import re
 import time
 from datetime import datetime
@@ -19,6 +18,7 @@ import httpx
 
 from ..config import settings
 from ..database import Database
+from ..evidence import SHORT_TERMS, STOPWORDS, relevant, terms
 from . import forums, reddit, youtube
 from .base import CollectorUnavailable, cached
 
@@ -63,16 +63,6 @@ def _clean(text: str, limit: int) -> str:
     text = WHITESPACE.sub(" ", html.unescape(TAG.sub(" ", text or ""))).strip()
     return text if len(text) <= limit else text[: limit - 1].rstrip() + "…"
 
-
-def terms(query: str) -> list[str]:
-    """Return 5-character stems of the meaningful words of a query."""
-    words = re.findall(r"[^\W_]+", query.casefold())
-    return list(dict.fromkeys(w[:5] for w in words if w not in STOPWORDS and (len(w) >= 3 or w in SHORT_TERMS)))
-
-
-SHORT_TERMS = {"ai", "vr", "ar", "ux", "ui", "3d"}
-STOPWORDS = {"for", "the", "and", "with", "how", "what", "when", "your", "you", "from", "into", "about", "best", "app", "apps",
-             "dla", "jak", "oraz", "się", "jest", "czy", "które", "który", "przez", "jako", "przy", "nad", "pod", "bez"}
 
 GENERIC = {"motiv", "train", "worko", "child", "kids", "peopl", "probl", "help", "learn", "plann", "sport", "famil", "home", "work", "daily", "tips", "ideas", "start"}
 
@@ -130,19 +120,6 @@ def timestamp(value: Any) -> float:
         except ValueError:
             return 0.0
     return 0.0
-
-
-def relevant(text: str, stems: list[str], minimum: float) -> bool:
-    """Tell whether enough query stems occur in a text."""
-    if not stems:
-        return False
-    words = re.findall(r"[^\W_]+", text.casefold())
-    tokens = {word[:5] for word in words}
-    if "ai" in stems and re.search(r"artificial intelligence|sztuczn\w* inteligenc", text, re.I):
-        tokens.add("ai")
-    if any(stem not in tokens for stem in stems if stem in SHORT_TERMS):
-        return False
-    return len(tokens.intersection(stems)) >= max(1, math.ceil(len(stems) * minimum))
 
 
 async def _paced(name: str, call: Callable[[], Awaitable[Any]]) -> Any:

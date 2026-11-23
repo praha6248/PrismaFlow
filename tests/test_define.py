@@ -244,7 +244,7 @@ async def test_problems_and_personas_cite_real_evidence(db: Database) -> None:
     llm = Citing()
     service = DefineService(db, llm, define_collectors())
     state = await service.generate_problems(project_id, _noop, _noop)
-    assert all(p["evidence_ids"] == [evidence_id] for p in state["problems"])
+    assert [p["evidence_ids"] for p in state["problems"]] == [[evidence_id], [], []]
     assert state["problems"][0]["evidence"][0]["title"] == "Can't stick to my training plan"
 
     db.choose_problem(state["problems"][0]["id"])
@@ -288,3 +288,17 @@ def test_saved_search_suggestion_cannot_be_a_problem_quote(db: Database) -> None
     assert problem["quote"] is None and problem["quote_source"] is None
     assert problem["evidence"] == []
     assert db.list_evidence(root)[0]["title"] == hint
+
+
+def test_saved_news_about_food_waste_does_not_support_portion_sizes(db: Database) -> None:
+    project = discover.create_project(db, "Planowanie posiłków dla jednej osoby")["project"]["id"]
+    title = "Opóźnienia w wypłatach SNAP a miliardy dolarów zmarnowanego jedzenia"
+    node = db.root_node(project)["id"]
+    db.add_evidence(project, node, "community", title)
+    news = db.list_evidence(node)[0]
+    db.replace_problems(project, [dict(
+        title="Przepisy dają zbyt duże porcje", description="", keyword="przepis na jedną osobę",
+        quote=title, quote_source="community", evidence_ids=[news["id"]], node_ids=[],
+    )])
+    problem = db.list_problems(project)[0]
+    assert problem["quote"] is None and not problem["evidence_ids"]
