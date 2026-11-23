@@ -53,7 +53,8 @@ export function QualityButton({ onShowSetup }: { onShowSetup: () => void }) {
             gap: u(3),
             padding: `${u(3)} ${u(7)}`,
             fontSize: "var(--text-small)",
-            background: state?.enabled ? "var(--color-pink)" : "#f3ecfa",
+            background: state?.enabled ? "var(--color-pink-button)" : "#f3ecfa",
+            fontWeight: state?.enabled ? 600 : undefined,
             color: state?.enabled ? "var(--color-on-pink)" : "var(--color-mauve)",
           }}
           title={t("Tryb jakości: Claude zamiast lokalnego modelu")}
@@ -214,7 +215,7 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
                   fontSize: "var(--text-body)",
                   padding: `${u(5)} ${u(12)}`,
                   background: "#f3ecfa",
-                  color: "#573476",
+                  color: "var(--color-ink)",
                 }}
               >
                 {t("Wróć do modelu lokalnego")}
@@ -224,11 +225,11 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
                 type="button"
                 disabled={busy || (!key && !state?.has_key)}
                 onClick={() => save(true, key || undefined)}
-                className="rounded-md text-on-pink disabled:opacity-40"
+                className="rounded-md font-semibold text-on-pink disabled:opacity-40"
                 style={{
                   fontSize: "var(--text-body)",
                   padding: `${u(5)} ${u(12)}`,
-                  background: "var(--color-pink)",
+                  background: "var(--color-pink-button)",
                 }}
               >
                 {t("Włącz tryb jakości")}

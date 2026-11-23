@@ -229,12 +229,12 @@ export function SetupGuide({ state, onRefresh, onClose }: Props) {
             type="button"
             onClick={check}
             disabled={checking}
-            className="ml-auto flex shrink-0 items-center rounded-md text-on-pink disabled:opacity-60"
+            className="ml-auto flex shrink-0 items-center rounded-md font-semibold text-on-pink disabled:opacity-60"
             style={{
               fontSize: "var(--text-body)",
               padding: `${u(5)} ${u(10)}`,
               gap: u(3),
-              background: "var(--color-pink)",
+              background: "var(--color-pink-button)",
             }}
           >
             <RefreshCw

@@ -273,13 +273,13 @@ function AddFeatureForm({ onSubmit, onClose }: AddFormProps) {
         <button
           type="submit"
           disabled={!title.trim() || busy}
-          className="text-on-pink disabled:opacity-50"
+          className="font-semibold text-on-pink disabled:opacity-50"
           style={{
             height: u(14),
             padding: `0 ${u(8)}`,
             borderRadius: u(5),
             fontSize: "var(--text-body)",
-            background: "var(--color-pink)",
+            background: "var(--color-pink-button)",
           }}
         >
           {t("Dodaj")}
@@ -531,7 +531,7 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
           borderRadius: u(7),
           fontSize: "var(--text-body)",
           background: "#e7d8f8",
-          color: "#573476",
+          color: "var(--color-ink)",
           boxShadow: SHADOW,
         }}
       >

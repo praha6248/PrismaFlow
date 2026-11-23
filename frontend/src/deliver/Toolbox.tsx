@@ -165,7 +165,7 @@ export function Toolbox({
           borderRadius: u(6),
           fontSize: "var(--text-small)",
           background: "#e9dcf8",
-          color: "#573476",
+          color: "var(--color-ink)",
         }}
       >
         <Plus style={{ width: u(6.5), height: u(6.5) }} />

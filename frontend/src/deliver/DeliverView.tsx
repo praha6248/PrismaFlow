@@ -317,13 +317,13 @@ function Canvas({
         <button
           type="button"
           onClick={() => fitView({ padding: 0.12, maxZoom: 1, duration: 500 })}
-          className="pf-fade-up absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center text-on-pink transition-transform hover:scale-[1.03]"
+          className="pf-fade-up absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center font-semibold text-on-pink transition-transform hover:scale-[1.03]"
           style={{
             gap: u(4),
             padding: `${u(6)} ${u(11)}`,
             borderRadius: u(20),
             fontSize: "var(--text-small)",
-            background: "var(--color-pink)",
+            background: "var(--color-pink-button)",
             boxShadow: SHADOW,
           }}
         >
@@ -699,11 +699,11 @@ function Studio({ projectId, notify, onRestart }: Props) {
               <button
                 type="button"
                 onClick={() => runJob("flow")}
-                className="rounded text-on-pink"
+                className="rounded font-semibold text-on-pink"
                 style={{
                   fontSize: "var(--text-body)",
                   padding: `${u(4)} ${u(10)}`,
-                  background: "var(--color-pink)",
+                  background: "var(--color-pink-button)",
                 }}
               >
                 {t("Zaprojektuj przepływ z AI")}

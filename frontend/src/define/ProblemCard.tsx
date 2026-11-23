@@ -67,7 +67,7 @@ export function ProblemCard({
       </h3>
 
       <p
-        className="absolute line-clamp-3"
+        className="absolute line-clamp-2"
         style={{
           left: u(12),
           right: u(12),
@@ -165,7 +165,7 @@ export function ProblemCard({
         className="absolute text-haze"
         style={{ left: u(12), top: u(162), fontSize: "var(--text-small)", lineHeight: 1 }}
       >
-        {t("Zainteresowanie w ostatnich 12 miesiącach")}
+        {t("Ostatnie 12 miesięcy")}
       </div>
       <EvidenceBadge
         evidence={problem.evidence ?? []}

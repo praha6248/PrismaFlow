@@ -460,7 +460,7 @@ export function AuditPanel({
             borderRadius: u(5),
             fontSize: "var(--text-small)",
             background: "#e9dcf8",
-            color: "#573476",
+            color: "var(--color-ink)",
           }}
         >
           <Sparkles style={{ width: u(6.5), height: u(6.5) }} />
@@ -495,12 +495,12 @@ export function AuditPanel({
             <button
               type="button"
               onClick={() => onAccept(s)}
-              className="flex shrink-0 items-center rounded text-on-pink"
+              className="flex shrink-0 items-center rounded font-semibold text-on-pink"
               style={{
                 fontSize: "var(--text-small)",
                 padding: `${u(2.5)} ${u(4)}`,
                 gap: u(1.5),
-                background: "var(--color-pink)",
+                background: "var(--color-pink-button)",
               }}
             >
               <Check style={{ width: u(5), height: u(5) }} />
@@ -522,12 +522,12 @@ export function AuditPanel({
         type="button"
         onClick={onHandoff}
         disabled={handoffBusy || audit.screens === 0}
-        className="flex shrink-0 flex-col items-center justify-center text-on-pink transition-transform enabled:hover:scale-[1.01] enabled:active:scale-[0.98] disabled:opacity-60"
+        className="flex shrink-0 flex-col items-center justify-center font-semibold text-on-pink transition-transform enabled:hover:scale-[1.01] enabled:active:scale-[0.98] disabled:opacity-60"
         style={{
           marginTop: u(6),
           height: u(30),
           borderRadius: u(7),
-          background: "var(--color-pink)",
+          background: "var(--color-pink-button)",
           boxShadow: `0 ${u(1.5)} ${u(6)} rgba(240, 110, 220, 0.35)`,
         }}
       >

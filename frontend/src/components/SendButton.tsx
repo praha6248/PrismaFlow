@@ -15,7 +15,7 @@ export function SendButton({ size, disabled }: Props) {
       style={{
         width: `calc(var(--u) * ${size})`,
         height: `calc(var(--u) * ${size})`,
-        background: "var(--color-pink)",
+        background: "var(--color-pink-button)",
         boxShadow:
           "0 0 0 calc(var(--u) * 1) #ffffff, 0 calc(var(--u) * 1) calc(var(--u) * 3) rgba(240, 110, 220, 0.35)",
       }}

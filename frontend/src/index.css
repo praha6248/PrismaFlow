@@ -5,8 +5,8 @@
   --font-serif: "Crimson Text", Georgia, serif;
   --font-sans: "Montserrat", system-ui, sans-serif;
   --color-ink: #101010;
-  --color-plum: #573476;
-  --color-mauve: #674e78;
+  --color-plum: #101010;
+  --color-mauve: #34303a;
   --color-haze: #72647d;
   --color-pink: #f783e9;
   --color-pink-deep: #eb21d4;
@@ -14,7 +14,8 @@
   --color-pink-line: #fcdbfb;
   --color-lilac-card: #f8f4ff;
   --color-muted: #72647d;
-  --color-on-pink: #4a2468;
+  --color-on-pink: #ffffff;
+  --color-pink-button: #f34cdf;
   --color-pink-text: #a0388f;
   --color-bubble-text: #3d1d5a;
   --color-error: #9b2c2c;
@@ -189,39 +190,4 @@ button {
 
 .pf-scroll::-webkit-scrollbar {
   display: none;
-}
-
-:root[data-theme="white"] {
-  --color-pink: #d42bc2;
-  --color-pink-deep: #b81ea8;
-  --color-pink-soft: #fbc4f4;
-  --color-pink-line: #f6b0ee;
-  --color-plum: #4a2468;
-  --color-mauve: #5a3d73;
-  --color-haze: #66587a;
-  --color-muted: #66587a;
-}
-
-:root[data-theme="white"] body {
-  background: #ffffff;
-}
-
-:root[data-theme="white"] .frame {
-  background: #ffffff;
-}
-
-:root[data-theme="white"] .frame::before {
-  display: none;
-}
-
-:root[data-theme="white"] .card {
-  background: transparent;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-  box-shadow: none;
-  border-radius: 0;
-}
-
-:root[data-theme="white"] .stage {
-  filter: saturate(1.35);
 }

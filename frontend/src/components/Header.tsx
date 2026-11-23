@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import sparkle from "../assets/sparkle.png";
+import logo from "../assets/logo.svg";
 import { t } from "../i18n";
 
 const PHASES = ["Discover", "Define", "Develop", "Deliver"] as const;
@@ -23,11 +23,11 @@ export function Header({ active, reached, onHome, onNavigate }: Props) {
         title={t("Nowy projekt")}
       >
         <img
-          src={sparkle}
+          src={logo}
           alt=""
           draggable={false}
           style={{
-            width: "calc(var(--u) * 19)",
+            width: "calc(var(--u) * 26)",
             height: "calc(var(--u) * 19)",
           }}
         />
@@ -71,7 +71,7 @@ export function Header({ active, reached, onHome, onNavigate }: Props) {
         )}
         {PHASES.map((phase, index) => {
           const isActive = index === active;
-          const done = index < reached && !isActive;
+          const done = index <= reached && !isActive;
           const locked = index > reached;
           return (
             <button
@@ -100,11 +100,11 @@ export function Header({ active, reached, onHome, onNavigate }: Props) {
                   marginTop: "calc(var(--u) * 10.2)",
                   width: "calc(var(--u) * 14)",
                   height: "calc(var(--u) * 14)",
-                  border: `calc(var(--u) * 1) solid ${isActive ? "var(--color-pink)" : done ? "var(--color-pink)" : "#f9c4f1"}`,
+                  border: `calc(var(--u) * 1) solid ${isActive ? "var(--color-pink)" : done ? "var(--color-pink-button)" : "#f9c4f1"}`,
                   background: isActive
                     ? "#ffffff"
                     : done
-                      ? "var(--color-pink)"
+                      ? "var(--color-pink-button)"
                       : "#fff7fd",
                 }}
               >

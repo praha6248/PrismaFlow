@@ -224,8 +224,8 @@ export function ChoiceBar({
 }: ChoiceBarProps) {
   const active =
     tone === "pink"
-      ? { background: "var(--color-pink)", color: "var(--color-on-pink)" }
-      : { background: "#e6d8f7", color: "#573476" };
+      ? { background: "var(--color-pink-button)", color: "var(--color-on-pink)", fontWeight: 600 }
+      : { background: "#e6d8f7", color: "var(--color-ink)" };
   return (
     <div className="pf-fade-up absolute" style={barStyle(frame)}>
       <div

@@ -40,7 +40,7 @@ export function EvidenceBadge({ evidence, style }: Props) {
           gap: u(2.5),
           padding: `${u(2)} ${u(5)}`,
           fontSize: "var(--text-small)",
-          background: empty ? "#f6f0f3" : open ? "var(--color-pink)" : "#fbe3f7",
+          background: empty ? "#f6f0f3" : open ? "var(--color-pink-button)" : "#fbe3f7",
           color: empty ? "var(--color-haze)" : open ? "var(--color-on-pink)" : "var(--color-pink-text)",
         }}
         title={

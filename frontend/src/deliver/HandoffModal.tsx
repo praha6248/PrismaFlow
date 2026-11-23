@@ -69,7 +69,8 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
                 style={{
                   fontSize: "var(--text-small)",
                   padding: `${u(3)} ${u(9)}`,
-                  background: tab === key ? "var(--color-pink)" : "transparent",
+                  background: tab === key ? "var(--color-pink-button)" : "transparent",
+                  fontWeight: tab === key ? 600 : undefined,
                   color: tab === key ? "var(--color-on-pink)" : "var(--color-mauve)",
                 }}
               >
@@ -122,7 +123,7 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
               borderRadius: u(6),
               gap: u(3),
               background: "#f3ecfa",
-              color: "#573476",
+              color: "var(--color-ink)",
             }}
           >
             <RotateCcw style={{ width: u(7), height: u(7) }} />
@@ -131,13 +132,13 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
           <button
             type="button"
             onClick={copy}
-            className="flex items-center text-on-pink"
+            className="flex items-center font-semibold text-on-pink"
             style={{
               fontSize: "var(--text-body)",
               padding: `${u(5)} ${u(12)}`,
               borderRadius: u(6),
               gap: u(3),
-              background: "var(--color-pink)",
+              background: "var(--color-pink-button)",
             }}
           >
             {copied ? (

@@ -367,12 +367,12 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
             !state?.hypotheses.length
           }
           onClick={analyse}
-          className="flex items-center justify-center rounded-md text-on-pink disabled:opacity-40"
+          className="flex items-center justify-center rounded-md font-semibold text-on-pink disabled:opacity-40"
           style={{
             fontSize: "var(--text-small)",
             height: u(17),
             gap: u(3),
-            background: "var(--color-pink)",
+            background: "var(--color-pink-button)",
           }}
         >
           <MessageSquareQuote style={{ width: u(6.5), height: u(6.5) }} />
