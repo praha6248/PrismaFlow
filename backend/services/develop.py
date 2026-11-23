@@ -12,6 +12,7 @@ from ..models import FeatureSet
 from ..retrieval import Retriever, graph_boost
 from .discover import LANGUAGE_NAMES, StructuredLLM
 from .jobs import ProgressFn, WarnFn
+from .research import hmw_question
 from .validate import validated_insights
 
 POOL_SIZE = 50
@@ -26,7 +27,10 @@ Rules:
 - Titles have 2-4 words; descriptions are a short benefit phrase of 3-8 words without a trailing period,
   for example "Dopasowanie do rytmu dnia".
 - keywords are everyday words people use when they need the feature, so they can be matched against the evidence.
-- evidence_ids lists only ids of evidence lines that really support the feature."""
+- evidence_ids lists only ids of evidence lines that really support the feature.
+- When a "How might we" question is given, every feature must be one possible answer to it.
+- impact is the RICE impact on the persona (0.25 minimal, 0.5 low, 1 medium, 2 high, 3 massive) and effort is
+  the work for the first version in person-weeks (0.5 to 8); be realistic and spread the values."""
 
 WORD = re.compile(r"\w+")
 
@@ -76,17 +80,40 @@ def scored(pool: dict[int, dict[str, Any]], keywords: list[str], cited: list[int
     }
 
 
+def confidence(feature: dict[str, Any], validated: bool) -> float:
+    """RICE confidence from the evidence behind a feature, one level higher after confirmed interviews."""
+    levels = (0.5, 0.8, 1.0)
+    level = 0 if feature["support"] == 0 else 1 if feature["support"] < 3 else 2
+    if validated and feature["support"] > 0:
+        level = min(2, level + 1)
+    return levels[level]
+
+
+def rice(feature: dict[str, Any], validated: bool) -> dict[str, Any]:
+    """Reach (evidence items), impact, confidence and effort with the resulting RICE score."""
+    reach = feature["support"]
+    impact = float(feature.get("impact") or 1)
+    effort = max(0.5, float(feature.get("effort") or 2))
+    conf = confidence(feature, validated)
+    return {"reach": reach, "impact": impact, "confidence": conf, "effort": effort, "score": round(reach * impact * conf / effort, 1)}
+
+
 def develop_state(db: Database, project_id: int) -> dict[str, Any]:
     """Return everything the Develop board needs."""
     project = db.get_project(project_id)
     if project is None:
         raise LookupError(f"project {project_id} not found")
     problem = next((p for p in db.list_problems(project_id) if p["chosen"]), None)
+    validated = any(line.startswith("CONFIRMED") for line in validated_insights(db, project_id))
+    features = db.list_features(project_id)
+    for feature in features:
+        feature["rice"] = rice(feature, validated)
     return {
         "project": project,
         "problem": problem,
         "persona": db.chosen_persona(project_id),
-        "features": db.list_features(project_id),
+        "hmw": hmw_question(db, project_id),
+        "features": features,
     }
 
 
@@ -156,6 +183,7 @@ class DevelopService:
                 f"Persona: {persona['name']}, {persona['age']}, {persona['role']}",
                 f'Persona says: "{persona["quote"]}"',
                 f"Main need to solve first: {persona['focus']}",
+                *([f"How might we: {state['hmw']}"] if state["hmw"] else []),
                 "",
                 "Evidence from search suggestions and community threads:",
                 *(evidence_lines or ["(none collected)"]),
@@ -186,6 +214,8 @@ class DevelopService:
                     "description": draft.description,
                     "keywords": draft.keywords,
                     **scored(pool, [*draft.keywords, draft.title], draft.evidence_ids),
+                    "impact": draft.impact,
+                    "effort": draft.effort,
                     "origin": "ai",
                 }
             )

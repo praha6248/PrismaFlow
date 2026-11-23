@@ -264,6 +264,18 @@ class FeatureDraft(BaseModel):
         json_schema_extra={"minItems": 1, "maxItems": 4},
     )
     evidence_ids: list[int] = Field(description="Ids of evidence lines that support the feature; empty when none")
+    impact: float = Field(default=1, description="RICE impact on the persona: 0.25 minimal, 0.5 low, 1 medium, 2 high, 3 massive")
+    effort: float = Field(default=2, description="RICE effort in person-weeks for the first version, 0.5 to 8")
+
+    @field_validator("impact")
+    @classmethod
+    def _impact(cls, value: float) -> float:
+        return min((0.25, 0.5, 1.0, 2.0, 3.0), key=lambda level: abs(level - value))
+
+    @field_validator("effort")
+    @classmethod
+    def _effort(cls, value: float) -> float:
+        return round(max(0.5, min(8.0, value)) * 2) / 2
 
     @field_validator("title")
     @classmethod
@@ -310,6 +322,8 @@ class FeatureUpdate(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=60)
     description: str | None = Field(default=None, max_length=140)
     priority: Priority | None = None
+    impact: Literal[0.25, 0.5, 1, 2, 3] | None = None
+    effort: float | None = Field(default=None, ge=0.5, le=8)
 
 
 class FeatureOrderItem(BaseModel):
@@ -564,3 +578,145 @@ class InterviewCreate(BaseModel):
 
     person: str = Field(min_length=1, max_length=80)
     notes: str = Field(min_length=20, max_length=20000)
+
+
+class ThemeDraft(BaseModel):
+    """A theme on the affinity board grouping related notes."""
+
+    name: str = Field(description="Theme name in 2-5 words, sentence case")
+    insight: str = Field(description="One-sentence insight the notes in this theme reveal")
+    notes: list[int] = Field(description="Numbers of the notes that belong to this theme")
+
+    @field_validator("name")
+    @classmethod
+    def _name(cls, value: str) -> str:
+        return _sentence(value, 60).rstrip(".")
+
+
+class AffinityDraft(BaseModel):
+    """Themes proposed by the model for the affinity board."""
+
+    themes: list[ThemeDraft] = Field(json_schema_extra={"minItems": 2, "maxItems": 6})
+
+
+class BoardNoteCreate(BaseModel):
+    """Notes pasted by the user; blank lines separate notes."""
+
+    text: str = Field(min_length=1, max_length=20_000)
+    source: Literal["note", "interview", "test"] = "note"
+    label: str = Field(default="", max_length=80)
+    theme: str | None = None
+
+
+class BoardNoteUpdate(BaseModel):
+    """Move a note to a theme, or out of all themes with an empty value."""
+
+    theme: str | None = None
+
+
+class ThemeUpdate(BaseModel):
+    """Rename a theme or change its insight."""
+
+    name: str | None = Field(default=None, min_length=1, max_length=60)
+    insight: str | None = Field(default=None, max_length=240)
+
+
+class EmpathyItem(BaseModel):
+    """One observation in a quadrant of the empathy map."""
+
+    text: str = Field(description="Short observation, 4-14 words")
+    note: int = Field(default=0, description="Number of the note it comes from, or 0 when inferred")
+
+
+class JourneyStageDraft(BaseModel):
+    """A stage of the user journey."""
+
+    phase: Literal["before", "during", "after"]
+    name: str = Field(description="Stage name in 1-3 words")
+    action: str = Field(description="What the persona does, 4-12 words")
+    thought: str = Field(description="What the persona thinks, first person, 4-12 words")
+    emotion: int = Field(description="Emotion from -2 (frustrated) to 2 (delighted)")
+    pain: str = Field(default="", description="Frustration at this stage, 3-10 words, or empty")
+    note: int = Field(default=0, description="Number of the note it comes from, or 0 when inferred")
+
+    @field_validator("emotion")
+    @classmethod
+    def _emotion(cls, value: int) -> int:
+        return max(-2, min(2, value))
+
+
+class EmpathyDraft(BaseModel):
+    """Empathy map, journey and How Might We questions for the chosen persona."""
+
+    says: list[EmpathyItem] = Field(json_schema_extra={"minItems": 2, "maxItems": 4})
+    thinks: list[EmpathyItem] = Field(json_schema_extra={"minItems": 2, "maxItems": 4})
+    does: list[EmpathyItem] = Field(json_schema_extra={"minItems": 2, "maxItems": 4})
+    feels: list[EmpathyItem] = Field(json_schema_extra={"minItems": 2, "maxItems": 4})
+    journey: list[JourneyStageDraft] = Field(json_schema_extra={"minItems": 5, "maxItems": 7})
+    hmw: list[str] = Field(
+        description="Three 'How might we...' questions, each built on a journey frustration",
+        json_schema_extra={"minItems": 3, "maxItems": 3},
+    )
+
+
+class HmwUpdate(BaseModel):
+    """Choose or rewrite the How Might We question."""
+
+    text: str = Field(min_length=5, max_length=200)
+
+
+class RiceDraft(BaseModel):
+    """Impact and effort estimates for one feature."""
+
+    feature: int = Field(description="Number of the feature")
+    impact: float = Field(description="Impact on the persona: 0.25, 0.5, 1, 2 or 3")
+    effort: float = Field(description="Effort in person-weeks, 0.5 to 8")
+
+
+class RiceSet(BaseModel):
+    """Impact and effort estimates for the backlog."""
+
+    estimates: list[RiceDraft]
+
+
+class TaskDraft(BaseModel):
+    """A usability test task written for a participant."""
+
+    goal: str = Field(description="Id of the goal screen")
+    scenario: str = Field(description="Realistic scenario for the participant, second person, 10-30 words, no UI words")
+
+
+class TaskSet(BaseModel):
+    """Usability test tasks."""
+
+    tasks: list[TaskDraft]
+
+
+class TestTaskUpdate(BaseModel):
+    """Edit a usability task's scenario."""
+
+    scenario: str = Field(min_length=5, max_length=300)
+
+
+class TestResult(BaseModel):
+    """One participant's attempt at one task."""
+
+    task: str
+    success: bool
+    seconds: float = Field(ge=0, le=3600)
+    path: list[str] = Field(default_factory=list, max_length=200)
+    quote: str = Field(default="", max_length=600)
+
+
+class TestSessionCreate(BaseModel):
+    """A usability test session with one participant."""
+
+    participant: str = Field(min_length=1, max_length=60)
+    results: list[TestResult] = Field(min_length=1, max_length=20)
+
+
+class Finding(BaseModel):
+    """Send a test observation back to Define or Develop."""
+
+    text: str = Field(min_length=3, max_length=600)
+    target: Literal["board", "backlog"]

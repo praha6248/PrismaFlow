@@ -10,7 +10,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Iterator
 
-SCHEMA_VERSION = 7
+SCHEMA_VERSION = 8
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS meta (
@@ -163,6 +163,8 @@ CREATE TABLE IF NOT EXISTS features (
     pool INTEGER NOT NULL DEFAULT 0,
     demand INTEGER NOT NULL DEFAULT 0,
     origin TEXT NOT NULL DEFAULT 'ai' CHECK (origin IN ('user', 'ai')),
+    impact REAL NOT NULL DEFAULT 1,
+    effort REAL NOT NULL DEFAULT 2,
     created_at REAL NOT NULL
 );
 
@@ -179,6 +181,14 @@ CREATE TABLE IF NOT EXISTS validations (
     project_id INTEGER PRIMARY KEY REFERENCES projects(id) ON DELETE CASCADE,
     data TEXT NOT NULL,
     updated_at REAL NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS documents (
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    kind TEXT NOT NULL CHECK (kind IN ('board', 'empathy', 'tests')),
+    data TEXT NOT NULL,
+    updated_at REAL NOT NULL,
+    PRIMARY KEY (project_id, kind)
 );
 
 CREATE TRIGGER IF NOT EXISTS evidence_ai AFTER INSERT ON evidence BEGIN
@@ -261,6 +271,11 @@ class Database:
                 conn.execute("ALTER TABLE personas ADD COLUMN profile TEXT NOT NULL DEFAULT '{}'")
             if "evidence_ids" not in persona_columns:
                 conn.execute("ALTER TABLE personas ADD COLUMN evidence_ids TEXT NOT NULL DEFAULT '[]'")
+            feature_columns = {r["name"] for r in conn.execute("PRAGMA table_info(features)")}
+            if "impact" not in feature_columns:
+                conn.execute("ALTER TABLE features ADD COLUMN impact REAL NOT NULL DEFAULT 1")
+            if "effort" not in feature_columns:
+                conn.execute("ALTER TABLE features ADD COLUMN effort REAL NOT NULL DEFAULT 2")
             if rebuild:
                 conn.execute("INSERT INTO evidence SELECT * FROM evidence_old")
                 conn.execute("DROP TABLE evidence_old")
@@ -712,7 +727,7 @@ class Database:
     def _insert_feature(self, conn: sqlite3.Connection, project_id: int, item: dict[str, Any], now: float) -> int:
         cur = conn.execute(
             "INSERT INTO features(project_id, priority, position, title, description, keywords, evidence_ids, "
-            "support, pool, demand, origin, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "support, pool, demand, origin, impact, effort, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
                 project_id,
                 item["priority"],
@@ -725,6 +740,8 @@ class Database:
                 item.get("pool", 0),
                 item.get("demand", 0),
                 item.get("origin", "ai"),
+                item.get("impact", 1),
+                item.get("effort", 2),
                 now,
             ),
         )
@@ -756,7 +773,7 @@ class Database:
 
     def update_feature(self, feature_id: int, **fields: Any) -> dict[str, Any] | None:
         """Update editable feature fields."""
-        allowed = {"priority", "position", "title", "description", "keywords", "evidence_ids", "support", "pool", "demand"}
+        allowed = {"priority", "position", "title", "description", "keywords", "evidence_ids", "support", "pool", "demand", "impact", "effort"}
         values = {k: v for k, v in fields.items() if k in allowed and v is not None}
         for key in ("keywords", "evidence_ids"):
             if key in values:
@@ -842,3 +859,19 @@ class Database:
         item["profile"] = json.loads(item["profile"])
         item["focus"] = item["options"][item["chosen_option"]] if item["chosen_option"] < len(item["options"]) else ""
         return item
+
+    def get_document(self, project_id: int, kind: str) -> dict[str, Any] | None:
+        """Return a project's JSON document of the given kind (board, empathy or tests)."""
+        with self.connect() as conn:
+            row = conn.execute("SELECT data FROM documents WHERE project_id = ? AND kind = ?", (project_id, kind)).fetchone()
+        return json.loads(row["data"]) if row else None
+
+    def save_document(self, project_id: int, kind: str, data: dict[str, Any]) -> None:
+        """Store a project's JSON document of the given kind."""
+        with self.connect() as conn:
+            conn.execute(
+                "INSERT INTO documents(project_id, kind, data, updated_at) VALUES (?, ?, ?, ?) "
+                "ON CONFLICT(project_id, kind) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at",
+                (project_id, kind, json.dumps(data, ensure_ascii=False), time.time()),
+            )
+            self.touch_project(conn, project_id)

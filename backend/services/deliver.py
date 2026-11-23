@@ -473,7 +473,16 @@ class DeliverService:
             "audit": audit(flow),
             "suggestions": stored["suggestions"] if stored else [],
             "insights": validated_insights(self.db, project_id),
+            "tests": self._tests(project_id, flow),
         }
+
+    def _tests(self, project_id: int, flow: Flow) -> dict[str, Any]:
+        from .usability import empty_tests, summarize
+
+        data = self.db.get_document(project_id, "tests") or empty_tests()
+        ids = {s.id for s in flow.screens}
+        data["tasks"] = [t for t in data["tasks"] if t["goal"] in ids]
+        return summarize(flow, data)
 
     def save(self, project_id: int, flow: Flow) -> dict[str, Any]:
         """Store an edited flow and return it with a fresh audit."""
@@ -654,14 +663,40 @@ class DeliverService:
     async def handoff(self, project_id: int) -> dict[str, Any]:
         """Write the Figma prompt and CLAUDE.md for the project and return their contents."""
         state = self.state(project_id)
-        figma, claude = handoff_documents(state, await self.style(state))
+        style = finish_style(await self.style(state))
+        figma, claude = handoff_documents(state, style)
         root = self.export_root or _documents_dir()
         directory = root / slug(state["project"]["name"])
         directory.mkdir(parents=True, exist_ok=True)
         (directory / "figma-prompt.md").write_text(figma, encoding="utf-8")
         (directory / "CLAUDE.md").write_text(claude, encoding="utf-8")
+        report = await self.report(project_id, state, style, directory)
         self.db.update_project(project_id, phase="deliver", stage="done")
-        return {"figma_prompt": figma, "claude_md": claude, "directory": str(directory)}
+        return {"figma_prompt": figma, "claude_md": claude, "report": report["markdown"], "files": report["files"], "directory": str(directory)}
+
+    async def report(self, project_id: int, state: dict[str, Any], style: dict[str, Any], directory: Path) -> dict[str, Any]:
+        """Write the research report (Markdown, HTML and PDF when Chromium is available) and the prototype SVG."""
+        from .develop import develop_state
+        from .report import markdown_html, prototype_svg, report_markdown, write_pdf
+        from .validate import summarize as summarize_validation
+
+        validation = self.db.get_validation(project_id)
+        context = {
+            **state,
+            "features": [f for f in develop_state(self.db, project_id)["features"] if f["priority"] != "wont"],
+            "board": self.db.get_document(project_id, "board"),
+            "empathy": self.db.get_document(project_id, "empathy"),
+            "validation": summarize_validation(validation) if validation else None,
+        }
+        markdown = report_markdown(context)
+        (directory / "raport.md").write_text(markdown, encoding="utf-8")
+        html_path = directory / "raport.html"
+        html_path.write_text(markdown_html(markdown, state["project"]["name"]), encoding="utf-8")
+        (directory / "prototyp-figma.svg").write_text(prototype_svg(Flow.model_validate(state["flow"]), style), encoding="utf-8")
+        files = ["figma-prompt.md", "CLAUDE.md", "raport.md", "raport.html", "prototyp-figma.svg"]
+        if await write_pdf(html_path, directory / "raport.pdf"):
+            files.append("raport.pdf")
+        return {"markdown": markdown, "files": files}
 
 
 STYLE_SYSTEM = """You are a brand and UI designer. Propose the visual style of a new mobile app for the persona and problem given.

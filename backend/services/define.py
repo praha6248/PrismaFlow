@@ -18,6 +18,7 @@ from ..retrieval import Retriever, graph_boost
 from .discover import LANGUAGE_NAMES, StructuredLLM, normalize_label
 from .translate import trend_queries
 from .jobs import ProgressFn, WarnFn
+from .research import board_lines, quote_from_notes, real_notes
 
 PROBLEM_SYSTEM = """You are a product strategist running the Define phase of the Double Diamond.
 From a mind map and real evidence (search suggestions and community threads) you synthesise exactly three
@@ -246,6 +247,7 @@ class DefineService:
             f"[{item['id']}] ({item['source']}) {item['title']}" + (f" — {item['body'][:160]}" if item.get("body") else "")
             for item in evidence.values()
         ]
+        themes = board_lines(self.db, project_id)
         prompt = "\n".join(
             [
                 f'Niche: "{project["seed"]}"',
@@ -254,6 +256,7 @@ class DefineService:
                 "",
                 "Evidence lines (id, source, text):",
                 *(evidence_lines or ["(no evidence collected yet)"]),
+                *(["", "Themes the founder found on the affinity board (base the problems on these first):", *themes] if themes else []),
                 "",
                 "Return exactly three problem statements.",
             ]
@@ -390,6 +393,7 @@ class DefineService:
         relevant = [(key, item) for key, item in evidence.items() if supports_persona(item, problem)]
         pool = dict(relevant[:24])
         lines = [f"[{item['id']}] ({item['source']}) {item['title']}" for item in pool.values()]
+        notes = real_notes(self.db, project_id)
         prompt = "\n".join(
             [
                 f'Niche: "{project["seed"]}"',
@@ -397,6 +401,16 @@ class DefineService:
                 f"Target groups from the map: {', '.join(groups) if groups else 'not specified'}",
                 "Evidence lines (id, source, text):",
                 *(lines or ["(none)"]),
+                *(
+                    [
+                        "",
+                        "Notes from real people (interviews, the founder's notes, usability tests). When a persona matches",
+                        "one of them, copy its quote word for word from these notes instead of writing a new one:",
+                        *[f"- ({n['source']}{', ' + n['label'] if n.get('label') else ''}) {n['text'][:300]}" for n in notes[:20]],
+                    ]
+                    if notes
+                    else []
+                ),
                 "",
                 "Create exactly three personas.",
             ]
@@ -417,6 +431,10 @@ class DefineService:
                 pass
             personas = fix_ages(personas)
 
+        for persona in personas:
+            match = quote_from_notes(persona["quote"], notes)
+            if match:
+                persona["profile"]["quote_source"] = f"{match['source']}:{match.get('label', '')}"
         progress(0.95, "saving")
         self.db.replace_personas(project_id, problem["id"], personas)
         self.db.update_project(project_id, phase="define", stage="personas")

@@ -15,8 +15,15 @@ from .models import (
     ExpandRequest,
     FeatureCreate,
     InterviewCreate,
+    BoardNoteCreate,
+    BoardNoteUpdate,
     FeatureOrder,
     FeatureUpdate,
+    Finding,
+    HmwUpdate,
+    TestSessionCreate,
+    TestTaskUpdate,
+    ThemeUpdate,
     FlowUpdate,
     Job,
     NodeCreate,
@@ -34,7 +41,10 @@ from .services import discover
 from .services.define import DefineService, define_state
 from .services.validate import ValidateService
 from .services.deliver import DeliverService
-from .services.develop import DevelopService, develop_state
+from .services.develop import DevelopService, develop_state, rice
+from .services.research import ResearchService
+from .services.usability import UsabilityService
+from .services.validate import validated_insights
 from .services.discover import DiscoverService
 from .services.jobs import JobRegistry
 
@@ -57,7 +67,15 @@ def create_app(
     validate = ValidateService(database, ollama)
     develop = develop_service or DevelopService(database, ollama)
     deliver = deliver_service or DeliverService(database, ollama)
+    research = ResearchService(database, ollama)
+    usability = UsabilityService(database, ollama)
     jobs = JobRegistry()
+
+    def with_rice(feature: dict | None) -> dict | None:
+        if feature is None:
+            return None
+        validated = any(line.startswith("CONFIRMED") for line in validated_insights(database, feature["project_id"]))
+        return {**feature, "rice": rice(feature, validated)}
 
     app = FastAPI(title="PrismaFlow", version="0.1.0", docs_url="/api/docs", openapi_url="/api/openapi.json")
     app.state.db = database
@@ -265,7 +283,7 @@ def create_app(
         """Add a feature written by the user."""
         if database.get_project(project_id) is None:
             raise HTTPException(404, "project not found")
-        return develop.add(project_id, body.title, body.description, body.priority)
+        return with_rice(develop.add(project_id, body.title, body.description, body.priority))
 
     @api.patch("/features/{feature_id}")
     def update_feature(feature_id: int, body: FeatureUpdate) -> dict:
@@ -274,8 +292,8 @@ def create_app(
             raise HTTPException(404, "feature not found")
         database.update_feature(feature_id, **body.model_dump(exclude_none=True))
         if body.title is not None or body.description is not None:
-            return develop.rescore(feature_id)
-        return database.get_feature(feature_id)
+            return with_rice(develop.rescore(feature_id))
+        return with_rice(database.get_feature(feature_id))
 
     @api.put("/projects/{project_id}/features/order")
     def order_features(project_id: int, body: FeatureOrder) -> list[dict]:
@@ -327,6 +345,110 @@ def create_app(
         if not deliver.flow(project_id).screens:
             raise HTTPException(400, "the flow is empty")
         return await deliver.handoff(project_id)
+
+    def bad_request(call):
+        try:
+            return call()
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+
+    @api.get("/projects/{project_id}/board")
+    def get_board(project_id: int) -> dict:
+        """Return the affinity board, seeded from Discover evidence and logged interviews."""
+        return research.board(project_id)
+
+    @api.post("/projects/{project_id}/board/notes")
+    def add_board_notes(project_id: int, body: BoardNoteCreate) -> dict:
+        """Add pasted notes to the board; blank lines separate notes."""
+        return bad_request(lambda: research.add_notes(project_id, body.text, body.source, body.label, body.theme))
+
+    @api.patch("/projects/{project_id}/board/notes/{note_id}")
+    def move_board_note(project_id: int, note_id: str, body: BoardNoteUpdate) -> dict:
+        """Move a note into a theme or back to the ungrouped notes."""
+        return research.move_note(project_id, note_id, body.theme)
+
+    @api.delete("/projects/{project_id}/board/notes/{note_id}")
+    def remove_board_note(project_id: int, note_id: str) -> dict:
+        """Delete a note from the board."""
+        return research.remove_note(project_id, note_id)
+
+    @api.post("/projects/{project_id}/board/themes")
+    def add_board_theme(project_id: int, body: ThemeUpdate) -> dict:
+        """Create an empty theme."""
+        return research.add_theme(project_id, body.name or "Nowy temat")
+
+    @api.patch("/projects/{project_id}/board/themes/{theme_id}")
+    def update_board_theme(project_id: int, theme_id: str, body: ThemeUpdate) -> dict:
+        """Rename a theme or edit its insight."""
+        return research.update_theme(project_id, theme_id, body.name, body.insight)
+
+    @api.delete("/projects/{project_id}/board/themes/{theme_id}")
+    def remove_board_theme(project_id: int, theme_id: str) -> dict:
+        """Delete a theme and return its notes to the ungrouped column."""
+        return research.remove_theme(project_id, theme_id)
+
+    @api.post("/projects/{project_id}/board/cluster", status_code=202)
+    async def cluster_board(project_id: int) -> Job:
+        """Group the board's notes into themes in the background."""
+        research.board(project_id)
+        return jobs.start("board.cluster", lambda progress, warn: research.cluster(project_id, progress, warn))
+
+    @api.get("/projects/{project_id}/empathy")
+    def get_empathy(project_id: int) -> dict:
+        """Return the empathy map, journey and How Might We questions."""
+        return research.empathy(project_id)
+
+    @api.post("/projects/{project_id}/empathy", status_code=202)
+    async def generate_empathy(project_id: int) -> Job:
+        """Build the empathy map and journey for the chosen persona in the background."""
+        state = research.empathy(project_id)
+        if state["persona"] is None:
+            raise HTTPException(400, "choose a persona in Define first")
+        return jobs.start("empathy", lambda progress, warn: research.generate_empathy(project_id, progress, warn))
+
+    @api.put("/projects/{project_id}/hmw")
+    def choose_hmw(project_id: int, body: HmwUpdate) -> dict:
+        """Choose or rewrite the How Might We question that frames Develop."""
+        return bad_request(lambda: research.choose_hmw(project_id, body.text))
+
+    @api.get("/projects/{project_id}/tests")
+    def get_tests(project_id: int) -> dict:
+        """Return usability tasks, sessions and observed issues."""
+        return usability.state(project_id)
+
+    @api.post("/projects/{project_id}/tests/plan", status_code=202)
+    async def plan_tests(project_id: int) -> Job:
+        """Write usability tasks for the flow's goal screens in the background."""
+        if not deliver.flow(project_id).screens:
+            raise HTTPException(400, "the flow is empty")
+        return jobs.start("tests.plan", lambda progress, warn: usability.plan(project_id, progress, warn))
+
+    @api.patch("/projects/{project_id}/tests/tasks/{task_id}")
+    def update_test_task(project_id: int, task_id: str, body: TestTaskUpdate) -> dict:
+        """Rewrite a task's scenario."""
+        return usability.update_task(project_id, task_id, body.scenario)
+
+    @api.post("/projects/{project_id}/tests/sessions", status_code=201)
+    def add_test_session(project_id: int, body: TestSessionCreate) -> dict:
+        """Store one participant's results."""
+        return bad_request(lambda: usability.add_session(project_id, body.participant, [r.model_dump() for r in body.results]))
+
+    @api.delete("/projects/{project_id}/tests/sessions/{session_id}")
+    def remove_test_session(project_id: int, session_id: str) -> dict:
+        """Delete a recorded test session."""
+        return usability.remove_session(project_id, session_id)
+
+    @api.post("/projects/{project_id}/findings", status_code=201)
+    def send_finding(project_id: int, body: Finding) -> dict:
+        """Send a test observation back to the Define board or the Develop backlog."""
+        if database.get_project(project_id) is None:
+            raise HTTPException(404, "project not found")
+        if body.target == "board":
+            research.add_notes(project_id, body.text, "test", "Test")
+            return {"target": "board"}
+        title = " ".join(body.text.split())
+        feature = develop.add(project_id, title[:57] + "…" if len(title) > 60 else title, "", "should")
+        return {"target": "backlog", "feature": with_rice(feature)}
 
     @api.get("/jobs/{job_id}")
     def job_status(job_id: str) -> Job:
