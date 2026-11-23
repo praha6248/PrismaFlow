@@ -15,7 +15,7 @@ import networkx as nx
 
 from ..config import data_dir
 from ..database import Database
-from ..models import Flow, FlowDraft, FlowElement, FlowScreen, SuggestionSet
+from ..models import Flow, FlowDraft, FlowElement, FlowScreen, StyleDraft, SuggestionSet
 from ..ollama_client import OllamaError
 from .discover import LANGUAGE_NAMES, StructuredLLM
 from .jobs import ProgressFn, WarnFn
@@ -629,10 +629,32 @@ class DeliverService:
         self.db.save_flow(project_id, stored["flow"], suggestions=rest)
         return self.state(project_id)
 
-    def handoff(self, project_id: int) -> dict[str, Any]:
+    async def style(self, state: dict[str, Any]) -> dict[str, Any]:
+        """Ask the local model for the product's own visual style, falling back to a curated one."""
+        project, persona, problem = state["project"], state["persona"], state["problem"]
+        prompt = "\n".join(
+            [
+                f'Niche: "{project["seed"]}"',
+                f"Problem: {problem['title'] if problem else '-'}",
+                f"Persona: {persona['name']}, {persona['age']}, {persona['role']}; needs {persona['focus']}" if persona else "Persona: -",
+                "Must-have features: " + ", ".join(f["title"] for f in state["features"] if f["priority"] == "must"),
+            ]
+        )
+        try:
+            draft: StyleDraft = await self.llm.structured(
+                StyleDraft, STYLE_SYSTEM.format(language=self._language(project["id"])), prompt, temperature=0.6
+            )
+            style = StyleDraft.model_validate(draft.model_dump()).model_dump()
+        except (OllamaError, ValueError, TypeError, AttributeError):
+            return fallback_style(project["seed"])
+        if _distance(style["primary"], APP_ACCENT) < 60:
+            return fallback_style(project["seed"])
+        return style
+
+    async def handoff(self, project_id: int) -> dict[str, Any]:
         """Write the Figma prompt and CLAUDE.md for the project and return their contents."""
         state = self.state(project_id)
-        figma, claude = handoff_documents(state)
+        figma, claude = handoff_documents(state, await self.style(state))
         root = self.export_root or _documents_dir()
         directory = root / slug(state["project"]["name"])
         directory.mkdir(parents=True, exist_ok=True)
@@ -642,8 +664,142 @@ class DeliverService:
         return {"figma_prompt": figma, "claude_md": claude, "directory": str(directory)}
 
 
-def handoff_documents(state: dict[str, Any]) -> tuple[str, str]:
+STYLE_SYSTEM = """You are a brand and UI designer. Propose the visual style of a new mobile app for the persona and problem given.
+Rules:
+- Write mood and rationale in {language}.
+- Fit the style to the audience and the job: calm and trustworthy for health or money, energetic for sport,
+  friendly and clear for education, warm for family and care. Avoid generic purple gradients.
+- Use a light background, a surface close to white, one saturated primary colour and a dark text colour.
+- Pick a heading and a body font from the allowed list; they may be the same family.
+- Colours are #RRGGBB."""
+
+APP_ACCENT = "#F783E9"
+CORNER_PIXELS = {"sharp": 4, "soft": 12, "round": 24}
+FALLBACK_STYLES = (
+    {"mood": ["spokojny", "rzeczowy", "zaufany"], "background": "#F4F7FB", "surface": "#FFFFFF", "primary": "#1F6FEB", "text": "#16202C", "heading_font": "Manrope", "body_font": "Inter", "corners": "soft"},
+    {"mood": ["energiczny", "odważny", "motywujący"], "background": "#FFF7F0", "surface": "#FFFFFF", "primary": "#E4572E", "text": "#231A15", "heading_font": "Space Grotesk", "body_font": "DM Sans", "corners": "round"},
+    {"mood": ["ciepły", "przyjazny", "opiekuńczy"], "background": "#FBF8F3", "surface": "#FFFFFF", "primary": "#2E7D5B", "text": "#1E2420", "heading_font": "Fraunces", "body_font": "Nunito", "corners": "round"},
+    {"mood": ["jasny", "uporządkowany", "nowoczesny"], "background": "#F6F6F8", "surface": "#FFFFFF", "primary": "#5B4FE0", "text": "#18181F", "heading_font": "Outfit", "body_font": "Work Sans", "corners": "soft"},
+    {"mood": ["stonowany", "profesjonalny", "precyzyjny"], "background": "#F5F5F2", "surface": "#FFFFFF", "primary": "#0F766E", "text": "#1B1D1C", "heading_font": "IBM Plex Sans", "body_font": "IBM Plex Sans", "corners": "sharp"},
+)
+
+
+def luminance(color: str) -> float:
+    """WCAG relative luminance of a #RRGGBB colour."""
+    channels = [int(color[i : i + 2], 16) / 255 for i in (1, 3, 5)]
+    r, g, b = [c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4 for c in channels]
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def contrast(a: str, b: str) -> float:
+    """WCAG contrast ratio between two colours."""
+    hi, lo = sorted((luminance(a), luminance(b)), reverse=True)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def _darken(color: str, factor: float) -> str:
+    return "#" + "".join(f"{int(int(color[i : i + 2], 16) * factor):02X}" for i in (1, 3, 5))
+
+
+def _distance(a: str, b: str) -> float:
+    return sum((int(a[i : i + 2], 16) - int(b[i : i + 2], 16)) ** 2 for i in (1, 3, 5)) ** 0.5
+
+
+def fallback_style(seed: str) -> dict[str, Any]:
+    """Pick a curated style deterministically from the niche when the model is unavailable."""
+    index = sum(ord(c) for c in seed.casefold()) % len(FALLBACK_STYLES)
+    return {**FALLBACK_STYLES[index], "rationale": "Styl dobrany automatycznie; zweryfikuj go z personą."}
+
+
+def finish_style(style: dict[str, Any]) -> dict[str, Any]:
+    """Make a style accessible: text reaches WCAG AA 4.5:1 on background and surface, and the primary
+    button label reaches 4.5:1 with white or dark text; the contrast ratios are added to the style."""
+    style = dict(style)
+    for _ in range(12):
+        if min(contrast(style["text"], style["background"]), contrast(style["text"], style["surface"])) >= 4.5:
+            break
+        style["text"] = _darken(style["text"], 0.8)
+    for _ in range(12):
+        if max(contrast("#FFFFFF", style["primary"]), contrast(style["text"], style["primary"])) >= 4.5:
+            break
+        style["primary"] = _darken(style["primary"], 0.88)
+    white = contrast("#FFFFFF", style["primary"])
+    dark = contrast(style["text"], style["primary"])
+    style["on_primary"] = "#FFFFFF" if white >= dark else style["text"]
+    style["contrast_text"] = round(contrast(style["text"], style["background"]), 1)
+    style["contrast_primary"] = round(max(white, dark), 1)
+    return style
+
+
+def style_lines(style: dict[str, Any]) -> list[str]:
+    """Describe a product style as Markdown lines."""
+    return [
+        f"Nastrój: {', '.join(style['mood'])}. {style['rationale']}",
+        f"- Tło {style['background']}, powierzchnie {style['surface']}, tekst {style['text']} (kontrast {style['contrast_text']}:1)",
+        f"- Kolor główny {style['primary']}, etykieta na nim {style['on_primary']} (kontrast {style['contrast_primary']}:1)",
+        f"- Nagłówki {style['heading_font']}, tekst {style['body_font']}",
+        f"- Zaokrąglenia {CORNER_PIXELS[style['corners']]} px",
+    ]
+
+
+def ux_guidance(flow: Flow, report: dict[str, Any], style: dict[str, Any]) -> list[str]:
+    """Turn the flow, its audit and the product style into concrete UX/UI rules for the implementer."""
+    names = {s.id: s.name for s in flow.screens}
+    steps = report["steps"]
+    lines = ["## Wytyczne UX/UI", "", "### Nawigacja i ścieżka krytyczna"]
+    if steps["path"]:
+        lines.append(f"- Ścieżka {' → '.join(steps['path'])} ma działać bez zbędnych kroków; nie dodawaj ekranów pośrednich ani modali na tej drodze.")
+    path_ids = [s.id for name in steps["path"] for s in flow.screens if s.name == name]
+    start_id = next((s.id for s in flow.screens if s.kind == "start"), None)
+    for screen in flow.screens:
+        following = path_ids[path_ids.index(screen.id) + 1] if screen.id in path_ids[:-1] else None
+        forward = [e for e in screen.elements if e.target and e.target != start_id]
+        primary = [e for e in forward if e.target == following] or [e for e in forward if e.size == "L"]
+        if primary:
+            lines.append(f"- {screen.name}: jedna akcja główna „{primary[0].label}” → {names.get(primary[0].target, '')}, pełnej szerokości w dolnej strefie kciuka.")
+    for item in report["dead_ends"]:
+        lines.append(f"- {item['screen']}: dodaj wyraźną akcję dalej (lub powrót do startu) — teraz to ślepa uliczka.")
+    lines.append("- Systemowy gest i przycisk „wstecz” muszą działać na każdym ekranie; zachowuj stan formularzy przy powrocie.")
+    lines += ["", "### Wybory i obciążenie poznawcze"]
+    crowded = [h for h in report["hick"] if h["warning"]]
+    for item in crowded:
+        what = f"„{item['element']}”" if item["element"] else "akcje"
+        lines.append(f"- {item['screen']} · {what}: {item['options']} opcji — pokaż do 5 najczęstszych, resztę pod „Więcej” lub z wyszukiwarką.")
+    lines += [
+        "- Jedna decyzja na raz: grupuj filtry tematycznie, domyślne wartości ustaw na najczęstszy wybór.",
+        "- Długie listy sortuj w przewidywalny sposób (alfabetycznie lub wg popularności) i dodaj wyszukiwanie od ok. 10 pozycji.",
+        "",
+        "### Cele dotykowe i ergonomia",
+        "- Każdy element klikalny ma co najmniej 44×44 px (WCAG 2.5.5) i min. 8 px odstępu od sąsiednich.",
+    ]
+    for item in report["fitts"]:
+        lines.append(f"- {item['element']} ({item['screen']}): powiększ i przesuń bliżej dolnej krawędzi — trudno w niego trafić kciukiem.")
+    lines += [
+        "- Akcje destrukcyjne trzymaj z dala od głównych i potwierdzaj je albo dawaj „Cofnij”.",
+        "",
+        "### Stany i informacja zwrotna",
+        "- Każdy ekran z danymi ma stan ładowania (szkielet), pusty (z podpowiedzią, co zrobić) i błędu (z przyciskiem ponowienia).",
+        "- Reaguj na dotyk w < 100 ms (stan pressed); operacje > 1 s pokazują postęp.",
+        "- Po zapisaniu lub wysłaniu pokaż krótkie potwierdzenie (toast) zamiast przenosić użytkownika bez komentarza.",
+        "",
+        "### Formularze",
+        "- Etykieta nad polem (nie placeholder zamiast etykiety), właściwy typ klawiatury, autouzupełnianie.",
+        "- Walidacja po opuszczeniu pola, komunikat błędu pod polem mówi, jak to naprawić.",
+        "",
+        "### Typografia, kolor i dostępność",
+        f"- Tekst {style['text']} na tle {style['background']} ({style['contrast_text']}:1), etykiety przycisków {style['on_primary']} na {style['primary']} ({style['contrast_primary']}:1); nie schodź poniżej 4,5:1.",
+        f"- Tekst podstawowy 16 px, interlinia 1,5; nagłówki {style['heading_font']}, treść {style['body_font']}; skaluj z ustawieniami systemu (Dynamic Type / sp).",
+        f"- Siatka odstępów 8 px, zaokrąglenia {CORNER_PIXELS[style['corners']]} px; kolor główny tylko dla akcji, nie dla dekoracji.",
+        "- Nie przekazuj informacji samym kolorem; ikony mają etykiety dostępności, kolejność fokusu = kolejność wizualna.",
+        "- Szanuj „ogranicz ruch” (prefers-reduced-motion); animacje 150–300 ms.",
+        "",
+    ]
+    return lines
+
+
+def handoff_documents(state: dict[str, Any], style: dict[str, Any] | None = None) -> tuple[str, str]:
     """Render the Figma design prompt and the CLAUDE.md implementation brief."""
+    style = finish_style(style or fallback_style(state["project"]["seed"]))
     project, persona, problem = state["project"], state["persona"], state["problem"]
     flow = Flow.model_validate(state["flow"])
     report = state["audit"]
@@ -668,16 +824,7 @@ def handoff_documents(state: dict[str, Any]) -> tuple[str, str]:
                 f"- {e.label} ({e.type}, rozmiar {e.size} / {SIZE_NAMES[e.size]}, strefa {ZONE_NAMES[e.zone]}){target}"
             )
         screen_lines.append("")
-    steps = report["steps"]
-    audit_lines = [
-        f"- Kroki do celu: {steps['value'] if steps['value'] is not None else 'cel nieosiągalny'}"
-        + (f" ({' → '.join(steps['path'])})" if steps["path"] else ""),
-        f"- Szacowany czas do celu (KLM): {report['klm']['seconds']} s" if report["klm"] else "- Szacowany czas do celu (KLM): —",
-        f"- Cele dotykowe ≥ 44 px (WCAG 2.5.5 AAA): {report['targets']['aaa']}/{report['targets']['total']}",
-        *(f"- Hick: {h['screen']} · {h['element'] or 'wybór akcji'} — {h['options']} opcji = {h['seconds']} s" for h in report["hick"][:3]),
-        *(f"- Fitts: {f['element']} na ekranie {f['screen']} — ID {f['index']}" for f in report["fitts"]),
-        *(f"- Ślepa uliczka: {d['screen']}" for d in report["dead_ends"]),
-    ]
+    guidance = ux_guidance(flow, report, style)
     who = (
         f"{persona['name']}, {persona['age']} lat, {persona['role']}. Cytat: „{persona['quote']}”. Główna potrzeba: {persona['focus']}."
         if persona
@@ -700,9 +847,8 @@ def handoff_documents(state: dict[str, Any]) -> tuple[str, str]:
             "- Maksymalnie 7 wyborów widocznych naraz; resztę schowaj w „Więcej”.",
             "- Każdy ekran poza celem ma wyraźne przejście dalej.",
             "",
-            "## Styl",
-            "Jasne, pastelowe tło (#F3EEFF → #FFF0FB), akcent #F783E9, nagłówki Crimson Text, tekst Montserrat,",
-            "zaokrąglone karty z miękkim cieniem.",
+            "## Styl produktu",
+            *style_lines(style),
             "",
         ]
     )
@@ -721,13 +867,11 @@ def handoff_documents(state: dict[str, Any]) -> tuple[str, str]:
             "",
             "## User flow",
             *screen_lines,
-            "## Audyt UX",
-            *audit_lines,
+            "## Styl produktu",
+            *style_lines(style),
             "",
-            "## Wskazówki dla implementacji",
-            "- Zacznij od ścieżki krytycznej start → cel; funkcje Must muszą działać end-to-end.",
-            "- Komponenty: przycisk główny (L, dół ekranu), przycisk drugorzędny (M), link (S).",
-            "- Dostępność: kontrast WCAG AA, cele dotykowe ≥ 44×44 px, etykiety dla czytników ekranu.",
+            *guidance,
+            "## Uwagi",
             "- Popyt oznacza odsetek dowodów (podpowiedzi Google, dyskusje ze Stack Exchange i Lemmy) wspierających funkcję; to hipotezy do zweryfikowania w testach z użytkownikami.",
             "",
         ]

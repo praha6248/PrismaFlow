@@ -420,3 +420,62 @@ class SuggestionSet(BaseModel):
     """Structured answer with flow optimisations."""
 
     suggestions: list[SuggestionDraft] = Field(json_schema_extra={"minItems": 1, "maxItems": 4})
+
+
+HEX_COLOR = re.compile(r"^#[0-9a-fA-F]{6}$")
+StyleFont = Literal[
+    "Inter",
+    "Manrope",
+    "DM Sans",
+    "Nunito",
+    "Poppins",
+    "Work Sans",
+    "Source Sans 3",
+    "IBM Plex Sans",
+    "Rubik",
+    "Lora",
+    "Merriweather",
+    "Playfair Display",
+    "Fraunces",
+    "Space Grotesk",
+    "Outfit",
+]
+
+
+class StyleDraft(BaseModel):
+    """A visual direction for the product being designed, chosen for its persona and niche."""
+
+    mood: list[str] = Field(description="Three adjectives describing the product's look and feel", json_schema_extra={"minItems": 3, "maxItems": 3})
+    rationale: str = Field(description="Why this style fits the persona, at most 20 words")
+    background: str = Field(description="Page background colour as #RRGGBB")
+    surface: str = Field(description="Card and sheet colour as #RRGGBB")
+    primary: str = Field(description="Primary action colour as #RRGGBB")
+    text: str = Field(description="Body text colour as #RRGGBB")
+    heading_font: StyleFont
+    body_font: StyleFont
+    corners: Literal["sharp", "soft", "round"] = Field(description="Corner style: sharp 4 px, soft 12 px, round 24 px")
+
+    @field_validator("mood")
+    @classmethod
+    def _mood(cls, value: list[str]) -> list[str]:
+        words = [" ".join(re.sub(r"[^\w\s-]", "", item).split()[:2]).casefold() for item in value]
+        return [w for w in words if w][:3]
+
+    @field_validator("rationale")
+    @classmethod
+    def _rationale(cls, value: str) -> str:
+        sentences = re.split(r"(?<=[.!?])\s+", " ".join(value.replace("*", "").replace("_", " ").split()))
+        text = sentences[0]
+        if len(sentences) > 1 and len(text) + len(sentences[1]) < 200:
+            text += " " + sentences[1]
+        return text if len(text) <= 220 else text[:219].rsplit(" ", 1)[0] + "…"
+
+    @field_validator("background", "surface", "primary", "text")
+    @classmethod
+    def _hex(cls, value: str) -> str:
+        value = value.strip()
+        if not value.startswith("#"):
+            value = "#" + value
+        if not HEX_COLOR.match(value):
+            raise ValueError("expected a #RRGGBB colour")
+        return value.upper()

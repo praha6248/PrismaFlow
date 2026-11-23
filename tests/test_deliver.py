@@ -195,8 +195,9 @@ def test_deliver_endpoints(tmp_path) -> None:
 
         pack = client.post(f"/api/projects/{project_id}/handoff").json()
         assert "Start" in pack["figma_prompt"] and "MoSCoW" in pack["claude_md"]
-        assert "KLM" in pack["claude_md"] and "WCAG" in pack["claude_md"]
+        assert "Wytyczne UX/UI" in pack["claude_md"] and "WCAG" in pack["claude_md"] and "Audyt UX" not in pack["claude_md"]
         assert (tmp_path / "exports" / "sport" / "CLAUDE.md").is_file()
+        assert "Styl produktu" in pack["figma_prompt"] and "#F783E9" not in pack["figma_prompt"]
 
 
 def test_optimize_falls_back_without_the_model(tmp_path) -> None:
@@ -207,3 +208,12 @@ def test_optimize_falls_back_without_the_model(tmp_path) -> None:
         state = _wait(client, client.post("/api/deliver/optimize", json={"project_id": project_id}).json())
         assert state["status"] == "done"
         assert state["result"]["suggestions"][0]["op"] == "add_transition"
+
+
+def test_product_style_is_accessible() -> None:
+    from backend.services.deliver import contrast, fallback_style, finish_style
+
+    style = finish_style({**fallback_style("sport"), "text": "#9A9A9A", "primary": "#FFE08A"})
+    assert contrast(style["text"], style["background"]) >= 4.5 and style["contrast_text"] >= 4.5
+    assert style["contrast_primary"] >= 4.5
+    assert fallback_style("sport") == fallback_style("Sport")

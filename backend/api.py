@@ -266,11 +266,11 @@ def create_app(
         return deliver.dismiss(project_id, suggestion_id)
 
     @api.post("/projects/{project_id}/handoff")
-    def handoff(project_id: int) -> dict:
+    async def handoff(project_id: int) -> dict:
         """Export the Figma prompt and CLAUDE.md and return their contents."""
         if not deliver.flow(project_id).screens:
             raise HTTPException(400, "the flow is empty")
-        return deliver.handoff(project_id)
+        return await deliver.handoff(project_id)
 
     @api.get("/jobs/{job_id}")
     def job_status(job_id: str) -> Job:
