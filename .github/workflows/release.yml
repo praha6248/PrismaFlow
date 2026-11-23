@@ -126,4 +126,9 @@ jobs:
       - name: GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" out/* --notes-file notes.md --generate-notes --title "PrismaFlow $GITHUB_REF_NAME"
+        run: |
+          flags=()
+          if [[ "$GITHUB_REF_NAME" == *-beta* ]]; then
+            flags+=(--prerelease)
+          fi
+          gh release create "$GITHUB_REF_NAME" out/* --verify-tag --notes-file notes.md --generate-notes --title "PrismaFlow $GITHUB_REF_NAME" "${flags[@]}"

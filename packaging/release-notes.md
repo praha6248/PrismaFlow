@@ -1,12 +1,14 @@
 ## Install
 
-| System | Download | One command |
-| --- | --- | --- |
-| Windows 10/11 (x64) | `PrismaFlow-*-windows-x64-setup.exe` | `irm https://raw.githubusercontent.com/praha6248/PrismaFlow/main/install.ps1 \| iex` |
-| Linux (x86_64, glibc 2.39+) | `PrismaFlow-*-x86_64.AppImage` or `PrismaFlow-linux-x86_64.tar.gz` | `curl -fsSL https://raw.githubusercontent.com/praha6248/PrismaFlow/main/install.sh \| sh` |
+Download a file from the assets attached to this release.
 
-On Linux the window needs WebKit2GTK: `sudo apt install gir1.2-webkit2-4.1 python3-gi`. The AppImage also
-needs FUSE 2 (`sudo apt install libfuse2t64`); the one-command installer uses the tarball and does not.
+| System | Download |
+| --- | --- |
+| Windows 10/11 (x64) | `PrismaFlow-*-windows-x64-setup.exe` |
+| Linux (x86_64, glibc 2.39+) | `PrismaFlow-*-x86_64.AppImage` or `PrismaFlow-linux-x86_64.tar.gz` |
+
+On Linux the window needs WebKit2GTK (`sudo apt install gir1.2-webkit2-4.1 python3-gi`).
+The AppImage also needs FUSE 2 (`sudo apt install libfuse2t64`).
 
 ## Models
 
