@@ -1,5 +1,5 @@
-import { Check, Sparkles, X } from "lucide-react";
-import type { ReactNode } from "react";
+import { AlertCircle, CheckCircle2, Check, ChevronDown, Sparkles, X } from "lucide-react";
+import { useState, type ReactNode } from "react";
 import { u } from "../components/ui";
 import type { FlowAudit, Suggestion } from "../types";
 import { ZONE_LABELS } from "./ScreenNode";
@@ -69,6 +69,20 @@ export function AuditPanel({ audit, suggestions, optimizing, handoffBusy, onOpti
   const dead = audit.dead_ends;
   const primarySmall = audit.targets.below_aaa.filter((t) => t.primary);
   const steps = audit.steps;
+  const [details, setDetails] = useState(false);
+
+  const issues: { text: string; screenId?: string }[] = [];
+  if (steps.status === "missing") issues.push({ text: "Oznacz ekran startowy i ekran celu, żeby policzyć drogę do celu." });
+  if (steps.status === "no_path") issues.push({ text: "Ze startu nie da się dojść do celu. Połącz ekrany." });
+  if (steps.value !== null && steps.value > 3) issues.push({ text: `Droga do celu: ${steps.value} ${plural(steps.value, "krok", "kroki", "kroków")}. Spróbuj skrócić ją do 3.` });
+  dead.forEach((d) => issues.push({ text: `${d.screen}: brak przejścia dalej.`, screenId: d.screen_id }));
+  audit.unreachable.forEach((d) => issues.push({ text: `${d.screen}: nie da się tu dojść.`, screenId: d.screen_id }));
+  audit.hick
+    .filter((h) => h.warning)
+    .slice(0, 2)
+    .forEach((h) => issues.push({ text: `${h.screen}: za dużo opcji w ${h.element ? `„${h.element}”` : "wyborze akcji"}. Schowaj część w „Więcej”.`, screenId: h.screen_id }));
+  primarySmall.slice(0, 2).forEach((t) => issues.push({ text: `${t.screen}: „${t.element}” jest za mały do kliknięcia kciukiem.`, screenId: t.screen_id }));
+  audit.fitts.slice(0, 2).forEach((f) => issues.push({ text: `${f.screen}: „${f.element}” trudno sięgnąć. Przenieś go niżej.`, screenId: f.screen_id }));
 
   return (
     <div className="flex h-full flex-col" style={{ padding: `${u(9)} ${u(8)} ${u(8)}` }}>
@@ -86,6 +100,46 @@ export function AuditPanel({ audit, suggestions, optimizing, handoffBusy, onOpti
       </span>
 
       <div className="pf-scroll flex min-h-0 flex-1 flex-col overflow-y-auto" style={{ gap: u(4), marginTop: u(6) }}>
+        <div
+          className="pf-fade shrink-0"
+          style={{ borderRadius: u(5), background: issues.length ? TONES.warn.background : TONES.good.background, border: `${u(0.5)} solid ${issues.length ? TONES.warn.border : TONES.good.border}`, padding: `${u(4.5)} ${u(6)}` }}
+        >
+          <div className="flex items-center text-ink" style={{ gap: u(3), fontSize: u(5.8) }}>
+            {issues.length ? <AlertCircle style={{ width: u(6), height: u(6), color: "#d65bc4" }} /> : <CheckCircle2 style={{ width: u(6), height: u(6), color: "#3d9a5b" }} />}
+            {issues.length ? `Do poprawy: ${issues.length}` : "Flow wygląda dobrze"}
+          </div>
+          <div className="flex flex-col" style={{ gap: u(2), marginTop: u(2.5), fontSize: u(4.8), lineHeight: 1.4, color: "#7c6d88" }}>
+            {issues.length === 0 && (
+              <span>
+                {steps.value !== null && `${steps.value} ${plural(steps.value, "krok", "kroki", "kroków")} do celu`}
+                {audit.klm && ` · około ${pl(audit.klm.seconds, 0)} s`}. Brak ślepych uliczek i za małych przycisków.
+              </span>
+            )}
+            {issues.map((issue, index) =>
+              issue.screenId ? (
+                <button key={index} type="button" className="text-left hover:underline" onClick={() => onFocusScreen(issue.screenId!)}>
+                  {issue.text}
+                </button>
+              ) : (
+                <span key={index}>{issue.text}</span>
+              ),
+            )}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setDetails((v) => !v)}
+          aria-expanded={details}
+          className="flex shrink-0 items-center text-mauve hover:text-plum"
+          style={{ gap: u(2), fontSize: u(5) }}
+        >
+          <ChevronDown style={{ width: u(5), height: u(5), transform: details ? "rotate(180deg)" : undefined, transition: "transform 150ms" }} />
+          {details ? "Ukryj szczegóły pomiarów" : "Szczegóły pomiarów"}
+        </button>
+
+        {details && (
+          <>
         <Metric
           tone={steps.value !== null ? (steps.value <= 3 ? "good" : "warn") : "warn"}
           title="Kroki do celu"
@@ -167,8 +221,11 @@ export function AuditPanel({ audit, suggestions, optimizing, handoffBusy, onOpti
           {!dead.length && !audit.unreachable.length && "Z każdego ekranu da się przejść dalej."}
         </Metric>
 
+          </>
+        )}
+
         <span className="font-serif text-ink" style={{ fontSize: u(7.5), marginTop: u(3) }}>
-          Asystent AI · Ollama
+          Asystent AI
         </span>
         <button
           type="button"
