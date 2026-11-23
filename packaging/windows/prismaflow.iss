@@ -14,6 +14,7 @@ DefaultGroupName=PrismaFlow
 DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
+LicenseFile=..\..\LICENSE
 InfoBeforeFile=models.txt
 OutputDir=..\..\dist
 OutputBaseFilename=PrismaFlow-{#AppVersion}-windows-x64-setup
