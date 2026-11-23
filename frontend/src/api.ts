@@ -204,6 +204,8 @@ export const api = {
     }),
   handoff: (projectId: number) =>
     request<Handoff>(`/projects/${projectId}/handoff`, { method: "POST" }),
+  caseStudy: (projectId: number) =>
+    request<Job>(`/projects/${projectId}/case-study`, { method: "POST" }),
   board: (projectId: number) => request<BoardState>(`/projects/${projectId}/board`),
   addNotes: (projectId: number, text: string, source: NoteSource, label = "", theme: string | null = null) =>
     request<BoardState>(`/projects/${projectId}/board/notes`, {

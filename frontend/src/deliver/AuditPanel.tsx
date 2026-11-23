@@ -86,6 +86,7 @@ interface Props {
   onAccept: (s: Suggestion) => void;
   onDismiss: (s: Suggestion) => void;
   onHandoff: () => void;
+  onCaseStudy: () => void;
   onFocusScreen: (screenId: string) => void;
   tests?: TestsState;
   onOpenTests: () => void;
@@ -100,6 +101,7 @@ export function AuditPanel({
   onAccept,
   onDismiss,
   onHandoff,
+  onCaseStudy,
   onFocusScreen,
   tests,
   onOpenTests,
@@ -564,26 +566,41 @@ export function AuditPanel({
         ))}
       </div>
 
-      <button
-        type="button"
-        onClick={onHandoff}
-        disabled={handoffBusy || audit.screens === 0}
-        className="flex shrink-0 flex-col items-center justify-center font-semibold text-on-pink transition-transform enabled:hover:scale-[1.01] enabled:active:scale-[0.98] disabled:opacity-60"
-        style={{
-          marginTop: u(6),
-          height: u(30),
-          borderRadius: u(7),
-          background: "var(--color-pink-button)",
-          boxShadow: `0 ${u(1.5)} ${u(6)} rgba(240, 110, 220, 0.35)`,
-        }}
-      >
-        <span style={{ fontSize: "var(--text-body)", lineHeight: 1.1 }}>
-          {handoffBusy ? t("Generuję…") : t("Generuj Handoff")}
-        </span>
-        <span style={{ fontSize: "var(--text-small)", opacity: 0.9, marginTop: u(1.5) }}>
-          {t("Figma · Claude · raport z badań")}
-        </span>
-      </button>
+      <div className="flex shrink-0" style={{ marginTop: u(6), gap: u(4) }}>
+        <button
+          type="button"
+          onClick={onHandoff}
+          disabled={handoffBusy || audit.screens === 0}
+          className="flex min-w-0 flex-1 flex-col items-center justify-center font-semibold text-on-pink transition-transform enabled:hover:scale-[1.01] enabled:active:scale-[0.98] disabled:opacity-60"
+          style={{
+            height: u(30),
+            borderRadius: u(7),
+            background: "var(--color-pink-button)",
+            boxShadow: `0 ${u(1.5)} ${u(6)} rgba(240, 110, 220, 0.35)`,
+          }}
+        >
+          <span style={{ fontSize: "var(--text-body)", lineHeight: 1.1 }}>
+            {handoffBusy ? t("Generuję…") : t("Generuj Handoff")}
+          </span>
+        </button>
+        <button
+          type="button"
+          onClick={onCaseStudy}
+          disabled={audit.screens === 0}
+          className="flex shrink-0 flex-col items-center justify-center font-semibold text-on-pink transition-transform enabled:hover:scale-[1.01] enabled:active:scale-[0.98] disabled:opacity-60"
+          style={{
+            width: u(52),
+            height: u(30),
+            borderRadius: u(7),
+            background: "var(--color-pink-button)",
+            boxShadow: `0 ${u(1.5)} ${u(6)} rgba(240, 110, 220, 0.35)`,
+          }}
+        >
+          <span style={{ fontSize: "var(--text-body)", lineHeight: 1.1 }}>
+            {t("Case study")}
+          </span>
+        </button>
+      </div>
     </div>
   );
 }

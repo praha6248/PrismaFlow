@@ -310,6 +310,15 @@ export interface Handoff {
   directory: string;
 }
 
+export interface CaseStudy {
+  markdown: string;
+  files: string[];
+  directory: string;
+  gaps: number;
+  removed: string[];
+  narrative: boolean;
+}
+
 export interface QualityState {
   enabled: boolean;
   has_key: boolean;

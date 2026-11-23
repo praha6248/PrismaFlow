@@ -29,6 +29,7 @@ import type {
 } from "../types";
 import { AuditPanel } from "./AuditPanel";
 import { HandoffModal } from "./HandoffModal";
+import { CaseStudyModal } from "./CaseStudyModal";
 import { TestsPanel } from "./TestsPanel";
 import {
   ScreenNode,
@@ -366,6 +367,7 @@ function Studio({ projectId, notify, onRestart }: Props) {
   const [showTests, setShowTests] = useState(false);
   const [tests, setTests] = useState<TestsState | null>(null);
   const [handoffBusy, setHandoffBusy] = useState(false);
+  const [showCaseStudy, setShowCaseStudy] = useState(false);
   const saveTimer = useRef<number | undefined>(undefined);
   const dirty = useRef(false);
   const started = useRef(false);
@@ -611,6 +613,11 @@ function Studio({ projectId, notify, onRestart }: Props) {
     }
   };
 
+  const openCaseStudy = async () => {
+    await flush();
+    setShowCaseStudy(true);
+  };
+
   const testsState = tests ?? state?.tests;
   const persona = state?.persona;
   const subtitle = `${persona ? `${persona.name} · ${persona.focus} · ` : ""}${t("Połącz ekrany i dopracuj doświadczenie")}`;
@@ -741,6 +748,7 @@ function Studio({ projectId, notify, onRestart }: Props) {
             onAccept={accept}
             onDismiss={dismiss}
             onHandoff={generateHandoff}
+            onCaseStudy={openCaseStudy}
             onFocusScreen={focusScreen}
             tests={testsState}
             onOpenTests={() => setShowTests(true)}
@@ -763,6 +771,13 @@ function Studio({ projectId, notify, onRestart }: Props) {
           flow={flow}
           onClose={() => setShowTests(false)}
           onChanged={setTests}
+          notify={notify}
+        />
+      )}
+      {showCaseStudy && (
+        <CaseStudyModal
+          projectId={projectId}
+          onClose={() => setShowCaseStudy(false)}
           notify={notify}
         />
       )}

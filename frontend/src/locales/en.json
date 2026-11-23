@@ -401,7 +401,6 @@
   "Każde zadanie ukończyło co najmniej 80% osób.": "At least 80% of people completed every task.",
   "Wyniki i kolejny test": "Results and next test",
   "Przeprowadź test z użytkownikiem": "Run a usability test",
-  "Figma · Claude · raport z badań": "Figma · Claude · research report",
   "osoby|osób|osób": "person|people",
   "osoba|osoby|osób": "person|people",
   "„{task}”: cel osiągnęło {done} z {all} osób.": "“{task}”: {done} of {all} people reached the goal.",
@@ -445,5 +444,17 @@
   "Kliknięcia bez efektu: {n} ({last})": "Taps with no effect: {n} ({last})",
   "„{task}”: „{element}” na ekranie „{screen}” nic nie robi, a klikało w to: {count}.": "“{task}”: “{element}” on “{screen}” does nothing, yet it was tapped by {count}.",
   "pomyłki {n}": "dead taps {n}",
-  "Usunięto konkurencję, której nazwa nie pojawia się w wyszukiwaniach ani dyskusjach — model mógł ją zmyślić.": "Removed a competitor whose name doesn't appear in searches or discussions — the model may have made it up."
+  "Usunięto konkurencję, której nazwa nie pojawia się w wyszukiwaniach ani dyskusjach — model mógł ją zmyślić.": "Removed a competitor whose name doesn't appear in searches or discussions — the model may have made it up.",
+  "Case study": "Case study",
+  "Przygotowuję…": "Preparing…",
+  "Zbieram dane z projektu…": "Collecting project data…",
+  "Lokalny model pisze opis…": "The local model is writing the narrative…",
+  "Zapisuję Markdown, HTML i PDF…": "Saving Markdown, HTML and PDF…",
+  "Nie udało się napisać case study": "Could not write the case study",
+  "Lokalny model nie odpowiedział — case study zawiera tylko fakty z projektu.": "The local model did not answer — the case study contains project facts only.",
+  "Miejsca do uzupełnienia: {count}": "Places to fill in: {count}",
+  "usunięte zdania z liczbami spoza danych: {count}": "sentences removed for numbers not in the data: {count}",
+  "Tylko fakty z projektu; braki zostaną oznaczone „do uzupełnienia”.": "Project facts only; gaps will be marked “to fill in”.",
+  "PDF: otwórz case-study.html i wydrukuj do PDF": "PDF: open case-study.html and print to PDF",
+  "Napisz ponownie": "Write again"
 }

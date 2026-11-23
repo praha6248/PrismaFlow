@@ -752,3 +752,40 @@ class Finding(BaseModel):
 
     text: str = Field(min_length=3, max_length=600)
     target: Literal["board", "backlog"]
+
+
+def _paragraph(value: str) -> str:
+    text = " ".join(re.sub(r"[*#`>_]", " ", value).split()).strip()
+    if len(text) <= 600:
+        return text
+    sentences = re.split(r"(?<=[.!?])\s+", text)
+    kept = ""
+    for sentence in sentences:
+        if len(kept) + len(sentence) + 1 > 600:
+            break
+        kept = f"{kept} {sentence}".strip()
+    return kept or text[:599].rsplit(" ", 1)[0].rstrip(" ,;") + "…"
+
+
+class CaseStudyDraft(BaseModel):
+    """Narrative paragraphs of a UX case study, written only from the project's fact sheet."""
+
+    headline: str = Field(description="Case study title, at most 10 words, naming the product and the persona's job")
+    summary: str = Field(description="2-3 sentences: the problem, what was designed and what the tests showed")
+    context: str = Field(description="1-2 sentences on why the problem matters to the persona")
+    research: str = Field(description="1-2 sentences on what the research methods revealed")
+    synthesis: str = Field(description="1-2 sentences connecting the themes, persona and the chosen How might we")
+    ideation: str = Field(description="1-2 sentences on how features were prioritised")
+    design: str = Field(description="1-2 sentences on the flow and what the audit found")
+    testing: str = Field(description="1-2 sentences on what the usability tests showed")
+    reflection: str = Field(description="2-3 sentences: lessons and next steps that follow from the test issues and the gaps")
+
+    @field_validator("headline")
+    @classmethod
+    def _headline(cls, value: str) -> str:
+        return _sentence(_paragraph(value), 90).rstrip(".")
+
+    @field_validator("summary", "context", "research", "synthesis", "ideation", "design", "testing", "reflection")
+    @classmethod
+    def _text(cls, value: str) -> str:
+        return _paragraph(value)

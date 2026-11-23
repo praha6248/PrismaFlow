@@ -41,6 +41,7 @@ from .services import discover
 from .services.define import DefineService, define_state
 from .services.validate import ValidateService
 from .services.deliver import DeliverService
+from .services.case_study import CaseStudyService
 from .services.develop import DevelopService, develop_state, rice
 from .services.research import ResearchService
 from .services.usability import UsabilityService
@@ -68,6 +69,7 @@ def create_app(
     develop = develop_service or DevelopService(database, ollama)
     deliver = deliver_service or DeliverService(database, ollama)
     research = ResearchService(database, ollama)
+    case_study = CaseStudyService(deliver)
     usability = UsabilityService(database, ollama)
     jobs = JobRegistry()
 
@@ -345,6 +347,13 @@ def create_app(
         if not deliver.flow(project_id).screens:
             raise HTTPException(400, "the flow is empty")
         return await deliver.handoff(project_id)
+
+    @api.post("/projects/{project_id}/case-study", status_code=202)
+    async def generate_case_study(project_id: int) -> Job:
+        """Start writing a UX case study from the project's data."""
+        if database.get_project(project_id) is None:
+            raise HTTPException(404, "project not found")
+        return jobs.start("case_study", lambda progress, warn: case_study.generate(project_id, progress, warn))
 
     def bad_request(call):
         try:

@@ -665,29 +665,38 @@ class DeliverService:
         state = self.state(project_id)
         style = finish_style(await self.style(state))
         figma, claude = handoff_documents(state, style)
-        root = self.export_root or _documents_dir()
-        directory = root / slug(state["project"]["name"])
-        directory.mkdir(parents=True, exist_ok=True)
+        directory = self.export_dir(state["project"])
         (directory / "figma-prompt.md").write_text(figma, encoding="utf-8")
         (directory / "CLAUDE.md").write_text(claude, encoding="utf-8")
         report = await self.report(project_id, state, style, directory)
         self.db.update_project(project_id, phase="deliver", stage="done")
         return {"figma_prompt": figma, "claude_md": claude, "report": report["markdown"], "files": report["files"], "directory": str(directory)}
 
-    async def report(self, project_id: int, state: dict[str, Any], style: dict[str, Any], directory: Path) -> dict[str, Any]:
-        """Write the research report (Markdown, HTML and PDF when Chromium is available) and the prototype SVG."""
+    def export_dir(self, project: dict[str, Any]) -> Path:
+        """Folder where the project's exports are written."""
+        directory = (self.export_root or _documents_dir()) / slug(project["name"])
+        directory.mkdir(parents=True, exist_ok=True)
+        return directory
+
+    def report_context(self, project_id: int, state: dict[str, Any]) -> dict[str, Any]:
+        """Deliver state plus the RICE backlog, board, empathy map and interview validation."""
         from .develop import develop_state
-        from .report import markdown_html, prototype_svg, report_markdown, write_pdf
         from .validate import summarize as summarize_validation
 
         validation = self.db.get_validation(project_id)
-        context = {
+        return {
             **state,
             "features": [f for f in develop_state(self.db, project_id)["features"] if f["priority"] != "wont"],
             "board": self.db.get_document(project_id, "board"),
             "empathy": self.db.get_document(project_id, "empathy"),
             "validation": summarize_validation(validation) if validation else None,
         }
+
+    async def report(self, project_id: int, state: dict[str, Any], style: dict[str, Any], directory: Path) -> dict[str, Any]:
+        """Write the research report (Markdown, HTML and PDF when Chromium is available) and the prototype SVG."""
+        from .report import markdown_html, prototype_svg, report_markdown, write_pdf
+
+        context = self.report_context(project_id, state)
         markdown = report_markdown(context)
         (directory / "raport.md").write_text(markdown, encoding="utf-8")
         html_path = directory / "raport.html"
