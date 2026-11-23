@@ -212,7 +212,7 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
       >
         <span
           className="tracking-[0.14em] text-haze"
-          style={{ fontSize: u(5.2) }}
+          style={{ fontSize: "var(--text-small)" }}
         >
           {t("HIPOTEZY DO SPRAWDZENIA")}
         </span>
@@ -241,13 +241,13 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
                 }}
               >
                 <div className="flex items-center" style={{ gap: u(4) }}>
-                  <span className="text-haze" style={{ fontSize: u(4.6) }}>
+                  <span className="text-haze" style={{ fontSize: "var(--text-small)" }}>
                     {KIND_LABELS[h.kind]}
                   </span>
                   <span
                     className="ml-auto rounded-full"
                     style={{
-                      fontSize: u(4.6),
+                      fontSize: "var(--text-small)",
                       padding: `${u(1)} ${u(4)}`,
                       background: status.background,
                       color: status.color,
@@ -259,7 +259,7 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
                 <div
                   className="text-ink"
                   style={{
-                    fontSize: u(6.4),
+                    fontSize: "var(--text-body)",
                     lineHeight: 1.35,
                     marginTop: u(3),
                   }}
@@ -270,7 +270,7 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
                   <div
                     className="text-mauve"
                     style={{
-                      fontSize: u(5.4),
+                      fontSize: "var(--text-small)",
                       lineHeight: 1.4,
                       marginTop: u(4),
                     }}
@@ -303,7 +303,7 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
         <div className="flex items-center">
           <span
             className="tracking-[0.14em] text-haze"
-            style={{ fontSize: u(5.2) }}
+            style={{ fontSize: "var(--text-small)" }}
           >
             {t("SKRYPT WYWIADU · MOM TEST")}
           </span>
@@ -312,7 +312,7 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
             disabled={!state?.questions.length}
             onClick={copy}
             className="ml-auto flex items-center text-plum hover:underline"
-            style={{ fontSize: u(5.4), gap: u(2) }}
+            style={{ fontSize: "var(--text-small)", gap: u(2) }}
           >
             {copied ? (
               <Check style={{ width: u(6), height: u(6) }} />
@@ -325,7 +325,7 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
         <ol
           className="pf-scroll min-h-0 list-decimal overflow-y-auto text-mauve"
           style={{
-            fontSize: u(5.6),
+            fontSize: "var(--text-small)",
             lineHeight: 1.45,
             paddingLeft: u(10),
             maxHeight: u(48),
@@ -338,7 +338,7 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
         <div style={{ height: u(0.5), background: "#efe8f5" }} />
         <span
           className="tracking-[0.14em] text-haze"
-          style={{ fontSize: u(5.2) }}
+          style={{ fontSize: "var(--text-small)" }}
         >
           {t("DODAJ WYWIAD")}
         </span>
@@ -347,7 +347,7 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
           onChange={(e) => setPerson(e.target.value)}
           placeholder={t("Kto (imię, rola)")}
           className="select-text rounded-md border border-[#eadff3] bg-white text-ink outline-none focus:border-pink"
-          style={{ fontSize: u(6), padding: `${u(3)} ${u(5)}` }}
+          style={{ fontSize: "var(--text-small)", padding: `${u(3)} ${u(5)}` }}
         />
         <textarea
           value={notes}
@@ -356,7 +356,7 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
             "Wklej notatki lub transkrypcję. Liczą się fakty z przeszłości rozmówcy, nie komplementy.",
           )}
           className="pf-scroll min-h-0 flex-1 select-text resize-none rounded-md border border-[#eadff3] bg-white text-ink outline-none focus:border-pink"
-          style={{ fontSize: u(5.8), padding: u(5), lineHeight: 1.4 }}
+          style={{ fontSize: "var(--text-small)", padding: u(5), lineHeight: 1.4 }}
         />
         <button
           type="button"
@@ -367,9 +367,9 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
             !state?.hypotheses.length
           }
           onClick={analyse}
-          className="flex items-center justify-center rounded-md text-white disabled:opacity-40"
+          className="flex items-center justify-center rounded-md text-on-pink disabled:opacity-40"
           style={{
-            fontSize: u(6.2),
+            fontSize: "var(--text-small)",
             height: u(17),
             gap: u(3),
             background: "var(--color-pink)",
@@ -387,7 +387,7 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
                 key={i.id}
                 className="flex items-center rounded-full bg-[#f3ecfa] text-mauve"
                 style={{
-                  fontSize: u(4.8),
+                  fontSize: "var(--text-small)",
                   padding: `${u(1.5)} ${u(4)}`,
                   gap: u(2),
                 }}

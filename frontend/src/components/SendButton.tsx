@@ -29,8 +29,8 @@ export function SendButton({ size, disabled }: Props) {
       >
         <path
           d="M2.6 2.8 L18 10 L2.6 17.2 L6.6 10 Z"
-          fill="#ffffff"
-          stroke="#ffffff"
+          fill="var(--color-on-pink)"
+          stroke="var(--color-on-pink)"
           strokeWidth="1.2"
           strokeLinejoin="round"
         />

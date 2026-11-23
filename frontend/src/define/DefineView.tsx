@@ -298,7 +298,7 @@ export function DefineView({ projectId, onBack, onDone, notify }: Props) {
             type="button"
             onClick={() => run("personas")}
             className="absolute left-1/2 -translate-x-1/2 text-plum underline"
-            style={{ top: u(250), fontSize: u(7) }}
+            style={{ top: u(250), fontSize: "var(--text-body)" }}
           >
             {t("Wygeneruj persony")}
           </button>
@@ -375,7 +375,7 @@ export function DefineView({ projectId, onBack, onDone, notify }: Props) {
           type="button"
           onClick={() => run("problems")}
           className="absolute left-1/2 -translate-x-1/2 text-plum underline"
-          style={{ top: u(250), fontSize: u(7) }}
+          style={{ top: u(250), fontSize: "var(--text-body)" }}
         >
           {t("Sformułuj problemy")}
         </button>

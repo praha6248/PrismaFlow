@@ -41,7 +41,7 @@ export function PersonaCard({
           style={{
             width: u(24),
             height: u(24),
-            fontSize: u(11),
+            fontSize: "var(--text-title)",
             background: AVATAR_COLORS[index % AVATAR_COLORS.length],
           }}
         >
@@ -50,13 +50,13 @@ export function PersonaCard({
         <div className="min-w-0" style={{ marginLeft: u(7) }}>
           <div
             className="truncate text-ink"
-            style={{ fontSize: u(9.3), lineHeight: 1.1 }}
+            style={{ fontSize: "var(--text-body)", lineHeight: 1.1 }}
           >
             {persona.name}, {persona.age} {yearsLabel(persona.age)}
           </div>
           <div
             className="truncate text-haze"
-            style={{ fontSize: u(5.2), marginTop: u(2.5), lineHeight: 1.1 }}
+            style={{ fontSize: "var(--text-small)", marginTop: u(2.5), lineHeight: 1.1 }}
           >
             {persona.role}
           </div>
@@ -69,7 +69,7 @@ export function PersonaCard({
           left: u(12),
           right: u(12),
           top: u(46),
-          fontSize: u(10.9),
+          fontSize: "var(--text-title)",
           lineHeight: u(14.2),
         }}
         title={persona.quote}
@@ -89,9 +89,9 @@ export function PersonaCard({
       />
       <div
         className="absolute tracking-[0.14em] text-haze"
-        style={{ left: u(12), top: u(121.7), fontSize: u(5.2), lineHeight: 1 }}
+        style={{ left: u(12), top: u(121.7), fontSize: "var(--text-small)", lineHeight: 1 }}
       >
-        {t("WYBIERZ GŁÓWNY PROBLEM")}
+        {t("GŁÓWNY PROBLEM")}
       </div>
       <EvidenceBadge
         evidence={persona.evidence ?? []}
@@ -124,7 +124,7 @@ export function PersonaCard({
             <Radio checked={checked} size={8.5} />
             <span
               className="line-clamp-2 text-mauve"
-              style={{ fontSize: u(6.2), lineHeight: u(7.8) }}
+              style={{ fontSize: "var(--text-small)", lineHeight: u(7.8) }}
               title={option}
             >
               {option}

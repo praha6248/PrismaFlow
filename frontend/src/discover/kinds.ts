@@ -13,31 +13,31 @@ export const KIND_STYLES: Record<NodeKind, KindStyle> = {
     label: t("nisza"),
     gradient: "linear-gradient(140deg, #ee8bdc 0%, #e48ce6 45%, #d58ff1 100%)",
     badgeBg: "#fbd7f5",
-    badgeText: "#d14fc0",
+    badgeText: "#aa2c99",
   },
   idea: {
     label: t("pomysł"),
     gradient: "linear-gradient(150deg, #b98cee 0%, #a88bee 50%, #958aed 100%)",
     badgeBg: "#e5d3f8",
-    badgeText: "#9e4eef",
+    badgeText: "#821bea",
   },
   target_group: {
     label: t("grupa docelowa"),
     gradient: "linear-gradient(140deg, #8fc1ef 0%, #b0c6f6 50%, #d3ccfb 100%)",
     badgeBg: "#d2e5f9",
-    badgeText: "#4c98e5",
+    badgeText: "#1a66b3",
   },
   pain_point: {
     label: t("problem"),
     gradient: "linear-gradient(150deg, #f167e2 0%, #f34fbd 50%, #f6449a 100%)",
     badgeBg: "#ffd0ec",
-    badgeText: "#fc4aa1",
+    badgeText: "#be035f",
   },
   competitor: {
     label: t("konkurencja"),
     gradient: "linear-gradient(145deg, #fdb68a 0%, #fb9c98 55%, #f68aa9 100%)",
     badgeBg: "#ffe0d0",
-    badgeText: "#e3743c",
+    badgeText: "#ab4a19",
   },
 };
 

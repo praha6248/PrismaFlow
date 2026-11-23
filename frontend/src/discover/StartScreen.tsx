@@ -37,7 +37,7 @@ export function StartScreen({ leaving, busy, onSubmit }: Props) {
         className="absolute inset-x-0 text-center font-serif font-normal text-ink"
         style={{
           top: `calc(${offset} + var(--u) * 248.5)`,
-          fontSize: "calc(var(--u) * 18.6)",
+          fontSize: "var(--text-title)",
           lineHeight: 1,
         }}
       >
@@ -62,11 +62,11 @@ export function StartScreen({ leaving, busy, onSubmit }: Props) {
           placeholder={t("Wpisz myśl przewodnią…")}
           maxLength={80}
           autoFocus
-          className="h-full w-full bg-transparent text-mauve outline-none placeholder:text-[#c5c5c5]"
+          className="h-full w-full bg-transparent text-mauve outline-none placeholder:text-haze"
           style={{
             paddingLeft: "calc(var(--u) * 7)",
             paddingRight: "calc(var(--u) * 28)",
-            fontSize: "calc(var(--u) * 7.3)",
+            fontSize: "var(--text-body)",
           }}
         />
         <div

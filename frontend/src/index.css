@@ -7,19 +7,25 @@
   --color-ink: #101010;
   --color-plum: #573476;
   --color-mauve: #674e78;
-  --color-haze: #aa9fb2;
+  --color-haze: #72647d;
   --color-pink: #f783e9;
-  --color-pink-deep: #ed34d8;
+  --color-pink-deep: #eb21d4;
   --color-pink-soft: #fed3f9;
   --color-pink-line: #fcdbfb;
   --color-lilac-card: #f8f4ff;
-  --color-muted: #7c6d88;
+  --color-muted: #72647d;
+  --color-on-pink: #4a2468;
+  --color-pink-text: #a0388f;
+  --color-bubble-text: #3d1d5a;
   --color-error: #9b2c2c;
   --color-success: #2b6a45;
 }
 
 :root {
   --u: min(calc(100vw / 672), calc(100vh / 477));
+  --text-small: calc(var(--u) * 6);
+  --text-body: calc(var(--u) * 7);
+  --text-title: calc(var(--u) * 14);
   --card-left: calc(var(--u) * 14);
   --card-top: calc(var(--u) * 19);
   --card-right: calc(var(--u) * 14);
@@ -192,7 +198,7 @@ button {
   --color-pink-line: #f6b0ee;
   --color-plum: #4a2468;
   --color-mauve: #5a3d73;
-  --color-haze: #8a7d97;
+  --color-haze: #66587a;
   --color-muted: #66587a;
 }
 

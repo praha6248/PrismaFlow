@@ -39,9 +39,9 @@ export function EvidenceBadge({ evidence, style }: Props) {
         style={{
           gap: u(2.5),
           padding: `${u(2)} ${u(5)}`,
-          fontSize: u(5),
+          fontSize: "var(--text-small)",
           background: empty ? "#f6f0f3" : open ? "var(--color-pink)" : "#fbe3f7",
-          color: empty ? "#b18a9c" : open ? "#ffffff" : "#a3358f",
+          color: empty ? "var(--color-haze)" : open ? "var(--color-on-pink)" : "var(--color-pink-text)",
         }}
         title={
           empty
@@ -69,7 +69,7 @@ export function EvidenceBadge({ evidence, style }: Props) {
         >
           <div
             className="tracking-[0.12em] text-haze"
-            style={{ fontSize: u(4.6), marginBottom: u(4) }}
+            style={{ fontSize: "var(--text-small)", marginBottom: u(4) }}
           >
             {t("NA PODSTAWIE")}
           </div>
@@ -81,12 +81,12 @@ export function EvidenceBadge({ evidence, style }: Props) {
                 borderTop: `${u(0.5)} solid #f2ebf7`,
               }}
             >
-              <div className="text-haze" style={{ fontSize: u(4.4) }}>
+              <div className="text-haze" style={{ fontSize: "var(--text-small)" }}>
                 {sourceLabel(item)}
               </div>
               <div
                 className="text-ink"
-                style={{ fontSize: u(5.6), lineHeight: 1.35 }}
+                style={{ fontSize: "var(--text-small)", lineHeight: 1.35 }}
                 title={item.url ?? undefined}
               >
                 {item.title}

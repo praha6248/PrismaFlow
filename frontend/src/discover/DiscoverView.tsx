@@ -253,7 +253,7 @@ export function DiscoverView({
           className="pf-fade pointer-events-none absolute inset-x-0 z-10 text-center font-serif font-normal text-plum"
           style={{
             top: "calc(var(--u) * 104.2)",
-            fontSize: "calc(var(--u) * 15)",
+            fontSize: "var(--text-title)",
             lineHeight: 1,
           }}
         >
@@ -277,7 +277,7 @@ export function DiscoverView({
             padding: "calc(var(--u) * 6) calc(var(--u) * 12)",
             background: "#fdfcfe",
             color: "#853c77",
-            fontSize: "calc(var(--u) * 7)",
+            fontSize: "var(--text-body)",
             boxShadow:
               "0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(196, 160, 232, 0.28)",
           }}

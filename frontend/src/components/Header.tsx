@@ -35,7 +35,7 @@ export function Header({ active, reached, onHome, onNavigate }: Props) {
           className="font-serif text-ink"
           style={{
             marginLeft: "calc(var(--u) * 7.5)",
-            fontSize: "calc(var(--u) * 14.6)",
+            fontSize: "var(--text-title)",
             lineHeight: 1,
           }}
         >
@@ -90,7 +90,7 @@ export function Header({ active, reached, onHome, onNavigate }: Props) {
             >
               <span
                 className={locked ? "cursor-not-allowed text-ink" : "text-ink"}
-                style={{ fontSize: "calc(var(--u) * 11)", lineHeight: 1 }}
+                style={{ fontSize: "var(--text-body)", lineHeight: 1 }}
               >
                 {phase}
               </span>
@@ -120,7 +120,7 @@ export function Header({ active, reached, onHome, onNavigate }: Props) {
                 )}
                 {done && (
                   <Check
-                    color="#ffffff"
+                    color="var(--color-on-pink)"
                     strokeWidth={3}
                     style={{
                       width: "calc(var(--u) * 8)",

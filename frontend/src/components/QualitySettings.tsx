@@ -24,7 +24,7 @@ export function QualityButton({ onShowSetup }: { onShowSetup: () => void }) {
       >
         <div
           className="flex rounded-full bg-[#f3ecfa]"
-          style={{ padding: u(1.5), fontSize: u(5) }}
+          style={{ padding: u(1.5), fontSize: "var(--text-small)" }}
           role="group"
           aria-label={t("Język interfejsu")}
         >
@@ -52,9 +52,9 @@ export function QualityButton({ onShowSetup }: { onShowSetup: () => void }) {
           style={{
             gap: u(3),
             padding: `${u(3)} ${u(7)}`,
-            fontSize: u(5.6),
+            fontSize: "var(--text-small)",
             background: state?.enabled ? "var(--color-pink)" : "#f3ecfa",
-            color: state?.enabled ? "#ffffff" : "var(--color-mauve)",
+            color: state?.enabled ? "var(--color-on-pink)" : "var(--color-mauve)",
           }}
           title={t("Tryb jakości: Claude zamiast lokalnego modelu")}
         >
@@ -124,7 +124,7 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
         }}
       >
         <div className="flex items-center">
-          <span className="font-serif text-plum" style={{ fontSize: u(13) }}>
+          <span className="font-serif text-plum" style={{ fontSize: "var(--text-title)" }}>
             {t("Tryb jakości")}
           </span>
           <button
@@ -136,7 +136,7 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
             <X style={{ width: u(9), height: u(9) }} />
           </button>
         </div>
-        <p className="text-mauve" style={{ fontSize: u(6), lineHeight: 1.5 }}>
+        <p className="text-mauve" style={{ fontSize: "var(--text-small)", lineHeight: 1.5 }}>
           {t(
             "Problemy, persony, backlog i flow generuje {model} zamiast lokalnej Gemmy. Odpowiedzi nadal muszą cytować zebrane dowody. Gdy Claude jest niedostępny, aplikacja wraca do modelu lokalnego.",
             { model: state?.model ?? "Claude" },
@@ -145,7 +145,7 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
         <p
           className="rounded-md text-[#8a4a7e]"
           style={{
-            fontSize: u(5.4),
+            fontSize: "var(--text-small)",
             lineHeight: 1.5,
             padding: u(6),
             background: "#fdf0fa",
@@ -158,7 +158,7 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
 
         <label
           className="flex flex-col text-haze"
-          style={{ fontSize: u(5), gap: u(3) }}
+          style={{ fontSize: "var(--text-small)", gap: u(3) }}
         >
           {t("KLUCZ API ANTHROPIC")} {state?.has_key ? t("· zapisany") : ""}
           <input
@@ -170,12 +170,12 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
               state?.has_key ? t("Wpisz nowy, aby zastąpić") : "sk-ant-…"
             }
             className="select-text rounded-md border border-[#eadff3] bg-white text-ink outline-none focus:border-pink"
-            style={{ fontSize: u(6.4), padding: `${u(5)} ${u(6)}` }}
+            style={{ fontSize: "var(--text-body)", padding: `${u(5)} ${u(6)}` }}
           />
         </label>
 
         {error && (
-          <span className="text-[#b3261e]" style={{ fontSize: u(5.4) }}>
+          <span className="text-error" style={{ fontSize: "var(--text-small)" }}>
             {error}
           </span>
         )}
@@ -188,7 +188,7 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
             type="button"
             onClick={onShowSetup}
             className="text-haze underline hover:text-plum"
-            style={{ fontSize: u(5.6) }}
+            style={{ fontSize: "var(--text-small)" }}
           >
             {t("Modele lokalne")}
           </button>
@@ -198,7 +198,7 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
               disabled={busy}
               onClick={() => save(false, "")}
               className="text-haze hover:text-plum"
-              style={{ fontSize: u(5.6) }}
+              style={{ fontSize: "var(--text-small)" }}
             >
               {t("Usuń klucz")}
             </button>
@@ -211,7 +211,7 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
                 onClick={() => save(false)}
                 className="rounded-md"
                 style={{
-                  fontSize: u(6.4),
+                  fontSize: "var(--text-body)",
                   padding: `${u(5)} ${u(12)}`,
                   background: "#f3ecfa",
                   color: "#573476",
@@ -224,9 +224,9 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
                 type="button"
                 disabled={busy || (!key && !state?.has_key)}
                 onClick={() => save(true, key || undefined)}
-                className="rounded-md text-white disabled:opacity-40"
+                className="rounded-md text-on-pink disabled:opacity-40"
                 style={{
-                  fontSize: u(6.4),
+                  fontSize: "var(--text-body)",
                   padding: `${u(5)} ${u(12)}`,
                   background: "var(--color-pink)",
                 }}

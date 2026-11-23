@@ -119,7 +119,7 @@ function Column({
           height: u(15),
           padding: `0 ${u(6)}`,
           borderRadius: u(4.5),
-          fontSize: u(8.2),
+          fontSize: "var(--text-body)",
           background: style.background,
           color: style.color,
         }}
@@ -128,13 +128,13 @@ function Column({
       </span>
       <span
         className="absolute text-haze"
-        style={{ left: u(112), top: u(10.5), fontSize: u(7) }}
+        style={{ left: u(112), top: u(10.5), fontSize: "var(--text-body)" }}
       >
         {features.length}
       </span>
       <span
         className="absolute text-haze"
-        style={{ left: u(8), top: u(27.4), fontSize: u(5.6) }}
+        style={{ left: u(8), top: u(27.4), fontSize: "var(--text-small)" }}
       >
         {style.hint}
       </span>
@@ -170,7 +170,7 @@ function Column({
               marginTop: features.length ? u(CARD_GAP) : 0,
               borderRadius: u(5.5),
               border: `${u(0.7)} dashed #dccfe6`,
-              fontSize: u(5.8),
+              fontSize: "var(--text-small)",
               lineHeight: 1.5,
               padding: `0 ${u(14)}`,
             }}
@@ -231,7 +231,7 @@ function AddFeatureForm({ onSubmit, onClose }: AddFormProps) {
         onChange={(e) => setTitle(e.target.value)}
         placeholder={t("Nazwa funkcji")}
         className="rounded bg-[#f7f3fb] text-ink outline-none placeholder:text-haze"
-        style={{ height: u(17), padding: `0 ${u(6)}`, fontSize: u(7.4) }}
+        style={{ height: u(17), padding: `0 ${u(6)}`, fontSize: "var(--text-body)" }}
       />
       <input
         value={description}
@@ -239,7 +239,7 @@ function AddFeatureForm({ onSubmit, onClose }: AddFormProps) {
         onChange={(e) => setDescription(e.target.value)}
         placeholder={t("Co daje użytkownikowi?")}
         className="rounded bg-[#f7f3fb] text-mauve outline-none placeholder:text-haze"
-        style={{ height: u(15), padding: `0 ${u(6)}`, fontSize: u(6.4) }}
+        style={{ height: u(15), padding: `0 ${u(6)}`, fontSize: "var(--text-body)" }}
       />
       <div className="flex items-center" style={{ gap: u(4) }}>
         {COLUMNS.map((column) => (
@@ -252,7 +252,7 @@ function AddFeatureForm({ onSubmit, onClose }: AddFormProps) {
               height: u(12),
               padding: `0 ${u(6)}`,
               borderRadius: u(3.5),
-              fontSize: u(6),
+              fontSize: "var(--text-small)",
               background: PRIORITY_STYLES[column].background,
               color: PRIORITY_STYLES[column].color,
               boxShadow:
@@ -266,19 +266,19 @@ function AddFeatureForm({ onSubmit, onClose }: AddFormProps) {
           type="button"
           onClick={onClose}
           className="ml-auto text-haze"
-          style={{ fontSize: u(6.4) }}
+          style={{ fontSize: "var(--text-body)" }}
         >
           {t("Anuluj")}
         </button>
         <button
           type="submit"
           disabled={!title.trim() || busy}
-          className="text-white disabled:opacity-50"
+          className="text-on-pink disabled:opacity-50"
           style={{
             height: u(14),
             padding: `0 ${u(8)}`,
             borderRadius: u(5),
-            fontSize: u(6.6),
+            fontSize: "var(--text-body)",
             background: "var(--color-pink)",
           }}
         >
@@ -486,13 +486,13 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
       <div className="pf-fade absolute" style={{ left: u(25.2), top: u(143) }}>
         <div
           className="font-serif text-plum"
-          style={{ fontSize: u(10), lineHeight: 1 }}
+          style={{ fontSize: "var(--text-title)", lineHeight: 1 }}
         >
           {t("Propozycje lokalnego LLM")}
         </div>
         <div
           className="text-haze"
-          style={{ fontSize: u(5.8), marginTop: u(5) }}
+          style={{ fontSize: "var(--text-small)", marginTop: u(5) }}
         >
           {t("Przeciągnij karty między kolumnami MoSCoW.")}
         </div>
@@ -510,7 +510,7 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
           height: u(22),
           gap: u(3),
           borderRadius: u(7),
-          fontSize: u(7),
+          fontSize: "var(--text-body)",
           background: "#fde3f9",
           color: "#a0388f",
         }}
@@ -529,7 +529,7 @@ export function DevelopView({ projectId, onDone, notify }: Props) {
           width: u(110),
           height: u(22),
           borderRadius: u(7),
-          fontSize: u(7),
+          fontSize: "var(--text-body)",
           background: "#e7d8f8",
           color: "#573476",
           boxShadow: SHADOW,

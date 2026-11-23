@@ -64,7 +64,7 @@ function SectionTitle({ children }: { children: string }) {
     <div
       className="uppercase text-haze"
       style={{
-        fontSize: "calc(var(--u) * 5.4)",
+        fontSize: "var(--text-small)",
         letterSpacing: "0.08em",
         marginBottom: "calc(var(--u) * 4)",
       }}
@@ -115,7 +115,7 @@ export function EvidenceDrawer({
         backdropFilter: "blur(10px)",
         boxShadow:
           "0 calc(var(--u) * 4) calc(var(--u) * 18) rgba(180, 140, 225, 0.28)",
-        fontSize: "calc(var(--u) * 6.6)",
+        fontSize: "var(--text-body)",
       }}
     >
       <header
@@ -129,7 +129,7 @@ export function EvidenceDrawer({
             style={{
               background: style.badgeBg,
               color: style.badgeText,
-              fontSize: "calc(var(--u) * 5.6)",
+              fontSize: "var(--text-small)",
               padding: "calc(var(--u) * 1.5) calc(var(--u) * 6)",
             }}
           >
@@ -156,7 +156,7 @@ export function EvidenceDrawer({
         <h2
           className="font-serif text-plum"
           style={{
-            fontSize: "calc(var(--u) * 15)",
+            fontSize: "var(--text-title)",
             lineHeight: 1.1,
             marginTop: "calc(var(--u) * 6)",
           }}
@@ -240,7 +240,7 @@ export function EvidenceDrawer({
                         className="text-haze"
                         style={{
                           marginTop: "calc(var(--u) * 2)",
-                          fontSize: "calc(var(--u) * 5.6)",
+                          fontSize: "var(--text-small)",
                         }}
                       >
                         {t("{ratio}× zainteresowania hasłem „{anchor}”", {
@@ -272,7 +272,7 @@ export function EvidenceDrawer({
                         background: "#f8f4fc",
                         padding: "calc(var(--u) * 1.5) calc(var(--u) * 5)",
                         gap: "calc(var(--u) * 2.5)",
-                        fontSize: "calc(var(--u) * 5.8)",
+                        fontSize: "var(--text-small)",
                       }}
                     >
                       <Search
@@ -328,7 +328,7 @@ export function EvidenceDrawer({
                         className="mt-0.5 inline-flex items-center text-haze hover:text-mauve"
                         style={{
                           gap: "calc(var(--u) * 2)",
-                          fontSize: "calc(var(--u) * 5.4)",
+                          fontSize: "var(--text-small)",
                         }}
                       >
                         {sourceLabel(quote.meta)} ·{" "}
@@ -383,7 +383,7 @@ export function EvidenceDrawer({
             disabled={busy}
             aria-label={t("Usuń węzeł")}
             title={t("Usuń węzeł")}
-            className="flex items-center justify-center text-haze transition-colors hover:text-[#fc4aa1] disabled:opacity-50"
+            className="flex items-center justify-center text-haze transition-colors hover:text-error disabled:opacity-50"
             style={{
               width: "calc(var(--u) * 20)",
               height: "calc(var(--u) * 20)",
@@ -404,7 +404,7 @@ function EnTag() {
     <span
       className="ml-1 inline-block rounded align-middle text-haze"
       style={{
-        fontSize: "calc(var(--u) * 4.2)",
+        fontSize: "var(--text-small)",
         padding: "0 calc(var(--u) * 2)",
         border: "1px solid #e4d6ec",
         lineHeight: 1.5,

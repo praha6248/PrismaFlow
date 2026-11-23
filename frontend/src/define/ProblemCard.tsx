@@ -16,7 +16,7 @@ function growthStyle(growth: number) {
   if (growth >= 5)
     return { background: "#efe6fb", color: "#6d4f8e", Icon: ArrowUpRight };
   if (growth <= -5)
-    return { background: "#f4f0f8", color: "#8a7d96", Icon: ArrowDownRight };
+    return { background: "#f4f0f8", color: "var(--color-haze)", Icon: ArrowDownRight };
   return { background: "#f2edf8", color: "var(--color-muted)", Icon: ArrowRight };
 }
 
@@ -45,7 +45,7 @@ export function ProblemCard({
       >
         <span
           className="tracking-[0.14em] text-haze"
-          style={{ fontSize: u(5.4), lineHeight: 1 }}
+          style={{ fontSize: "var(--text-small)", lineHeight: 1 }}
         >
           PROBLEM {String(index + 1).padStart(2, "0")}
         </span>
@@ -58,7 +58,7 @@ export function ProblemCard({
           left: u(12),
           right: u(12),
           top: u(29.5),
-          fontSize: u(13.2),
+          fontSize: "var(--text-title)",
           lineHeight: u(16.3),
         }}
         title={problem.title}
@@ -72,7 +72,7 @@ export function ProblemCard({
           left: u(12),
           right: u(12),
           top: u(65),
-          fontSize: u(6.4),
+          fontSize: "var(--text-body)",
           lineHeight: u(8.4),
           color: "var(--color-muted)",
         }}
@@ -95,13 +95,13 @@ export function ProblemCard({
       <div className="absolute" style={{ left: u(12), top: u(101) }}>
         <div
           className="font-serif text-ink"
-          style={{ fontSize: u(14.7), lineHeight: 1 }}
+          style={{ fontSize: "var(--text-title)", lineHeight: 1 }}
         >
           {trend?.available ? trend.index : "—"}
         </div>
         <div
           className="text-haze"
-          style={{ fontSize: u(4.8), marginTop: u(3), lineHeight: 1 }}
+          style={{ fontSize: "var(--text-small)", marginTop: u(3), lineHeight: 1 }}
         >
           {trend?.available
             ? "indeks Google Trends (0–100)"
@@ -119,7 +119,7 @@ export function ProblemCard({
             width: u(57),
             height: u(16),
             gap: u(2),
-            fontSize: u(7),
+            fontSize: "var(--text-body)",
             background: pill?.background ?? "#f1edf6",
             color: pill?.color ?? "#aa9fb2",
           }}
@@ -129,7 +129,7 @@ export function ProblemCard({
         </span>
         <span
           className="text-haze"
-          style={{ fontSize: u(4.8), marginTop: u(3), lineHeight: 1 }}
+          style={{ fontSize: "var(--text-small)", marginTop: u(3), lineHeight: 1 }}
         >
           3 mies. vs 9 mies.
         </span>
@@ -163,7 +163,7 @@ export function ProblemCard({
       </div>
       <div
         className="absolute text-haze"
-        style={{ left: u(12), top: u(162), fontSize: u(4.8), lineHeight: 1 }}
+        style={{ left: u(12), top: u(162), fontSize: "var(--text-small)", lineHeight: 1 }}
       >
         {t("Zainteresowanie w ostatnich 12 miesiącach")}
       </div>
@@ -179,7 +179,7 @@ export function ProblemCard({
             left: u(12),
             right: u(12),
             top: u(176),
-            fontSize: u(7.2),
+            fontSize: "var(--text-body)",
             lineHeight: u(9),
           }}
           title={

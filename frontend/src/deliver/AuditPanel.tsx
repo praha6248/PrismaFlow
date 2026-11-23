@@ -47,14 +47,14 @@ function Metric({
       <div className="flex items-start justify-between" style={{ gap: u(4) }}>
         <span
           className="text-ink"
-          style={{ fontSize: u(5.8), lineHeight: 1.25 }}
+          style={{ fontSize: "var(--text-small)", lineHeight: 1.25 }}
         >
           {title}
         </span>
         {value !== undefined && (
           <span
             className="font-serif text-ink"
-            style={{ fontSize: u(12), lineHeight: 0.9 }}
+            style={{ fontSize: "var(--text-title)", lineHeight: 0.9 }}
           >
             {value}
           </span>
@@ -63,7 +63,7 @@ function Metric({
       {children && (
         <div
           style={{
-            fontSize: u(4.6),
+            fontSize: "var(--text-small)",
             lineHeight: 1.45,
             color: "var(--color-muted)",
             marginTop: u(1.5),
@@ -182,13 +182,13 @@ export function AuditPanel({
       <div className="flex items-center justify-between">
         <span
           className="font-serif text-ink"
-          style={{ fontSize: u(10), lineHeight: 1 }}
+          style={{ fontSize: "var(--text-title)", lineHeight: 1 }}
         >
           {t("Audyt UX")}
         </span>
         <span
           className="flex items-center rounded-full bg-[#f3ecfa] text-mauve"
-          style={{ fontSize: u(4.8), padding: `${u(2)} ${u(5)}`, gap: u(2.5) }}
+          style={{ fontSize: "var(--text-small)", padding: `${u(2)} ${u(5)}`, gap: u(2.5) }}
         >
           <span
             className="rounded-full bg-pink"
@@ -201,7 +201,7 @@ export function AuditPanel({
           {t("Na żywo")}
         </span>
       </div>
-      <span className="text-haze" style={{ fontSize: u(4.8), marginTop: u(3) }}>
+      <span className="text-haze" style={{ fontSize: "var(--text-small)", marginTop: u(3) }}>
         {audit.screens} {plural(audit.screens, "ekran", "ekrany", "ekranów")} ·{" "}
         {t("analiza całego flow")}
       </span>
@@ -223,15 +223,15 @@ export function AuditPanel({
         >
           <div
             className="flex items-center text-ink"
-            style={{ gap: u(3), fontSize: u(5.8) }}
+            style={{ gap: u(3), fontSize: "var(--text-small)" }}
           >
             {issues.length ? (
               <AlertCircle
-                style={{ width: u(6), height: u(6), color: "#d65bc4" }}
+                style={{ width: u(6), height: u(6), color: "var(--color-pink-text)" }}
               />
             ) : (
               <CheckCircle2
-                style={{ width: u(6), height: u(6), color: "#3d9a5b" }}
+                style={{ width: u(6), height: u(6), color: "var(--color-success)" }}
               />
             )}
             {issues.length
@@ -243,7 +243,7 @@ export function AuditPanel({
             style={{
               gap: u(2),
               marginTop: u(2.5),
-              fontSize: u(4.8),
+              fontSize: "var(--text-small)",
               lineHeight: 1.4,
               color: "var(--color-muted)",
             }}
@@ -281,7 +281,7 @@ export function AuditPanel({
           onClick={() => setDetails((v) => !v)}
           aria-expanded={details}
           className="flex shrink-0 items-center text-mauve hover:text-plum"
-          style={{ gap: u(2), fontSize: u(5) }}
+          style={{ gap: u(2), fontSize: "var(--text-small)" }}
         >
           <ChevronDown
             style={{
@@ -445,7 +445,7 @@ export function AuditPanel({
 
         <span
           className="font-serif text-ink"
-          style={{ fontSize: u(7.5), marginTop: u(3) }}
+          style={{ fontSize: "var(--text-body)", marginTop: u(3) }}
         >
           {t("Asystent AI")}
         </span>
@@ -458,7 +458,7 @@ export function AuditPanel({
             height: u(17),
             gap: u(3),
             borderRadius: u(5),
-            fontSize: u(6.2),
+            fontSize: "var(--text-small)",
             background: "#e9dcf8",
             color: "#573476",
           }}
@@ -481,13 +481,13 @@ export function AuditPanel({
             <div className="min-w-0 flex-1">
               <div
                 className="text-ink"
-                style={{ fontSize: u(5.4), lineHeight: 1.3 }}
+                style={{ fontSize: "var(--text-small)", lineHeight: 1.3 }}
               >
                 {s.title}
               </div>
               <div
                 className="text-haze"
-                style={{ fontSize: u(4.4), lineHeight: 1.3, marginTop: u(1) }}
+                style={{ fontSize: "var(--text-small)", lineHeight: 1.3, marginTop: u(1) }}
               >
                 {s.reason}
               </div>
@@ -495,9 +495,9 @@ export function AuditPanel({
             <button
               type="button"
               onClick={() => onAccept(s)}
-              className="flex shrink-0 items-center rounded text-white"
+              className="flex shrink-0 items-center rounded text-on-pink"
               style={{
-                fontSize: u(5),
+                fontSize: "var(--text-small)",
                 padding: `${u(2.5)} ${u(4)}`,
                 gap: u(1.5),
                 background: "var(--color-pink)",
@@ -522,7 +522,7 @@ export function AuditPanel({
         type="button"
         onClick={onHandoff}
         disabled={handoffBusy || audit.screens === 0}
-        className="flex shrink-0 flex-col items-center justify-center text-white transition-transform enabled:hover:scale-[1.01] enabled:active:scale-[0.98] disabled:opacity-60"
+        className="flex shrink-0 flex-col items-center justify-center text-on-pink transition-transform enabled:hover:scale-[1.01] enabled:active:scale-[0.98] disabled:opacity-60"
         style={{
           marginTop: u(6),
           height: u(30),
@@ -531,10 +531,10 @@ export function AuditPanel({
           boxShadow: `0 ${u(1.5)} ${u(6)} rgba(240, 110, 220, 0.35)`,
         }}
       >
-        <span style={{ fontSize: u(8.4), lineHeight: 1.1 }}>
+        <span style={{ fontSize: "var(--text-body)", lineHeight: 1.1 }}>
           {handoffBusy ? t("Generuję…") : t("Generuj Handoff")}
         </span>
-        <span style={{ fontSize: u(4.8), opacity: 0.9, marginTop: u(1.5) }}>
+        <span style={{ fontSize: "var(--text-small)", opacity: 0.9, marginTop: u(1.5) }}>
           Figma + Claude
         </span>
       </button>

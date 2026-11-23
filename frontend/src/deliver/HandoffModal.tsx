@@ -48,7 +48,7 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
         }}
       >
         <div className="flex items-center">
-          <span className="font-serif text-plum" style={{ fontSize: u(14) }}>
+          <span className="font-serif text-plum" style={{ fontSize: "var(--text-title)" }}>
             {t("Handoff Pack")}
           </span>
           <div
@@ -67,10 +67,10 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
                 onClick={() => setTab(key)}
                 className="rounded-full transition-colors"
                 style={{
-                  fontSize: u(6.2),
+                  fontSize: "var(--text-small)",
                   padding: `${u(3)} ${u(9)}`,
                   background: tab === key ? "var(--color-pink)" : "transparent",
-                  color: tab === key ? "#ffffff" : "var(--color-mauve)",
+                  color: tab === key ? "var(--color-on-pink)" : "var(--color-mauve)",
                 }}
               >
                 {label}
@@ -94,7 +94,7 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
             padding: u(10),
             borderRadius: u(7),
             background: "#f7f3fb",
-            fontSize: u(5.8),
+            fontSize: "var(--text-small)",
             lineHeight: 1.55,
             fontFamily: "Montserrat, sans-serif",
           }}
@@ -107,7 +107,7 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
         >
           <span
             className="min-w-0 flex-1 truncate text-haze"
-            style={{ fontSize: u(5.2) }}
+            style={{ fontSize: "var(--text-small)" }}
             title={handoff.directory}
           >
             {t("Zapisano:")} {handoff.directory}
@@ -117,7 +117,7 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
             onClick={onRestart}
             className="flex items-center transition-colors hover:bg-[#e9dcf8]"
             style={{
-              fontSize: u(6.6),
+              fontSize: "var(--text-body)",
               padding: `${u(5)} ${u(12)}`,
               borderRadius: u(6),
               gap: u(3),
@@ -131,9 +131,9 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
           <button
             type="button"
             onClick={copy}
-            className="flex items-center text-white"
+            className="flex items-center text-on-pink"
             style={{
-              fontSize: u(6.6),
+              fontSize: "var(--text-body)",
               padding: `${u(5)} ${u(12)}`,
               borderRadius: u(6),
               gap: u(3),

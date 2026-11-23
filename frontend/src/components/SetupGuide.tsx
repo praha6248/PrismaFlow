@@ -37,7 +37,7 @@ function CopyCommand({ command }: { command: string }) {
     >
       <code
         className="min-w-0 flex-1 select-text break-all"
-        style={{ fontSize: u(5.2) }}
+        style={{ fontSize: "var(--text-small)" }}
       >
         {command}
       </code>
@@ -70,23 +70,23 @@ function Step({
     <div className="flex" style={{ gap: u(5) }}>
       {done ? (
         <Check
-          className="shrink-0 text-[#3d9a5b]"
+          className="shrink-0 text-success"
           style={{ width: u(8), height: u(8) }}
         />
       ) : (
         <CircleDashed
-          className="shrink-0 text-[#d65bc4]"
+          className="shrink-0 text-pink-text"
           style={{ width: u(8), height: u(8) }}
         />
       )}
       <div className="min-w-0 flex-1">
-        <div className="text-ink" style={{ fontSize: u(6.4), lineHeight: 1.3 }}>
+        <div className="text-ink" style={{ fontSize: "var(--text-body)", lineHeight: 1.3 }}>
           {title}
         </div>
         {children && (
           <div
             className="text-mauve"
-            style={{ fontSize: u(5.4), lineHeight: 1.45, marginTop: u(1.5) }}
+            style={{ fontSize: "var(--text-small)", lineHeight: 1.45, marginTop: u(1.5) }}
           >
             {children}
           </div>
@@ -149,7 +149,7 @@ export function SetupGuide({ state, onRefresh, onClose }: Props) {
         }}
       >
         <div className="flex items-center">
-          <span className="font-serif text-plum" style={{ fontSize: u(13) }}>
+          <span className="font-serif text-plum" style={{ fontSize: "var(--text-title)" }}>
             {state?.ready ? t("Modele lokalne") : t("Zanim zaczniesz")}
           </span>
           <button
@@ -161,7 +161,7 @@ export function SetupGuide({ state, onRefresh, onClose }: Props) {
             <X style={{ width: u(9), height: u(9) }} />
           </button>
         </div>
-        <p className="text-mauve" style={{ fontSize: u(6), lineHeight: 1.5 }}>
+        <p className="text-mauve" style={{ fontSize: "var(--text-small)", lineHeight: 1.5 }}>
           {t(
             "PrismaFlow działa na Twoim komputerze. Tekst generuje lokalny model w Ollamie, więc dane nie opuszczają dysku.",
           )}
@@ -185,7 +185,7 @@ export function SetupGuide({ state, onRefresh, onClose }: Props) {
                 href={state?.ollama.download ?? "https://ollama.com/download"}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[#c03fae] underline"
+                className="text-pink-text underline"
               >
                 ollama.com/download
               </a>
@@ -206,7 +206,7 @@ export function SetupGuide({ state, onRefresh, onClose }: Props) {
               href={model.source}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center text-[#c03fae] underline"
+              className="inline-flex items-center text-pink-text underline"
               style={{ gap: u(1) }}
             >
               {t("Źródło")}
@@ -220,7 +220,7 @@ export function SetupGuide({ state, onRefresh, onClose }: Props) {
           className="flex items-center"
           style={{ gap: u(6), marginTop: u(2) }}
         >
-          <span className="text-haze" style={{ fontSize: u(5) }}>
+          <span className="text-haze" style={{ fontSize: "var(--text-small)" }}>
             {t(
               "Nie chcesz pobierać modeli? Włącz tryb jakości z własnym kluczem Claude.",
             )}
@@ -229,9 +229,9 @@ export function SetupGuide({ state, onRefresh, onClose }: Props) {
             type="button"
             onClick={check}
             disabled={checking}
-            className="ml-auto flex shrink-0 items-center rounded-md text-white disabled:opacity-60"
+            className="ml-auto flex shrink-0 items-center rounded-md text-on-pink disabled:opacity-60"
             style={{
-              fontSize: u(6.4),
+              fontSize: "var(--text-body)",
               padding: `${u(5)} ${u(10)}`,
               gap: u(3),
               background: "var(--color-pink)",

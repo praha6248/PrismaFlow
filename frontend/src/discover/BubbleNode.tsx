@@ -64,7 +64,7 @@ function BubbleNodeView({ data }: NodeProps<BubbleFlowNode>) {
         style={{ animationDelay: `${delay}ms` }}
       >
         <div
-          className="flex h-full w-full cursor-pointer items-center justify-center rounded-full text-center text-white transition-[box-shadow,transform] duration-300 ease-out hover:scale-[1.04]"
+          className="flex h-full w-full cursor-pointer items-center justify-center rounded-full text-center text-bubble-text transition-[box-shadow,transform] duration-300 ease-out hover:scale-[1.04]"
           style={{
             background: style.gradient,
             boxShadow: [
@@ -119,7 +119,7 @@ function BubbleNodeView({ data }: NodeProps<BubbleFlowNode>) {
               transform: "translateX(-50%)",
               background: style.badgeBg,
               color: style.badgeText,
-              fontSize: 6.4,
+              fontSize: 7.5,
               lineHeight: "13px",
               height: 13,
               padding: "0 7px",

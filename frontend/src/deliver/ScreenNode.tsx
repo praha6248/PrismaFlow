@@ -180,7 +180,7 @@ function ElementRow({
             })
           }
           className="nodrag cursor-pointer appearance-none bg-transparent text-right text-haze outline-none"
-          style={{ fontSize: 7 }}
+          style={{ fontSize: 7.5 }}
         >
           {Object.entries(TYPE_LABELS).map(([key, label]) => (
             <option key={key} value={key}>
@@ -223,7 +223,7 @@ function ElementRow({
         {(element.type === "list" || element.type === "select") && (
           <label
             className="flex items-center text-haze"
-            style={{ fontSize: 7, gap: 2 }}
+            style={{ fontSize: 7.5, gap: 2 }}
             title={t("Ile opcji widać naraz")}
           >
             <input
@@ -275,7 +275,7 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
         : String(index + 1).padStart(2, "0");
   const tagStyle =
     screen.kind === "goal"
-      ? { background: "#dff3e4", color: "#3d7a50" }
+      ? { background: "#dff3e4", color: "var(--color-success)" }
       : screen.kind === "start"
         ? { background: "#f3ecfa", color: "var(--color-muted)" }
         : { background: "#f3ecfa", color: "var(--color-muted)" };
@@ -367,7 +367,7 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
           }
           className="nodrag shrink-0 rounded-[4px]"
           style={{
-            fontSize: 6.5,
+            fontSize: 7.5,
             padding: "2px 6px",
             letterSpacing: "0.06em",
             ...tagStyle,
@@ -379,7 +379,7 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
         {deadEnd && (
           <span
             className="shrink-0 rounded-[4px] bg-[#fde3f4] text-[#a0388f]"
-            style={{ fontSize: 6.5, padding: "2px 5px" }}
+            style={{ fontSize: 7.5, padding: "2px 5px" }}
           >
             {t("Brak wyjścia")}
           </span>
@@ -394,7 +394,7 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
             <span
               key={feature.id}
               className="group/f flex items-center rounded-full bg-[#fdeefb] text-[#a0388f]"
-              style={{ fontSize: 6.5, padding: "1px 6px", gap: 3 }}
+              style={{ fontSize: 7.5, padding: "1px 6px", gap: 3 }}
             >
               <span
                 className="rounded-full bg-pink"
@@ -427,7 +427,7 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
         onClick={() => actions.addElement(screen.id)}
         className="nodrag flex w-full items-center justify-center text-haze transition-colors hover:text-plum"
         style={{
-          fontSize: 7,
+          fontSize: 7.5,
           gap: 3,
           padding: "5px 0 6px",
           borderTop: "1px solid #f3edf8",

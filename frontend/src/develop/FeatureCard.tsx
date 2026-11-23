@@ -32,7 +32,7 @@ export const PRIORITY_STYLES: Record<
     label: "Won't",
     hint: t("Poza zakresem tej wersji"),
     background: "#ebe8ef",
-    color: "#6f6878",
+    color: "#5f5867",
   },
 };
 
@@ -118,7 +118,7 @@ export function FeatureCardView({
             right: u(16),
             top: u(5.5),
             height: u(12),
-            fontSize: u(8.2),
+            fontSize: "var(--text-body)",
             padding: `0 ${u(2)}`,
           }}
         />
@@ -129,7 +129,7 @@ export function FeatureCardView({
             left: u(8),
             right: u(18),
             top: u(5.6),
-            fontSize: u(8.6),
+            fontSize: "var(--text-body)",
             lineHeight: u(10.3),
           }}
           onDoubleClick={() => onRename && setEditing(true)}
@@ -138,7 +138,7 @@ export function FeatureCardView({
         </div>
       )}
       <GripVertical
-        className="absolute text-[#c9bfd3] transition-opacity group-hover:opacity-0"
+        className="absolute text-haze transition-opacity group-hover:opacity-0"
         style={{ right: u(5), top: u(6), width: u(8), height: u(8) }}
       />
       {onDelete && (
@@ -160,7 +160,7 @@ export function FeatureCardView({
           left: u(8),
           right: u(8),
           top: u(28),
-          fontSize: u(5.8),
+          fontSize: "var(--text-small)",
           lineHeight: 1.2,
           color: "var(--color-muted)",
         }}
@@ -179,14 +179,14 @@ export function FeatureCardView({
             minWidth: u(53),
             padding: `0 ${u(4)}`,
             borderRadius: u(3.5),
-            fontSize: u(6),
+            fontSize: "var(--text-small)",
             background: style.background,
             color: style.color,
           }}
         >
           Popyt {feature.demand}/100
         </span>
-        <span className="text-haze" style={{ fontSize: u(5) }}>
+        <span className="text-haze" style={{ fontSize: "var(--text-small)" }}>
           {feature.support}/{feature.pool} {evidenceLabel(feature.pool)}
         </span>
       </div>

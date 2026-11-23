@@ -81,7 +81,6 @@
   "bez dowodów": "no evidence",
   "NA PODSTAWIE": "BASED ON",
   "Model": "Model",
-  "WYBIERZ GŁÓWNY PROBLEM": "PICK THE MAIN PROBLEM",
   "Zainteresowanie w ostatnich 12 miesiącach": "Interest over the last 12 months",
   "Podpowiedź Google": "Google suggestion",
   "Dyskusja społeczności (Stack Exchange, Lemmy)": "Community discussion (Stack Exchange, Lemmy)",
@@ -298,5 +297,9 @@
   "Brak pasujących dyskusji na Stack Exchange i Lemmy dla tego hasła.": "No matching discussions on Stack Exchange or Lemmy for this term.",
   "Rozwiń przez AI": "Expand with AI",
   "Usuń węzeł": "Remove node",
-  "Przetłumaczono z angielskiego": "Translated from English"
+  "Przetłumaczono z angielskiego": "Translated from English",
+  "GŁÓWNY PROBLEM": "MAIN PROBLEM",
+  "Audyt:": "Audit:",
+  "sugestie i projekt z lokalnego modelu do weryfikacji": "suggestions and design by the local model, to be verified",
+  "Studio User Flow": "Studio User Flow"
 }

@@ -72,7 +72,7 @@ function ZoomControl() {
       style={{
         gap: u(5),
         padding: `${u(2)} ${u(6)}`,
-        fontSize: u(5.4),
+        fontSize: "var(--text-small)",
         boxShadow: SHADOW,
       }}
     >
@@ -317,12 +317,12 @@ function Canvas({
         <button
           type="button"
           onClick={() => fitView({ padding: 0.12, maxZoom: 1, duration: 500 })}
-          className="pf-fade-up absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center text-white transition-transform hover:scale-[1.03]"
+          className="pf-fade-up absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center text-on-pink transition-transform hover:scale-[1.03]"
           style={{
             gap: u(4),
             padding: `${u(6)} ${u(11)}`,
             borderRadius: u(20),
-            fontSize: u(6.2),
+            fontSize: "var(--text-small)",
             background: "var(--color-pink)",
             boxShadow: SHADOW,
           }}
@@ -636,13 +636,13 @@ function Studio({ projectId, notify, onRestart }: Props) {
           <div>
             <div
               className="font-serif text-ink"
-              style={{ fontSize: u(9), lineHeight: 1 }}
+              style={{ fontSize: "var(--text-title)", lineHeight: 1 }}
             >
               {t("Przepływ aplikacji")}
             </div>
             <div
               className="text-haze"
-              style={{ fontSize: u(4.8), marginTop: u(3) }}
+              style={{ fontSize: "var(--text-small)", marginTop: u(3) }}
             >
               {flow.screens.length}{" "}
               {plural(flow.screens.length, "ekran", "ekrany", "ekranów")} ·{" "}
@@ -690,7 +690,7 @@ function Studio({ projectId, notify, onRestart }: Props) {
             className="absolute inset-0 flex flex-col items-center justify-center text-center"
             style={{ gap: u(6) }}
           >
-            <span className="text-mauve" style={{ fontSize: u(7) }}>
+            <span className="text-mauve" style={{ fontSize: "var(--text-body)" }}>
               {state.features.length
                 ? t("Przepływ jest pusty.")
                 : t("Najpierw dodaj funkcje w fazie Develop.")}
@@ -699,9 +699,9 @@ function Studio({ projectId, notify, onRestart }: Props) {
               <button
                 type="button"
                 onClick={() => runJob("flow")}
-                className="rounded text-white"
+                className="rounded text-on-pink"
                 style={{
-                  fontSize: u(6.4),
+                  fontSize: "var(--text-body)",
                   padding: `${u(4)} ${u(10)}`,
                   background: "var(--color-pink)",
                 }}
@@ -734,10 +734,10 @@ function Studio({ projectId, notify, onRestart }: Props) {
 
       <p
         className="pf-fade pointer-events-none absolute inset-x-0 text-center text-haze"
-        style={{ top: u(441), fontSize: u(4.6) }}
+        style={{ top: u(436), fontSize: "var(--text-small)", lineHeight: 1.2 }}
       >
-        Audyt: Hick RT = a + b·log₂(n+1) · Fitts ID = log₂(2D/W) · KLM · WCAG
-        2.2 · sugestie i projekt z lokalnego modelu do weryfikacji
+        {t("Audyt:")} Hick RT = a + b·log₂(n+1) · Fitts ID = log₂(2D/W) · KLM · WCAG 2.2 ·{" "}
+        {t("sugestie i projekt z lokalnego modelu do weryfikacji")}
       </p>
 
       {handoff && (

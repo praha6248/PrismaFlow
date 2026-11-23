@@ -10,20 +10,18 @@ export function PageTitle({
   title,
   subtitle,
   top = 101,
-  size = 16.5,
   gap = 23,
 }: {
   title: string;
   subtitle?: ReactNode;
   top?: number;
-  size?: number;
   gap?: number;
 }) {
   return (
     <>
       <h2
         className="pf-fade pointer-events-none absolute inset-x-0 text-center font-serif font-normal text-plum"
-        style={{ top: u(top), fontSize: u(size), lineHeight: 1 }}
+        style={{ top: u(top), fontSize: "var(--text-title)", lineHeight: 1 }}
       >
         {title}
       </h2>
@@ -33,7 +31,7 @@ export function PageTitle({
           style={{
             top: u(top + gap),
             width: u(480),
-            fontSize: u(7.5),
+            fontSize: "var(--text-body)",
             lineHeight: 1.2,
             color: "var(--color-muted)",
           }}
@@ -226,7 +224,7 @@ export function ChoiceBar({
 }: ChoiceBarProps) {
   const active =
     tone === "pink"
-      ? { background: "var(--color-pink)", color: "#ffffff" }
+      ? { background: "var(--color-pink)", color: "var(--color-on-pink)" }
       : { background: "#e6d8f7", color: "#573476" };
   return (
     <div className="pf-fade-up absolute" style={barStyle(frame)}>
@@ -236,7 +234,7 @@ export function ChoiceBar({
       >
         <span
           className="tracking-[0.12em] text-haze"
-          style={{ fontSize: u(5.4), lineHeight: 1 }}
+          style={{ fontSize: "var(--text-small)", lineHeight: 1 }}
         >
           {label}
         </span>
@@ -245,7 +243,7 @@ export function ChoiceBar({
           className="pf-fade truncate"
           style={{
             marginTop: u(4.5),
-            fontSize: u(8),
+            fontSize: "var(--text-body)",
             lineHeight: 1.15,
             color: value ? "#573476" : "var(--color-haze)",
           }}
@@ -264,7 +262,7 @@ export function ChoiceBar({
           width: u(button.width),
           height: u(button.height),
           borderRadius: u(8),
-          fontSize: u(8),
+          fontSize: "var(--text-body)",
           background: disabled ? "#ece8f1" : active.background,
           color: disabled ? "#b3a9bd" : active.color,
           boxShadow: disabled
@@ -306,7 +304,7 @@ export function FooterNote({
   return (
     <p
       className="pf-fade pointer-events-none absolute inset-x-0 text-center text-haze"
-      style={{ top: u(top), fontSize: u(4.8), lineHeight: 1.2 }}
+      style={{ top: u(top), fontSize: "var(--text-small)", lineHeight: 1.2 }}
     >
       {children}
     </p>

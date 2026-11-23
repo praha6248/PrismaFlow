@@ -30,17 +30,17 @@ export function Toolbox({
     >
       <span
         className="font-serif text-ink"
-        style={{ fontSize: u(10), lineHeight: 1 }}
+        style={{ fontSize: "var(--text-title)", lineHeight: 1 }}
       >
         {t("Przybornik")}
       </span>
-      <span className="text-haze" style={{ fontSize: u(4.8), marginTop: u(3) }}>
+      <span className="text-haze" style={{ fontSize: "var(--text-small)", marginTop: u(3) }}>
         {t("{count} z Develop", { count: features.length })} · {must.length}{" "}
         Must-Have
       </span>
       <span
         className="text-mauve"
-        style={{ fontSize: u(5.4), lineHeight: 1.4, marginTop: u(6) }}
+        style={{ fontSize: "var(--text-small)", lineHeight: 1.4, marginTop: u(6) }}
       >
         {t("Przeciągnij funkcję na ekran na kanwie obok.")}
       </span>
@@ -82,18 +82,18 @@ export function Toolbox({
                 }}
               />
               <GripVertical
-                className="absolute text-[#cfc4da]"
+                className="absolute text-haze"
                 style={{ right: u(3), top: u(5), width: u(6), height: u(6) }}
               />
               <div
                 className="text-ink"
-                style={{ fontSize: u(6), lineHeight: 1.3, paddingRight: u(6) }}
+                style={{ fontSize: "var(--text-small)", lineHeight: 1.3, paddingRight: u(6) }}
               >
                 {feature.title}
               </div>
               <div
                 className="text-haze"
-                style={{ fontSize: u(4.4), marginTop: u(2.5) }}
+                style={{ fontSize: "var(--text-small)", marginTop: u(2.5) }}
               >
                 {feature.priority === "must"
                   ? "Must"
@@ -111,7 +111,7 @@ export function Toolbox({
 
         <div
           className="flex shrink-0 items-center text-haze"
-          style={{ gap: u(8), fontSize: u(4.4), marginTop: u(2) }}
+          style={{ gap: u(8), fontSize: "var(--text-small)", marginTop: u(2) }}
         >
           <span className="flex items-center" style={{ gap: u(2) }}>
             <span
@@ -131,7 +131,7 @@ export function Toolbox({
 
         <span
           className="shrink-0 tracking-[0.1em] text-haze"
-          style={{ fontSize: u(4.6), marginTop: u(6) }}
+          style={{ fontSize: "var(--text-small)", marginTop: u(6) }}
         >
           {t("EKRANY W PRZEPŁYWIE")} · {screens.length}
         </span>
@@ -142,7 +142,7 @@ export function Toolbox({
             onClick={() => onFocusScreen(screen.id)}
             className="shrink-0 text-left transition-colors hover:text-plum"
             style={{
-              fontSize: u(5.6),
+              fontSize: "var(--text-small)",
               color: selectedId === screen.id ? "#e04fcf" : "var(--color-mauve)",
             }}
           >
@@ -163,7 +163,7 @@ export function Toolbox({
           height: u(20),
           gap: u(3),
           borderRadius: u(6),
-          fontSize: u(6.2),
+          fontSize: "var(--text-small)",
           background: "#e9dcf8",
           color: "#573476",
         }}

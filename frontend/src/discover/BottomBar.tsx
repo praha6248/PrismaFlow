@@ -74,7 +74,7 @@ export function ComposerBar({ onAdd, onDone, disabled }: ComposerProps) {
             style={{
               paddingLeft: "calc(var(--u) * 9)",
               paddingRight: "calc(var(--u) * 30)",
-              fontSize: "calc(var(--u) * 7.4)",
+              fontSize: "var(--text-body)",
             }}
           />
           <div
@@ -97,7 +97,7 @@ export function ComposerBar({ onAdd, onDone, disabled }: ComposerProps) {
             borderRadius: "calc(var(--u) * 9)",
             background: "var(--color-pink-soft)",
             color: "#853c77",
-            fontSize: "calc(var(--u) * 9.6)",
+            fontSize: "var(--text-body)",
             boxShadow:
               "0 calc(var(--u) * 1) calc(var(--u) * 4) rgba(237, 150, 225, 0.25)",
           }}
@@ -151,7 +151,7 @@ export function ProgressContent({ title, text, stage }: ProgressContentProps) {
           className="text-mauve"
           style={{
             marginLeft: "calc(var(--u) * 6)",
-            fontSize: "calc(var(--u) * 8.3)",
+            fontSize: "var(--text-body)",
           }}
         >
           {title}
@@ -159,7 +159,7 @@ export function ProgressContent({ title, text, stage }: ProgressContentProps) {
         <span
           key={stage}
           className="pf-fade ml-auto text-haze"
-          style={{ fontSize: "calc(var(--u) * 6.8)" }}
+          style={{ fontSize: "var(--text-body)" }}
         >
           {text}
         </span>
