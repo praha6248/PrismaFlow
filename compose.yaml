@@ -4,6 +4,7 @@ services:
     ports:
       - "127.0.0.1:8765:8765"
     environment:
+      PRISMAFLOW_YOUTUBE_API_KEY: ${PRISMAFLOW_YOUTUBE_API_KEY:-}
       OLLAMA_HOST: http://ollama:11434
     volumes:
       - workspace:/workspace

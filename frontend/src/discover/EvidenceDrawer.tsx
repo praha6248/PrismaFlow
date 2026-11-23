@@ -342,11 +342,11 @@ export function EvidenceDrawer({
                           fontSize: "var(--text-small)",
                         }}
                       >
-                        {sourceLabel(quote.meta)} ·{" "}
+                        {sourceLabel(quote.meta)}{quote.meta.platform !== "rss" && <> ·{" "}
                         {String(quote.meta.comments ?? 0)}{" "}
                         {quote.meta.platform === "stackexchange"
                           ? plural(Number(quote.meta.comments ?? 0), "odpowiedź", "odpowiedzi", "odpowiedzi")
-                          : plural(Number(quote.meta.comments ?? 0), "komentarz", "komentarze", "komentarzy")}
+                          : plural(Number(quote.meta.comments ?? 0), "komentarz", "komentarze", "komentarzy")}</>}
                         <ExternalLink style={{ width: "calc(var(--u) * 5)" }} />
                       </a>
                     </li>
@@ -355,7 +355,7 @@ export function EvidenceDrawer({
               ) : (
                 <p className="text-haze" style={{ lineHeight: 1.5 }}>
                   {t(
-                    "Brak pasujących dyskusji na Stack Exchange i Lemmy dla tego hasła.",
+                    "Brak pasujących dyskusji dla tego hasła.",
                   )}
                 </p>
               )}
@@ -430,6 +430,8 @@ function EnTag() {
 function sourceLabel(meta: Record<string, unknown>): string {
   const place = String(meta.place ?? meta.subreddit ?? "");
   if (meta.platform === "stackexchange") return `Stack Exchange · ${place}`;
+  if (meta.platform === "rss") return `RSS · ${place}`;
+  if (meta.platform === "youtube") return `YouTube · ${place}`;
   if (meta.platform === "lemmy") return `Lemmy · !${place}`;
   return `Reddit · r/${place}`;
 }

@@ -151,6 +151,8 @@ Environment variables, or `KEY=value` lines in `~/.config/PrismaFlow/prismaflow.
 | `PRISMAFLOW_EMBED_MODEL` | Ollama embedding model for semantic evidence retrieval (default `bge-m3`; without it retrieval falls back to full-text and graph neighbours) |
 | `PRISMAFLOW_LOCALE` | Default content locale, e.g. `pl_PL` or `en_US` |
 | `PRISMAFLOW_TREND_ANCHOR` | Google Trends calibration keyword |
+| `PRISMAFLOW_RSS_FEEDS_PL` / `PRISMAFLOW_RSS_FEEDS_EN` | Comma-separated URLs of Polish or English forum RSS/Atom feeds. An empty value disables that language’s feeds. |
+| `PRISMAFLOW_YOUTUBE_API_KEY` | Optional key for YouTube Data API v3. Enables public comments on review and tutorial videos. |
 | `PRISMAFLOW_REDDIT_CLIENT_ID` / `PRISMAFLOW_REDDIT_CLIENT_SECRET` | Optional Reddit OAuth app credentials |
 | `PRISMAFLOW_REDDIT_PLAYWRIGHT` | Set to `1` to prefer Chromium even when OAuth credentials are configured |
 | `PRISMAFLOW_DISCUSSION_MAX_AGE_DAYS` | Oldest community discussion still used as evidence, in days (default 1095, three years) |
@@ -163,6 +165,18 @@ Community evidence comes from two documented, keyless public APIs: Stack Exchang
 (sites such as fitness, parenting or cooking are picked from the query's topic; about 300 requests
 per day per IP, cached for three days) and Lemmy, a federated Reddit-like forum, searched through
 lemmy.world.
+
+Discover also reads recent topics from the ArturHome forum in Polish and the Arduino forum in English.
+Set the RSS variables above to follow forums, categories or tags that match your niche.
+Each feed is cached for an hour. Matching entries keep the original thread link and publication date.
+
+For YouTube, enable **YouTube Data API v3** in your Google Cloud project, create an API key
+and restrict the key to that API. Add `PRISMAFLOW_YOUTUBE_API_KEY=your_key` to your local
+`prismaflow.env` and restart PrismaFlow. With Docker Compose, export the variable in your shell
+before running `docker compose up -d`. Discover searches up to three review or tutorial videos
+per uncached query and checks up to 20 top-level comments per video.
+[Google Cloud API library](https://console.cloud.google.com/apis/library/youtube.googleapis.com) ·
+[Create credentials](https://console.cloud.google.com/apis/credentials).
 
 Reddit is **disabled by default**. To enable it, create a Reddit API app and set
 `PRISMAFLOW_REDDIT_CLIENT_ID` and `PRISMAFLOW_REDDIT_CLIENT_SECRET` (OAuth). Browser scraping with

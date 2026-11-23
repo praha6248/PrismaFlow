@@ -19,7 +19,7 @@ import httpx
 
 from ..config import settings
 from ..database import Database
-from . import reddit
+from . import forums, reddit, youtube
 from .base import CollectorUnavailable, cached
 
 STACKEXCHANGE_ENDPOINT = "https://api.stackexchange.com/2.3/search/advanced"
@@ -258,12 +258,16 @@ async def fetch_lemmy(client: httpx.AsyncClient, query: str, limit: int) -> list
 
 def _rank(posts: list[dict[str, Any]], limit: int) -> list[dict[str, Any]]:
     seen: set[str] = set()
+    seen_urls: set[str] = set()
     ranked = []
     for post in sorted(posts, key=lambda p: p["score"] + 2 * p["comments"], reverse=True):
         key = post["title"].casefold()
-        if key in seen:
+        url = post.get("url")
+        if key in seen or (url and url in seen_urls):
             continue
         seen.add(key)
+        if url:
+            seen_urls.add(url)
         ranked.append(post)
     return ranked[:limit]
 
@@ -288,7 +292,12 @@ async def search(db: Database, client: httpx.AsyncClient, query: str, language: 
             )
     jobs.append(("community:lemmy", query, lambda: fetch_lemmy(client, query, limit)))
 
+    if youtube.api_key() and language in ("pl", "en"):
+        jobs.append((f"community:youtube:{language}", query, lambda: youtube.search(client, query, language)))
+    feed_urls = forums.feeds(language)
+
     results: list[dict[str, Any]] = []
+
     errors: list[str] = []
     for source, cache_query, fetch in jobs:
         try:
@@ -297,7 +306,13 @@ async def search(db: Database, client: httpx.AsyncClient, query: str, language: 
             )
         except CollectorUnavailable as exc:
             errors.append(f"{source.split(':', 1)[1]}: {exc}")
-    sources = len(jobs)
+    for url in feed_urls:
+        try:
+            posts = await _paced(url, lambda: forums.recent(db, client, url, settings.discussion_max_age_days))
+            results.extend(posts)
+        except CollectorUnavailable as exc:
+            errors.append(f"rss: {exc}")
+    sources = len(jobs) + len(feed_urls)
     if reddit.enabled():
         sources += 1
         try:

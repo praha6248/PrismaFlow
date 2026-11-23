@@ -447,6 +447,7 @@ class DiscoverService:
                     "platform": post.get("platform", "reddit"),
                     "place": post.get("place") or post.get("subreddit"),
                     "comments": post.get("comments", 0),
+                    "published_at": post.get("created"),
                 }
                 if lang:
                     meta.update({"lang": lang, "original": post["title"]})

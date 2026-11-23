@@ -12,6 +12,9 @@ from backend.database import Database
 
 @pytest.fixture
 def reddit_queries(monkeypatch):
+    monkeypatch.setenv("PRISMAFLOW_RSS_FEEDS_EN", "")
+    monkeypatch.setenv("PRISMAFLOW_RSS_FEEDS_PL", "")
+    monkeypatch.delenv("PRISMAFLOW_YOUTUBE_API_KEY", raising=False)
     queries = []
 
     async def fetch_browser(query, limit):
@@ -142,3 +145,35 @@ async def test_reddit_is_disabled_by_default(db: Database, monkeypatch, reddit_q
         posts = await community.search(db, client, "sport for autistic children", "en")
     assert reddit_queries == []
     assert all(p["platform"] != "reddit" for p in posts)
+
+
+async def test_forum_and_youtube_join_discover_results(db, reddit_queries, monkeypatch):
+    from datetime import datetime, timezone
+
+    now = datetime.now(timezone.utc)
+    monkeypatch.setenv("PRISMAFLOW_RSS_FEEDS_PL", "https://forum.example/category.rss")
+    monkeypatch.setenv("PRISMAFLOW_YOUTUBE_API_KEY", "test")
+    calls = []
+
+    def handle(request):
+        calls.append(request.url.path)
+        if request.url.host == "lemmy.world":
+            return httpx.Response(200, json={"posts": []})
+        if request.url.host == "forum.example":
+            xml = f"""<feed xmlns="http://www.w3.org/2005/Atom"><entry><title>Zabawki AI a prywatność</title>
+            <updated>{now.isoformat()}</updated><link href="/topic/42"/></entry></feed>"""
+            return httpx.Response(200, text=xml)
+        assert request.headers["X-Goog-Api-Key"] == "test"
+        if request.url.path.endswith("/search"):
+            assert request.url.params["relevanceLanguage"] == "pl"
+            return httpx.Response(200, json={"items": [{"id": {"videoId": "abc"}, "snippet": {"channelTitle": "Test"}}]})
+        assert request.url.params["videoId"] == "abc"
+        snippet = {"textDisplay": "Moje zabawki AI nagrywają głos", "publishedAt": now.isoformat()}
+        thread = {"snippet": {"topLevelComment": {"id": "42", "snippet": snippet}, "totalReplyCount": 2}}
+        return httpx.Response(200, json={"items": [thread]})
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as client:
+        for _ in range(2):
+            posts = await community.search(db, client, "zabawki AI", "pl")
+            assert {p["url"] for p in posts} == {"https://forum.example/topic/42", "https://www.youtube.com/watch?v=abc&lc=42"}
+        assert calls.count("/category.rss") == calls.count("/youtube/v3/search") == 1
