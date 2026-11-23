@@ -75,6 +75,14 @@ button {
     inset 0 0 0 calc(var(--u) * 0.5) rgba(255, 255, 255, 0.8);
 }
 
+.stage {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - var(--u) * 322);
+  width: calc(var(--u) * 644);
+}
+
 .react-flow__pane {
   cursor: default;
 }

@@ -99,6 +99,8 @@ export function App() {
             notify={notify}
           />
         )}
+        {route.phase !== "discover" && (
+          <div className="stage">
         {route.phase === "define" && projectId !== null && (
           <DefineView
             key={projectId}
@@ -112,6 +114,8 @@ export function App() {
           <DevelopView key={projectId} projectId={projectId} onDone={() => advance("deliver")} notify={notify} />
         )}
         {route.phase === "deliver" && projectId !== null && <DeliverView key={projectId} projectId={projectId} notify={notify} />}
+          </div>
+        )}
         {toast && <Toast message={toast} onClose={() => setToast(null)} />}
       </main>
     </div>
