@@ -15,6 +15,7 @@ import type {
   MapNode,
   Phase,
   Project,
+  Provider,
   QualityState,
   Stage,
   ValidateState,
@@ -61,7 +62,7 @@ const json = (body: unknown) => JSON.stringify(body);
 
 export const api = {
   health: () => request<Health>("/health"),
-  setup: () => request<SetupState>("/setup"),
+  setup: (localOnly = false) => request<SetupState>(localOnly ? "/setup?local_only=true" : "/setup"),
   quality: () => request<QualityState>("/settings/quality"),
   getValidate: (projectId: number) =>
     request<ValidateState>(`/projects/${projectId}/validate`),
@@ -76,7 +77,7 @@ export const api = {
     request<ValidateState>(`/projects/${projectId}/interviews/${interviewId}`, {
       method: "DELETE",
     }),
-  updateQuality: (body: { enabled?: boolean; key?: string }) =>
+  updateQuality: (body: { provider?: Provider; enabled?: boolean; key?: string }) =>
     request<QualityState>("/settings/quality", {
       method: "PUT",
       body: JSON.stringify(body),

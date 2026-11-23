@@ -103,6 +103,7 @@ export function App() {
 
   const projectId = route.projectId;
   const setup = useSetup();
+  const [modelOpen, setModelOpen] = useState(false);
   return (
     <div className="frame">
       <main className="card">
@@ -114,11 +115,12 @@ export function App() {
             projectId !== null && navigate({ projectId, phase: PHASES[index] })
           }
         />
-        <QualityButton onShowSetup={() => setup.setOpen(true)} />
+        <QualityButton open={modelOpen} setOpen={setModelOpen} onShowSetup={() => { void setup.refresh(true); setup.setOpen(true); }} />
         {setup.open && (
           <SetupGuide
+            onCloud={() => { setup.setOpen(false); setModelOpen(true); }}
             state={setup.state}
-            onRefresh={setup.refresh}
+            onRefresh={() => setup.refresh(true)}
             onClose={() => setup.setOpen(false)}
           />
         )}

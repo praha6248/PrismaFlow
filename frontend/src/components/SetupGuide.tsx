@@ -99,9 +99,9 @@ function Step({
 export function useSetup() {
   const [state, setState] = useState<SetupState | null>(null);
   const [open, setOpen] = useState(false);
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (localOnly = false) => {
     try {
-      const next = await api.setup();
+      const next = await api.setup(localOnly);
       setState(next);
       return next;
     } catch {
@@ -117,12 +117,13 @@ export function useSetup() {
 }
 
 interface Props {
+  onCloud: () => void;
   state: SetupState | null;
   onRefresh: () => Promise<unknown>;
   onClose: () => void;
 }
 
-export function SetupGuide({ state, onRefresh, onClose }: Props) {
+export function SetupGuide({ state, onRefresh, onClose, onCloud }: Props) {
   const [checking, setChecking] = useState(false);
   const check = async () => {
     setChecking(true);
@@ -163,7 +164,7 @@ export function SetupGuide({ state, onRefresh, onClose }: Props) {
         </div>
         <p className="text-mauve" style={{ fontSize: "var(--text-small)", lineHeight: 1.5 }}>
           {t(
-            "Projekty są zapisywane na tym komputerze. Zapytania wyszukiwania trafiają do źródeł internetowych, a treść do analizy otrzymuje skonfigurowany serwer Ollama.",
+            "Projekty są zapisywane na tym komputerze. Zapytania wyszukiwania trafiają do źródeł internetowych, a treść do analizy otrzymuje wybrany model.",
           )}
           {state?.memory_gb
             ? ` ${t("Masz {ram} GB RAM, dlatego polecamy model poniżej.", { ram: number(state.memory_gb, 1) })}`
@@ -220,11 +221,9 @@ export function SetupGuide({ state, onRefresh, onClose }: Props) {
           className="flex items-center"
           style={{ gap: u(6), marginTop: u(2) }}
         >
-          <span className="text-haze" style={{ fontSize: "var(--text-small)" }}>
-            {t(
-              "Nie chcesz pobierać modeli? Włącz tryb jakości z własnym kluczem Claude.",
-            )}
-          </span>
+          <button type="button" onClick={onCloud} className="text-pink-text underline" style={{ fontSize: "var(--text-small)" }}>
+            {t("Wybierz Gemini lub Claude")}
+          </button>
           <button
             type="button"
             onClick={check}

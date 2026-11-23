@@ -34,6 +34,7 @@ from .models import (
     ProjectUpdate,
     QualityUpdate,
 )
+from . import gemini_client
 from .claude_client import HybridLLM, QualityConfig
 from .ollama_client import OllamaClient
 from .services.setup import memory_gb, setup_status
@@ -85,6 +86,10 @@ def create_app(
     app.state.jobs = jobs
     api = APIRouter(prefix="/api")
 
+    @app.exception_handler(gemini_client.GeminiError)
+    async def gemini_error(_: Request, exc: gemini_client.GeminiError) -> JSONResponse:
+        return JSONResponse(status_code=502, content={"detail": str(exc)})
+
     @app.exception_handler(LookupError)
     async def not_found(_: Request, exc: LookupError) -> JSONResponse:
         return JSONResponse(status_code=404, content={"detail": str(exc)})
@@ -95,8 +100,11 @@ def create_app(
         return {"ok": True, "ollama": await ollama.health(), "language": settings.language, "geo": settings.country}
 
     @api.get("/setup")
-    async def setup() -> dict:
+    async def setup(local_only: bool = False) -> dict:
         """Report which local models are installed and how to install the missing ones."""
+        if quality.provider == "gemini" and not local_only:
+            return {"ready": True, "ollama": {"ok": False, "url": settings.ollama_url,
+                    "download": "https://ollama.com/download"}, "memory_gb": memory_gb(), "models": []}
         health = await ollama.health()
         return setup_status(health["ok"], health["models"], health["url"], memory_gb(), settings.ux_model_repo)
 
@@ -106,9 +114,19 @@ def create_app(
         return quality.public()
 
     @api.put("/settings/quality")
-    def update_quality(body: QualityUpdate) -> dict:
+    async def update_quality(body: QualityUpdate) -> dict:
         """Turn the Claude quality mode on or off and save or remove the user's API key."""
-        return quality.update(enabled=body.enabled, key=body.key)
+        if body.key and (not body.key.strip().isascii() or not body.key.strip().isprintable() or any(c.isspace() for c in body.key.strip())):
+            raise HTTPException(400, "Invalid API key format")
+        if body.provider == "gemini" and body.enabled is not False:
+            key = (body.key if body.key is not None else quality.gemini_key).strip()
+            if not key:
+                raise HTTPException(400, "Gemini API key required")
+            try:
+                await gemini_client.request(key)
+            except gemini_client.GeminiError as exc:
+                raise HTTPException(400, str(exc)) from exc
+        return quality.update(enabled=body.enabled, key=body.key, provider=body.provider)
 
     @api.get("/projects")
     def list_projects() -> list[dict]:

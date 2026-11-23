@@ -537,10 +537,12 @@ class StyleDraft(BaseModel):
 
 
 class QualityUpdate(BaseModel):
-    """Request body for the Claude quality mode settings."""
+    """Select a generation provider or update its private key."""
+
+    provider: Literal["local", "claude", "gemini"] | None = None
 
     enabled: bool | None = None
-    key: str | None = Field(default=None, max_length=300)
+    key: str | None = Field(default=None, max_length=2048)
 
 
 HypothesisKind = Literal["problem", "frequency", "workaround", "willingness"]

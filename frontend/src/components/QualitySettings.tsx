@@ -1,12 +1,15 @@
 import { Sparkles, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "../api";
-import type { QualityState } from "../types";
+import type { Provider, QualityState } from "../types";
 import { SHADOW, u } from "./ui";
 import { locale, setLocale, t } from "../i18n";
 
-export function QualityButton({ onShowSetup }: { onShowSetup: () => void }) {
-  const [open, setOpen] = useState(false);
+export function QualityButton({ open, setOpen, onShowSetup }: {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  onShowSetup: () => void;
+}) {
   const [state, setState] = useState<QualityState | null>(null);
 
   useEffect(() => {
@@ -57,13 +60,13 @@ export function QualityButton({ onShowSetup }: { onShowSetup: () => void }) {
             fontWeight: state?.enabled ? 600 : undefined,
             color: state?.enabled ? "var(--color-on-pink)" : "var(--color-mauve)",
           }}
-          title={t("Tryb jakości: Claude zamiast lokalnego modelu")}
+          title={t("Wybierz model")}
         >
           <Sparkles style={{ width: u(6), height: u(6) }} />
-          {state?.enabled ? t("Tryb jakości") : t("Model lokalny")}
+          {state?.provider === "gemini" ? "Gemini" : state?.enabled ? "Claude" : t("Model lokalny")}
         </button>
       </div>
-      {open && (
+      {open && state && (
         <QualityModal
           state={state}
           onChange={setState}
@@ -79,13 +82,16 @@ export function QualityButton({ onShowSetup }: { onShowSetup: () => void }) {
 }
 
 interface ModalProps {
-  state: QualityState | null;
+  state: QualityState;
   onChange: (state: QualityState) => void;
   onClose: () => void;
   onShowSetup: () => void;
 }
 
 function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
+  const [provider, setProvider] = useState<Provider>(state.provider === "local" ? "gemini" : state.provider);
+  const gemini = provider === "gemini";
+  const hasKey = gemini ? state.has_gemini_key : state.has_key;
   const [key, setKey] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -95,10 +101,11 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
     setError(null);
     try {
       const next = await api.updateQuality({
-        enabled,
+        provider, enabled,
         ...(newKey !== undefined ? { key: newKey } : {}),
       });
       onChange(next);
+      if (newKey !== "") onClose();
       setKey("");
     } catch (exc) {
       setError(exc instanceof Error ? exc.message : t("Nie udało się zapisać"));
@@ -126,7 +133,7 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
       >
         <div className="flex items-center">
           <span className="font-serif text-plum" style={{ fontSize: "var(--text-title)" }}>
-            {t("Tryb jakości")}
+            {t("Wybierz model")}
           </span>
           <button
             type="button"
@@ -137,44 +144,27 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
             <X style={{ width: u(9), height: u(9) }} />
           </button>
         </div>
-        <p className="text-mauve" style={{ fontSize: "var(--text-small)", lineHeight: 1.5 }}>
-          {t(
-            "Problemy, persony, backlog i flow generuje {model} zamiast lokalnej Gemmy. Odpowiedzi nadal muszą cytować zebrane dowody. Gdy Claude jest niedostępny, aplikacja wraca do modelu lokalnego.",
-            { model: state?.model ?? "Claude" },
-          )}
-        </p>
-        <p
-          className="rounded-md text-[#8a4a7e]"
-          style={{
-            fontSize: "var(--text-small)",
-            lineHeight: 1.5,
-            padding: u(6),
-            background: "#fdf0fa",
-          }}
-        >
-          {t(
-            "Prywatność: w tym trybie treść promptów, w tym zebrane dyskusje i opis niszy, trafia do API Anthropic. Używasz własnego klucza i płacisz według swojego planu. Klucz zapisuje się tylko lokalnie w ~/.config/PrismaFlow (chmod 600).",
-          )}
-        </p>
-
-        <label
-          className="flex flex-col text-haze"
-          style={{ fontSize: "var(--text-small)", gap: u(3) }}
-        >
-          {t("KLUCZ API ANTHROPIC")} {state?.has_key ? t("· zapisany") : ""}
-          <input
-            type="password"
-            value={key}
-            autoComplete="off"
-            onChange={(event) => setKey(event.target.value)}
-            placeholder={
-              state?.has_key ? t("Wpisz nowy, aby zastąpić") : "sk-ant-…"
-            }
-            className="select-text rounded-md border border-[#eadff3] bg-white text-ink outline-none focus:border-pink"
-            style={{ fontSize: "var(--text-body)", padding: `${u(5)} ${u(6)}` }}
-          />
-        </label>
-
+        <select aria-label={t("Wybierz model")} value={provider} disabled={busy}
+          className="rounded-md border border-[#eadff3] bg-white p-2 text-ink"
+          onChange={(event) => { setProvider(event.target.value as Provider); setKey(""); setError(null); }}>
+          <option value="local">Ollama</option>
+          <option value="gemini">Gemini</option>
+          <option value="claude">Claude</option>
+        </select>
+        {provider !== "local" && <>
+          <p className="text-mauve" style={{ fontSize: "var(--text-small)" }}>
+            {t("Wybrane źródła i notatki z projektu trafią do {company}. Klucz jest zapisywany lokalnie.", { company: gemini ? "Google" : "Anthropic" })}
+          </p>
+          {gemini && <a href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer"
+            className="text-pink-text underline">{t("Utwórz klucz w Google AI Studio")}</a>}
+          <label className="flex flex-col text-mauve" style={{ gap: u(3) }}>
+            {gemini ? "Gemini API key" : "Anthropic API key"} {hasKey && t("· zapisany")}
+            <input type="password" value={key} autoComplete="off" disabled={busy}
+              onChange={(event) => setKey(event.target.value)}
+              placeholder={hasKey ? t("Wpisz nowy, aby zastąpić") : ""}
+              className="select-text rounded-md border border-[#eadff3] bg-white p-2 text-ink" />
+          </label>
+        </>}
         {error && (
           <span className="text-error" style={{ fontSize: "var(--text-small)" }}>
             {error}
@@ -193,49 +183,16 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
           >
             {t("Modele lokalne")}
           </button>
-          {state?.has_key && (
-            <button
-              type="button"
-              disabled={busy}
-              onClick={() => save(false, "")}
-              className="text-haze hover:text-plum"
-              style={{ fontSize: "var(--text-small)" }}
-            >
-              {t("Usuń klucz")}
-            </button>
+          {provider !== "local" && hasKey && (
+            <button type="button" disabled={busy} onClick={() => save(false, "")}
+              className="text-haze hover:text-plum">{t("Usuń klucz")}</button>
           )}
-          <div className="ml-auto flex" style={{ gap: u(6) }}>
-            {state?.enabled ? (
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() => save(false)}
-                className="rounded-md"
-                style={{
-                  fontSize: "var(--text-body)",
-                  padding: `${u(5)} ${u(12)}`,
-                  background: "#f3ecfa",
-                  color: "var(--color-ink)",
-                }}
-              >
-                {t("Wróć do modelu lokalnego")}
-              </button>
-            ) : (
-              <button
-                type="button"
-                disabled={busy || (!key && !state?.has_key)}
-                onClick={() => save(true, key || undefined)}
-                className="rounded-md font-semibold text-on-pink disabled:opacity-40"
-                style={{
-                  fontSize: "var(--text-body)",
-                  padding: `${u(5)} ${u(12)}`,
-                  background: "var(--color-pink-button)",
-                }}
-              >
-                {t("Włącz tryb jakości")}
-              </button>
-            )}
-          </div>
+          <button type="button" disabled={busy || (provider !== "local" && !key.trim() && !hasKey)}
+            onClick={() => save(provider !== "local", key.trim() || undefined)}
+            className="ml-auto rounded-md font-semibold text-on-pink disabled:opacity-40"
+            style={{ background: "var(--color-pink-button)", padding: `${u(5)} ${u(12)}` }}>
+            {busy ? t("Zapisuję…") : t("Zapisz")}
+          </button>
         </div>
       </div>
     </div>

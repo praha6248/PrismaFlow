@@ -320,7 +320,11 @@ export interface CaseStudy {
   narrative: boolean;
 }
 
+export type Provider = "local" | "claude" | "gemini";
+
 export interface QualityState {
+  provider: Provider;
+  has_gemini_key: boolean;
   enabled: boolean;
   has_key: boolean;
   model: string;

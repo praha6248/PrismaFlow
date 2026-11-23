@@ -51,12 +51,12 @@ class Retriever:
 
     def __init__(self, db: Database, embedder: Any = None, model: str | None = None) -> None:
         self.db = db
-        self.embedder: Embedder | None = embedder if callable(getattr(embedder, "embed", None)) else None
+        self.embedder: Embedder | None = embedder
         self.model = model or settings.embed_model
 
     async def prepare(self, project_id: int, queries: list[str], warn: Callable[[str], None] | None = None) -> bool:
         """Embed new evidence of the project and the given queries; return whether vectors are usable."""
-        if self.embedder is None:
+        if not callable(getattr(self.embedder, "embed", None)):
             return False
         try:
             pending = self.db.unembedded_evidence(project_id, self.model)
