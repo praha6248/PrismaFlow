@@ -95,7 +95,7 @@ export function ComposerBar({ onAdd, onDone, disabled }: ComposerProps) {
             width: "calc(var(--u) * 96)",
             height: "calc(var(--u) * 24)",
             borderRadius: "calc(var(--u) * 9)",
-            background: "#fed3f9",
+            background: "var(--color-pink-soft)",
             color: "#853c77",
             fontSize: "calc(var(--u) * 9.6)",
             boxShadow:
@@ -180,7 +180,7 @@ export function ProgressContent({ title, text, stage }: ProgressContentProps) {
           style={{
             width: "33%",
             borderRadius: "calc(var(--u) * 2)",
-            background: "linear-gradient(90deg, #fbb3f2 0%, #f783e9 100%)",
+            background: "linear-gradient(90deg, #fbb3f2 0%, var(--color-pink) 100%)",
             animation: "pf-slide 1.9s cubic-bezier(0.45, 0, 0.35, 1) infinite",
           }}
         />

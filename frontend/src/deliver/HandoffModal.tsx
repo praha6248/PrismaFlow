@@ -69,7 +69,7 @@ export function HandoffModal({ handoff, onClose, onRestart }: Props) {
                 style={{
                   fontSize: u(6.2),
                   padding: `${u(3)} ${u(9)}`,
-                  background: tab === key ? "#f783e9" : "transparent",
+                  background: tab === key ? "var(--color-pink)" : "transparent",
                   color: tab === key ? "#ffffff" : "var(--color-mauve)",
                 }}
               >

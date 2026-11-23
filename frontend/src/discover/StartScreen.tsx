@@ -42,7 +42,7 @@ export function StartScreen({ leaving, busy, onSubmit }: Props) {
         }}
       >
         {t("Co chcesz")}{" "}
-        <span style={{ color: "#ed34d8" }}>{t("stworzyć?")}</span>
+        <span style={{ color: "var(--color-pink-deep)" }}>{t("stworzyć?")}</span>
       </h1>
       <form
         onSubmit={submit}

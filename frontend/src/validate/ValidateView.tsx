@@ -346,7 +346,7 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
           value={person}
           onChange={(e) => setPerson(e.target.value)}
           placeholder={t("Kto (imię, rola)")}
-          className="select-text rounded-md border border-[#eadff3] bg-white text-ink outline-none focus:border-[#f783e9]"
+          className="select-text rounded-md border border-[#eadff3] bg-white text-ink outline-none focus:border-pink"
           style={{ fontSize: u(6), padding: `${u(3)} ${u(5)}` }}
         />
         <textarea
@@ -355,7 +355,7 @@ export function ValidateView({ projectId, onBack, onDone, notify }: Props) {
           placeholder={t(
             "Wklej notatki lub transkrypcję. Liczą się fakty z przeszłości rozmówcy, nie komplementy.",
           )}
-          className="pf-scroll min-h-0 flex-1 select-text resize-none rounded-md border border-[#eadff3] bg-white text-ink outline-none focus:border-[#f783e9]"
+          className="pf-scroll min-h-0 flex-1 select-text resize-none rounded-md border border-[#eadff3] bg-white text-ink outline-none focus:border-pink"
           style={{ fontSize: u(5.8), padding: u(5), lineHeight: 1.4 }}
         />
         <button

@@ -53,7 +53,7 @@ export function QualityButton({ onShowSetup }: { onShowSetup: () => void }) {
             gap: u(3),
             padding: `${u(3)} ${u(7)}`,
             fontSize: u(5.6),
-            background: state?.enabled ? "#f783e9" : "#f3ecfa",
+            background: state?.enabled ? "var(--color-pink)" : "#f3ecfa",
             color: state?.enabled ? "#ffffff" : "var(--color-mauve)",
           }}
           title={t("Tryb jakości: Claude zamiast lokalnego modelu")}
@@ -169,7 +169,7 @@ function QualityModal({ state, onChange, onClose, onShowSetup }: ModalProps) {
             placeholder={
               state?.has_key ? t("Wpisz nowy, aby zastąpić") : "sk-ant-…"
             }
-            className="select-text rounded-md border border-[#eadff3] bg-white text-ink outline-none focus:border-[#f783e9]"
+            className="select-text rounded-md border border-[#eadff3] bg-white text-ink outline-none focus:border-pink"
             style={{ fontSize: u(6.4), padding: `${u(5)} ${u(6)}` }}
           />
         </label>

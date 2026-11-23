@@ -118,7 +118,7 @@ export function PersonaCard({
               padding: `0 ${u(7)}`,
               borderRadius: u(7),
               background: checked ? "#fef0fc" : "#f7f3fb",
-              boxShadow: checked ? `inset 0 0 0 ${u(0.8)} #f783e9` : "none",
+              boxShadow: checked ? `inset 0 0 0 ${u(0.8)} var(--color-pink)` : "none",
             }}
           >
             <Radio checked={checked} size={8.5} />

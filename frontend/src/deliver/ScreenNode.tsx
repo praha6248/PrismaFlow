@@ -255,7 +255,7 @@ function ElementRow({
           width: 7,
           height: 7,
           right: -4,
-          background: element.target ? "#f783e9" : "#e4d6ec",
+          background: element.target ? "var(--color-pink)" : "#e4d6ec",
         }}
       />
     </div>
@@ -307,7 +307,7 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
         width: 200,
         borderRadius: 10,
         background: "#ffffff",
-        border: `1.2px solid ${over || selected ? "#f783e9" : deadEnd ? "#f7b6ee" : "#ece3f4"}`,
+        border: `1.2px solid ${over || selected ? "var(--color-pink)" : deadEnd ? "#f7b6ee" : "#ece3f4"}`,
         boxShadow: over
           ? "0 0 0 4px rgba(247, 131, 233, 0.18)"
           : "0 2px 10px rgba(196, 160, 232, 0.25)",
@@ -397,7 +397,7 @@ function ScreenNodeView({ data, selected }: NodeProps<ScreenFlowNode>) {
               style={{ fontSize: 6.5, padding: "1px 6px", gap: 3 }}
             >
               <span
-                className="rounded-full bg-[#f783e9]"
+                className="rounded-full bg-pink"
                 style={{ width: 4, height: 4 }}
               />
               {feature.title}

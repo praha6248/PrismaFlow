@@ -70,7 +70,7 @@ function BubbleNodeView({ data }: NodeProps<BubbleFlowNode>) {
             boxShadow: [
               "0 4px 12px rgba(150, 104, 214, 0.22)",
               "0 1px 3px rgba(150, 104, 214, 0.12)",
-              node.starred ? "0 0 0 2.5px #ffffff, 0 0 0 3.6px #f783e9" : "",
+              node.starred ? "0 0 0 2.5px #ffffff, 0 0 0 3.6px var(--color-pink)" : "",
               focused && !node.starred
                 ? "0 0 0 2.5px rgba(255,255,255,0.95), 0 0 0 3.4px rgba(160,120,230,0.55)"
                 : "",
@@ -105,8 +105,8 @@ function BubbleNodeView({ data }: NodeProps<BubbleFlowNode>) {
           <Star
             size={8.5}
             strokeWidth={2}
-            color="#f783e9"
-            fill={node.starred ? "#f783e9" : "transparent"}
+            color="var(--color-pink)"
+            fill={node.starred ? "var(--color-pink)" : "transparent"}
           />
         </button>
 

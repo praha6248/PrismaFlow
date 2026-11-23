@@ -284,7 +284,7 @@ export function DiscoverView({
         >
           {t("Przejdź do Define")}
           <span
-            className="rounded-full bg-[#fed3f9]"
+            className="rounded-full bg-pink-soft"
             style={{ padding: "0 calc(var(--u) * 5)" }}
           >
             {starredCount}

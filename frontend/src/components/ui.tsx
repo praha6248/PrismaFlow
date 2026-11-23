@@ -118,7 +118,7 @@ export function Card({
           onSelect();
         }
       }}
-      className="pf-fade-up absolute overflow-hidden text-left outline-none transition-[box-shadow,transform] duration-200 focus-visible:ring-2 focus-visible:ring-[#f783e9]"
+      className="pf-fade-up absolute overflow-hidden text-left outline-none transition-[box-shadow,transform] duration-200 focus-visible:ring-2 focus-visible:ring-[var(--color-pink)]"
       style={{
         left: u(left + index * (width + gap)),
         top: u(top),
@@ -126,7 +126,7 @@ export function Card({
         height: u(height),
         borderRadius: u(11),
         background: "#fdfcfe",
-        boxShadow: selected ? `0 0 0 ${u(1.2)} #f783e9, ${SHADOW}` : SHADOW,
+        boxShadow: selected ? `0 0 0 ${u(1.2)} var(--color-pink), ${SHADOW}` : SHADOW,
         cursor: onSelect && !disabled ? "pointer" : "default",
         animationDelay: `${index * 70}ms`,
         ...style,

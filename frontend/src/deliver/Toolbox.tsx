@@ -78,7 +78,7 @@ export function Toolbox({
                   top: u(7.5),
                   width: u(3.4),
                   height: u(3.4),
-                  background: screen ? "#f783e9" : "#d9c6ec",
+                  background: screen ? "var(--color-pink)" : "#d9c6ec",
                 }}
               />
               <GripVertical
@@ -122,7 +122,7 @@ export function Toolbox({
           </span>
           <span className="flex items-center" style={{ gap: u(2) }}>
             <span
-              className="rounded-full bg-[#f783e9]"
+              className="rounded-full bg-pink"
               style={{ width: u(3), height: u(3) }}
             />
             {t("użyta")}

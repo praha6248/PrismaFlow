@@ -171,7 +171,7 @@ export function EvidenceDrawer({
             marginTop: "calc(var(--u) * 7)",
             padding: "calc(var(--u) * 3) calc(var(--u) * 8)",
             gap: "calc(var(--u) * 4)",
-            background: node.starred ? "#fed3f9" : "#f8f4fc",
+            background: node.starred ? "var(--color-pink-soft)" : "#f8f4fc",
             color: node.starred ? "#853c77" : "var(--color-mauve)",
           }}
         >
@@ -180,8 +180,8 @@ export function EvidenceDrawer({
               width: "calc(var(--u) * 7.5)",
               height: "calc(var(--u) * 7.5)",
             }}
-            color="#f783e9"
-            fill={node.starred ? "#f783e9" : "transparent"}
+            color="var(--color-pink)"
+            fill={node.starred ? "var(--color-pink)" : "transparent"}
           />
           {node.starred ? t("Wybrany do analizy") : t("Zaznacz do analizy")}
         </button>
@@ -368,7 +368,7 @@ export function EvidenceDrawer({
           style={{
             height: "calc(var(--u) * 20)",
             borderRadius: "calc(var(--u) * 8)",
-            background: "#fed3f9",
+            background: "var(--color-pink-soft)",
             color: "#853c77",
             gap: "calc(var(--u) * 3)",
           }}

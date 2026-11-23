@@ -256,7 +256,7 @@ function AddFeatureForm({ onSubmit, onClose }: AddFormProps) {
               background: PRIORITY_STYLES[column].background,
               color: PRIORITY_STYLES[column].color,
               boxShadow:
-                priority === column ? `0 0 0 ${u(0.9)} #f783e9` : "none",
+                priority === column ? `0 0 0 ${u(0.9)} var(--color-pink)` : "none",
             }}
           >
             {PRIORITY_STYLES[column].label}

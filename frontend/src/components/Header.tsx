@@ -100,11 +100,11 @@ export function Header({ active, reached, onHome, onNavigate }: Props) {
                   marginTop: "calc(var(--u) * 10.2)",
                   width: "calc(var(--u) * 14)",
                   height: "calc(var(--u) * 14)",
-                  border: `calc(var(--u) * 1) solid ${isActive ? "#f783e9" : done ? "#f783e9" : "#f9c4f1"}`,
+                  border: `calc(var(--u) * 1) solid ${isActive ? "var(--color-pink)" : done ? "var(--color-pink)" : "#f9c4f1"}`,
                   background: isActive
                     ? "#ffffff"
                     : done
-                      ? "#f783e9"
+                      ? "var(--color-pink)"
                       : "#fff7fd",
                 }}
               >
