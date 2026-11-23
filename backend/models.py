@@ -28,6 +28,7 @@ class ClassifiedNode(BaseModel):
 
     label: str
     kind: NodeKind
+    search_query: str = Field(default="", description="2-5 word web search phrase joining the node with the niche")
 
     @field_validator("label")
     @classmethod
@@ -41,7 +42,7 @@ class ProposedNode(BaseModel):
     label: str = Field(description="1-3 word label in the niche's language")
     kind: NodeKind
     connects_to: list[str] = Field(description="Exact labels of nodes this one relates to")
-    search_query: str = Field(description="2-5 word web search phrase that surfaces real user discussions")
+    search_query: str = Field(description="2-5 word web search phrase joining the node with the niche")
 
     @field_validator("label")
     @classmethod
@@ -52,6 +53,12 @@ class ProposedNode(BaseModel):
     @classmethod
     def _query(cls, value: str) -> str:
         return " ".join(value.replace("_", " ").split())[:80]
+
+
+class RelevantItems(BaseModel):
+    """Numbers of the search results that are real evidence for the niche."""
+
+    relevant: list[int] = Field(default_factory=list)
 
 
 class ExpansionPlan(BaseModel):

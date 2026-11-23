@@ -15,7 +15,7 @@ import httpx
 from ..collectors import CollectorUnavailable, autocomplete, community, trends
 from ..config import COUNTRY_FOR_LANGUAGE, settings
 from ..database import Database
-from ..models import ExpansionPlan, NodeKind, ProposedNode
+from ..models import ExpansionPlan, NodeKind, ProposedNode, RelevantItems
 from ..ollama_client import OllamaError
 from .jobs import ProgressFn, WarnFn
 from .translate import translate, trend_queries
@@ -35,8 +35,10 @@ LANGUAGE_NAMES = {
 SYSTEM_PROMPT = """You are a product discovery researcher helping a founder map a product niche (Double Diamond, Discover phase).
 You grow a mind map whose nodes have one of these kinds:
 - idea: a product direction, feature, activity or sub-topic worth building around (e.g. for the niche "cooking": "meal prep", "batch cooking app").
-- target_group: a concrete group of people who would use the product (e.g. "busy parents", "students").
-- pain_point: a real frustration those people experience (e.g. "no time to cook", "food waste").
+- target_group: a concrete group of PEOPLE who would use the product, always a plural noun for people (e.g. "busy parents",
+  "students"). Never an activity, place, job, benefit or object.
+- pain_point: a real frustration those people experience, phrased as a problem (e.g. "no time to cook", "food waste").
+  Never a neutral or positive word such as "peace" or "relationships".
 - competitor: an existing named product, brand or service (e.g. "HelloFresh").
 Rules:
 - Propose a competitor only when its name appears in the search suggestions or you are certain it exists and serves
@@ -44,8 +46,51 @@ Rules:
 - Labels are 1-3 words, lowercase unless a brand name, without underscores or hashtags, written in {language}.
 - Never repeat or paraphrase an existing label.
 - Ground proposals in the real search suggestions when they reveal audiences, problems or products.
-- search_query is a 2-5 word phrase in {language} that would surface real user discussions or complaints about the node.
+- Stay inside the niche: every node must matter for this exact product, not for its audience's life in general.
+- Never propose the product format or a platform as a node ("mobile app", "website", "platform", "iPhone", "Android",
+  "free"); when the focus node is such a format, expand the needs and problems it would serve instead.
+- search_query is a 2-5 word phrase in {language} that joins the node with the niche so the search stays on topic
+  (for the niche "training plan after a knee injury" and the node "rehabilitation": "knee rehabilitation exercises").
+  Give one for every classified node too.
 - connects_to lists 1-2 exact labels from the map (existing or newly proposed) that the node is meaningfully related to."""
+
+
+RELEVANCE_SYSTEM = """You screen web search results collected as evidence for product research.
+A result is relevant when it is about the people, problems, needs, habits or products of the given niche.
+Results that only share a word with the topic are irrelevant: pets, films, games, politics, memes, other products.
+Return the numbers of the relevant results only."""
+
+RELEVANCE_LOW = 0.36
+RELEVANCE_HIGH = 0.58
+RELEVANCE_MID = 0.45
+FORMATS = {
+    "aplikacja", "aplikacja mobilna", "aplikacja webowa", "aplikacja internetowa", "strona internetowa", "strona www",
+    "platforma", "platforma online", "darmowa", "darmowa aplikacja", "app", "mobile app", "web app", "website",
+    "platform", "online platform", "free", "free app", "iphone", "android", "ios",
+}
+POLISH_LETTERS = set("ąćęłńóśźż")
+POLISH_WORDS = {"i", "w", "z", "na", "do", "dla", "po", "jak", "się", "nie", "oraz", "który", "aplikacja", "dla"}
+ENGLISH_WORDS = {"the", "a", "an", "to", "for", "in", "of", "that", "and", "with", "app", "my", "your", "find", "finds", "how"}
+
+
+def guess_language(texts: list[str]) -> str | None:
+    """Detect Polish or English from letters and function words, or None when unsure."""
+    joined = " ".join(texts).casefold()
+    if any(c in POLISH_LETTERS for c in joined):
+        return "pl"
+    words = set(re.findall(r"[a-z]+", joined))
+    english, polish = len(words & ENGLISH_WORDS), len(words & POLISH_WORDS)
+    if english >= 1 and english > polish:
+        return "en"
+    if polish >= 2:
+        return "pl"
+    return None
+
+
+def cosine(a: list[float], b: list[float]) -> float:
+    """Cosine similarity of two raw vectors."""
+    norm = math.sqrt(sum(x * x for x in a) * sum(y * y for y in b)) or 1.0
+    return sum(x * y for x, y in zip(a, b)) / norm
 
 
 class StructuredLLM(Protocol):
@@ -87,8 +132,9 @@ def graph(db: Database, project_id: int) -> dict[str, Any]:
 
 def create_project(db: Database, seed: str) -> dict[str, Any]:
     """Start a new project around a seed niche."""
-    geo = settings.country if settings.country else ""
-    project = db.create_project(seed, settings.language, geo)
+    language = guess_language([seed]) or settings.language
+    geo = settings.country if settings.country and language == settings.language else COUNTRY_FOR_LANGUAGE.get(language, "")
+    project = db.create_project(seed, language, geo)
     return graph(db, project["id"])
 
 
@@ -288,7 +334,8 @@ class DiscoverService:
                 plan = fallback_plan(focus, suggestions, set(existing), count)
 
             progress(0.45, "placing")
-            project = self._adopt_language(project, plan.language)
+            typed = [project["seed"], *(n["label"] for n in nodes if n["origin"] == "user" and not n["is_root"])]
+            project = self._adopt_language(project, guess_language(typed) or plan.language)
             touched = self._apply_plan(project_id, focus, nodes, plan, count)
 
             progress(0.55, "evidence")
@@ -301,6 +348,55 @@ class DiscoverService:
 
         self.db.update_project(project_id, stage="select")
         return graph(self.db, project_id)
+
+    async def _screen(
+        self, seed: str, nodes: list[dict[str, Any]], gathered: dict[int, dict[str, Any]], warn: WarnFn
+    ) -> None:
+        """Keep only discussions that are about the niche, not just sharing a word with a node."""
+        labels = {n["id"]: n["label"] for n in nodes}
+        items = [
+            (node_id, key, index, f"{post['title']} {(post.get('body') or '')[:200]}".strip())
+            for node_id, entry in gathered.items()
+            for key in ("posts", "en_posts")
+            for index, post in enumerate(entry.get(key) or [])
+        ]
+        if not items:
+            return
+        sims: list[float] | None = None
+        if callable(getattr(self.llm, "embed", None)):
+            try:
+                vectors = await self.llm.embed([seed, *(text for *_, text in items)])
+                sims = [cosine(vectors[0], v) for v in vectors[1:]]
+            except (OllamaError, httpx.HTTPError) as exc:
+                warn(f"screening: {exc}")
+        keep: set[int] = set()
+        unsure: list[int] = []
+        for position in range(len(items)):
+            sim = sims[position] if sims else None
+            if sim is None:
+                unsure.append(position)
+            elif sim >= RELEVANCE_HIGH:
+                keep.add(position)
+            elif sim >= RELEVANCE_LOW:
+                unsure.append(position)
+        for start in range(0, len(unsure), 30):
+            chunk = unsure[start : start + 30]
+            lines = [f"{n}. [{labels[items[p][0]]}] {items[p][3][:180]}" for n, p in enumerate(chunk, 1)]
+            try:
+                verdict: RelevantItems = await self.llm.structured(
+                    RelevantItems, RELEVANCE_SYSTEM, f'Niche: "{seed}"\n\nResults:\n' + "\n".join(lines), temperature=0
+                )
+                keep.update(chunk[n - 1] for n in verdict.relevant if 1 <= n <= len(chunk))
+            except OllamaError as exc:
+                warn(f"screening: {exc}")
+                keep.update(p for p in chunk if sims is None or sims[p] >= RELEVANCE_MID)
+        for position, (node_id, key, index, _) in enumerate(items):
+            if position not in keep:
+                gathered[node_id][key][index] = None
+        for entry in gathered.values():
+            for key in ("posts", "en_posts"):
+                if entry.get(key):
+                    entry[key] = [post for post in entry[key] if post is not None]
 
     def _drop_unconfirmed(
         self, project_id: int, candidates: list[dict[str, Any]], suggestions: list[str]
@@ -350,7 +446,8 @@ class DiscoverService:
         for verdict in plan.classified:
             node = by_label.get(normalize_label(verdict.label))
             if node and not node["is_root"] and not node["kind"]:
-                touched[node["id"]] = self.db.update_node(node["id"], kind=verdict.kind.value)
+                query = " ".join(verdict.search_query.split())[:80] or None
+                touched[node["id"]] = self.db.update_node(node["id"], kind=verdict.kind.value, search_query=query)
         for node in nodes:
             if not node["is_root"] and not node["kind"] and node["id"] not in touched:
                 touched[node["id"]] = self.db.update_node(node["id"], kind=NodeKind.idea.value)
@@ -358,7 +455,7 @@ class DiscoverService:
         created: list[tuple[dict[str, Any], ProposedNode]] = []
         for proposal in plan.new_nodes:
             key = normalize_label(proposal.label)
-            if not key or key in by_label or len(created) >= count:
+            if not key or key in by_label or key in FORMATS or len(created) >= count:
                 continue
             node = self.db.insert_node(
                 project_id,
@@ -434,6 +531,9 @@ class DiscoverService:
             progress(0.58 + 0.2 * done / len(nodes), "evidence")
 
         await asyncio.gather(*(collect(i, n) for i, n in enumerate(nodes)))
+
+        progress(0.785, "screening")
+        await self._screen(project["seed"], nodes, gathered, warn)
 
         if bilingual:
             progress(0.79, "translating")

@@ -141,6 +141,7 @@ async def test_expand_drops_competitors_nobody_mentions(db: Database) -> None:
             {"label": "edukacja.pl", "kind": "competitor", "connects_to": ["sport"], "search_query": "edukacja.pl"},
             {"label": "Strava", "kind": "competitor", "connects_to": ["sport"], "search_query": "strava"},
             {"label": "rodzice", "kind": "target_group", "connects_to": ["edukacja.pl"], "search_query": "rodzice"},
+            {"label": "Aplikacja mobilna", "kind": "idea", "connects_to": ["sport"], "search_query": "aplikacja"},
         ],
     }
     posts = [{"title": "Studying is a waste of time", "body": "I switched to Strava for runs", "score": 3, "comments": 1, "url": "https://x"}]
@@ -150,6 +151,7 @@ async def test_expand_drops_competitors_nobody_mentions(db: Database) -> None:
 
     nodes = {n["label"]: n for n in result["nodes"]}
     assert "edukacja.pl" not in nodes
+    assert "Aplikacja mobilna" not in nodes
     assert nodes["Strava"]["kind"] == "competitor"
     assert warnings == ["competitor: edukacja.pl"]
     linked = {i for e in result["edges"] for i in (e["source_id"], e["target_id"])}
@@ -161,3 +163,58 @@ def test_mentions_matches_whole_names() -> None:
     assert not discover.mentions("edukacja publiczna", "edukacja.pl")
     assert not discover.mentions("superhellofresh box", "HelloFresh")
     assert discover.mentions("Używam Perspektywy ranking", "perspektywy")
+
+
+class ScreeningLLM(FakeLLM):
+    """Fake model with embeddings: vectors point along the topic when the text mentions the knee."""
+
+    async def embed(self, texts: list[str]) -> list[list[float]]:
+        def vector(text: str) -> list[float]:
+            low = text.casefold()
+            if "kolan" in low:
+                return [1.0, 0.0]
+            if "kot" in low:
+                return [0.0, 1.0]
+            return [0.5, 0.866]
+
+        return [vector(t) for t in texts]
+
+
+async def test_expand_screens_out_discussions_that_only_share_a_word(db: Database) -> None:
+    project_id = discover.create_project(db, "Planer treningów po kontuzji kolana")["project"]["id"]
+    discover.add_node(db, project_id, "rehabilitacja")
+    plan = {
+        "language": "pl",
+        "classified": [{"label": "rehabilitacja", "kind": "idea", "search_query": "rehabilitacja kolana"}],
+        "new_nodes": [{"label": "fizjoterapeuta", "kind": "target_group", "connects_to": ["rehabilitacja"], "search_query": "fizjoterapeuta kolano"}],
+    }
+    posts = [
+        {"title": "Ćwiczenia na kolana po urazie", "body": "", "score": 50, "comments": 9, "url": "https://a"},
+        {"title": "Kot z centrum rehabilitacji zwierząt", "body": "", "score": 900, "comments": 90, "url": "https://b"},
+        {"title": "Fizjoterapia wróciła mi sprawność", "body": "", "score": 5, "comments": 1, "url": "https://c"},
+        {"title": "Nowy film akcji w kinach", "body": "", "score": 300, "comments": 40, "url": "https://d"},
+    ]
+    llm = ScreeningLLM(plan)
+    llm.relevant = "Fizjoterapia"
+    service = DiscoverService(db, llm, offline_collectors(posts=posts))
+    result = await service.expand(project_id, None, 3, _noop, _noop)
+
+    nodes = {n["label"]: n for n in result["nodes"]}
+    assert nodes["rehabilitacja"]["search_query"] == "rehabilitacja kolana"
+    titles = {q["title"] for q in discover.node_evidence(db, nodes["rehabilitacja"]["id"])["quotes"]}
+    assert "Ćwiczenia na kolana po urazie" in titles
+    assert "Fizjoterapia wróciła mi sprawność" in titles
+    assert not any("Kot" in t or "film" in t for t in titles)
+    assert any("Niche:" in p and "Nowy film" in p for p in llm.prompts)
+
+
+def test_guess_language_reads_letters_and_function_words() -> None:
+    assert discover.guess_language(["App that finds quiet places to study in the city", "students"]) == "en"
+    assert discover.guess_language(["Wspólny budżet domowy dla par"]) == "pl"
+    assert discover.guess_language(["planer treningow dla osob po kontuzji"]) == "pl"
+    assert discover.guess_language(["sport"]) is None
+
+
+def test_create_project_takes_language_from_the_seed(db: Database) -> None:
+    project = discover.create_project(db, "App that finds quiet places to study")["project"]
+    assert project["language"] == "en"

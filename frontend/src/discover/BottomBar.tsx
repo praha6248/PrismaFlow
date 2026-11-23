@@ -8,6 +8,7 @@ export const STAGE_TEXT: Record<string, string> = {
   thinking: t("Model analizuje mapę"),
   placing: t("Dodaję kolejne węzły"),
   evidence: t("Zbieram dowody z sieci"),
+  screening: t("Odrzucam dyskusje nie na temat"),
   translating: t("Tłumaczę wyniki z angielskiego"),
   trends: t("Sprawdzam trendy Google"),
   scoring: t("Liczę popyt"),

@@ -456,5 +456,6 @@
   "usunięte zdania z liczbami spoza danych: {count}": "sentences removed for numbers not in the data: {count}",
   "Tylko fakty z projektu; braki zostaną oznaczone „do uzupełnienia”.": "Project facts only; gaps will be marked “to fill in”.",
   "PDF: otwórz case-study.html i wydrukuj do PDF": "PDF: open case-study.html and print to PDF",
-  "Napisz ponownie": "Write again"
+  "Napisz ponownie": "Write again",
+  "Odrzucam dyskusje nie na temat": "Dropping off-topic discussions"
 }
