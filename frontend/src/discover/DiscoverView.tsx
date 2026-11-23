@@ -12,6 +12,12 @@ import { t } from "../i18n";
 
 const WARNINGS: [string, string][] = [
   [
+    "competitor:",
+    t(
+      "Usunięto konkurencję, której nazwa nie pojawia się w wyszukiwaniach ani dyskusjach — model mógł ją zmyślić.",
+    ),
+  ],
+  [
     "llm:",
     t(
       "Lokalny model jest niedostępny — mapę rozbudowano na podstawie podpowiedzi Google.",

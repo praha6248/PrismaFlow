@@ -444,5 +444,6 @@
   "usunięte nie na temat: {n}": "removed as off-topic: {n}",
   "Kliknięcia bez efektu: {n} ({last})": "Taps with no effect: {n} ({last})",
   "„{task}”: „{element}” na ekranie „{screen}” nic nie robi, a klikało w to: {count}.": "“{task}”: “{element}” on “{screen}” does nothing, yet it was tapped by {count}.",
-  "pomyłki {n}": "dead taps {n}"
+  "pomyłki {n}": "dead taps {n}",
+  "Usunięto konkurencję, której nazwa nie pojawia się w wyszukiwaniach ani dyskusjach — model mógł ją zmyślić.": "Removed a competitor whose name doesn't appear in searches or discussions — the model may have made it up."
 }

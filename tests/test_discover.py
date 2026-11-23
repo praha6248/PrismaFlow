@@ -130,3 +130,34 @@ async def test_english_discussions_reuse_original_and_cache_translation(db: Data
         assert {q["title"] for q in result["quotes"]} == {"Installing a camera", "[en] Taniec dla dzieci"}
     assert len(llm.prompts) == 1
     assert {q["title"] for q in discover.node_evidence(db, node["id"])["quotes"]} == {"Montaż kamery", "Taniec dla dzieci"}
+
+
+async def test_expand_drops_competitors_nobody_mentions(db: Database) -> None:
+    project_id = _seed(db)
+    plan = {
+        "language": "pl",
+        "classified": [],
+        "new_nodes": [
+            {"label": "edukacja.pl", "kind": "competitor", "connects_to": ["sport"], "search_query": "edukacja.pl"},
+            {"label": "Strava", "kind": "competitor", "connects_to": ["sport"], "search_query": "strava"},
+            {"label": "rodzice", "kind": "target_group", "connects_to": ["edukacja.pl"], "search_query": "rodzice"},
+        ],
+    }
+    posts = [{"title": "Studying is a waste of time", "body": "I switched to Strava for runs", "score": 3, "comments": 1, "url": "https://x"}]
+    service = DiscoverService(db, FakeLLM(plan), offline_collectors(posts=posts))
+    warnings: list[str] = []
+    result = await service.expand(project_id, None, 3, _noop, warnings.append)
+
+    nodes = {n["label"]: n for n in result["nodes"]}
+    assert "edukacja.pl" not in nodes
+    assert nodes["Strava"]["kind"] == "competitor"
+    assert warnings == ["competitor: edukacja.pl"]
+    linked = {i for e in result["edges"] for i in (e["source_id"], e["target_id"])}
+    assert nodes["rodzice"]["id"] in linked
+
+
+def test_mentions_matches_whole_names() -> None:
+    assert discover.mentions("Polecam Edukacja.pl do nauki", "edukacja.pl")
+    assert not discover.mentions("edukacja publiczna", "edukacja.pl")
+    assert not discover.mentions("superhellofresh box", "HelloFresh")
+    assert discover.mentions("Używam Perspektywy ranking", "perspektywy")

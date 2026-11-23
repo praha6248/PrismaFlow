@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import math
+import re
 import time
 from dataclasses import dataclass
 from statistics import mean
@@ -38,6 +39,8 @@ You grow a mind map whose nodes have one of these kinds:
 - pain_point: a real frustration those people experience (e.g. "no time to cook", "food waste").
 - competitor: an existing named product, brand or service (e.g. "HelloFresh").
 Rules:
+- Propose a competitor only when its name appears in the search suggestions or you are certain it exists and serves
+  this exact niche. Never invent brand names or domains; when unsure, propose another kind instead.
 - Labels are 1-3 words, lowercase unless a brand name, without underscores or hashtags, written in {language}.
 - Never repeat or paraphrase an existing label.
 - Ground proposals in the real search suggestions when they reveal audiences, problems or products.
@@ -64,6 +67,14 @@ class Collectors:
 def normalize_label(label: str) -> str:
     """Collapse whitespace and casing for duplicate detection."""
     return " ".join(label.replace("_", " ").split()).casefold()
+
+
+def mentions(text: str, name: str) -> bool:
+    """Whether a brand name occurs in text as a whole word or phrase."""
+    needle = " ".join(name.casefold().split())
+    if len(needle) < 3:
+        return False
+    return re.search(rf"(?<![\w.]){re.escape(needle)}(?![\w])", " ".join(text.casefold().split())) is not None
 
 
 def graph(db: Database, project_id: int) -> dict[str, Any]:
@@ -283,8 +294,41 @@ class DiscoverService:
             progress(0.55, "evidence")
             await self._enrich(project, touched, http, progress, warn)
 
+        candidates = [n for n in touched if n["origin"] == "ai" and n["kind"] == NodeKind.competitor.value]
+        for label in self._drop_unconfirmed(project_id, candidates, suggestions):
+            warn(f"competitor: {label}")
+        self._reattach(project_id, focus)
+
         self.db.update_project(project_id, stage="select")
         return graph(self.db, project_id)
+
+    def _drop_unconfirmed(
+        self, project_id: int, candidates: list[dict[str, Any]], suggestions: list[str]
+    ) -> list[str]:
+        """Delete AI competitors whose name never shows up in real suggestions or discussions."""
+        if not candidates:
+            return []
+        texts = [s.casefold() for s in suggestions]
+        for node in self.db.list_nodes(project_id):
+            for item in self.db.list_evidence(node["id"]):
+                if item["source"] in ("community", "reddit"):
+                    texts.append(f"{item['title']} {item.get('body') or ''}".casefold())
+                    original = item["meta"].get("original")
+                    if original:
+                        texts.append(original.casefold())
+        dropped = []
+        for node in candidates:
+            if not any(mentions(text, node["label"]) for text in texts):
+                self.db.delete_node(node["id"])
+                dropped.append(node["label"])
+        return dropped
+
+    def _reattach(self, project_id: int, focus: dict[str, Any]) -> None:
+        anchor = self.db.get_node(focus["id"]) or self.db.root_node(project_id)
+        linked = {i for e in self.db.list_edges(project_id) for i in (e["source_id"], e["target_id"])}
+        for node in self.db.list_nodes(project_id):
+            if not node["is_root"] and node["id"] not in linked:
+                self.db.insert_edge(project_id, anchor["id"], node["id"], origin="ai")
 
     def _adopt_language(self, project: dict[str, Any], detected: str) -> dict[str, Any]:
         code = (detected or "").strip().lower()[:2]
