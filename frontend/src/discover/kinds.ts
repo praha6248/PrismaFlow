@@ -48,6 +48,17 @@ export function styleFor(node: Pick<MapNode, "kind" | "is_root">): KindStyle {
 
 export const ROOT_DIAMETER = 84;
 
+export function relativeScores(nodes: MapNode[]): MapNode[] {
+  const scored = nodes.filter((n) => !n.is_root && n.enriched_at);
+  if (scored.length < 2) return nodes;
+  const low = Math.min(...scored.map((n) => n.score));
+  const high = Math.max(...scored.map((n) => n.score));
+  if (high - low < 0.02) return nodes.map((n) => (n.is_root || !n.enriched_at ? n : { ...n, score: 0.5 }));
+  return nodes.map((n) =>
+    n.is_root || !n.enriched_at ? n : { ...n, score: (n.score - low) / (high - low) },
+  );
+}
+
 const CHAR_WIDTH = 0.56;
 const LINE_HEIGHT = 1.12;
 const fits = new Map<string, number>();

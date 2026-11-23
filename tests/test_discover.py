@@ -218,3 +218,56 @@ def test_guess_language_reads_letters_and_function_words() -> None:
 def test_create_project_takes_language_from_the_seed(db: Database) -> None:
     project = discover.create_project(db, "App that finds quiet places to study")["project"]
     assert project["language"] == "en"
+
+
+async def test_trends_pause_after_429_and_double_while_it_repeats(db: Database, monkeypatch) -> None:
+    from backend.collectors import trends
+
+    calls: list[list[str]] = []
+
+    def limited(keywords, geo, timeframe):
+        calls.append(keywords)
+        raise trends.RateLimited("google trends: too many requests (429)")
+
+    monkeypatch.setattr(trends, "_download", limited)
+    import pytest
+
+    with pytest.raises(trends.RateLimited):
+        await trends.interest(db, ["a", "kalendarz"], "PL")
+    with pytest.raises(trends.RateLimited, match="paused"):
+        await trends.interest(db, ["b", "kalendarz"], "PL")
+    assert len(calls) == 1
+    assert 29 * 60 < trends.cooldown_left(db) <= 30 * 60
+    assert trends.start_cooldown(db) == 60 * 60
+
+
+async def test_competitors_are_checked_as_brands_categories_or_unrelated(db: Database) -> None:
+    project_id = discover.create_project(db, "Wspólny budżet domowy dla par")["project"]["id"]
+    discover.add_node(db, project_id, "fizjoterapeuta")
+    plan = {
+        "language": "pl",
+        "classified": [{"label": "fizjoterapeuta", "kind": "competitor"}],
+        "new_nodes": [
+            {"label": "Spendee", "kind": "competitor", "connects_to": ["Wspólny budżet domowy dla par"], "search_query": "spendee"},
+            {"label": "edukacja.pl", "kind": "competitor", "connects_to": ["Wspólny budżet domowy dla par"], "search_query": "edukacja.pl"},
+            {"label": "aplikacje budżetowe", "kind": "competitor", "connects_to": ["Wspólny budżet domowy dla par"], "search_query": "aplikacje budżetowe"},
+        ],
+    }
+    posts = [{"title": "Jak dzielicie wydatki w związku?", "body": "", "score": 3, "comments": 2, "url": "https://x"}]
+    llm = FakeLLM(plan)
+    llm.relevant = "wydatki"
+    llm.competitors = {
+        "Spendee": {"proper_name": True, "serves_niche": True, "people": False},
+        "edukacja.pl": {"proper_name": True, "serves_niche": False, "people": False},
+        "aplikacje budżetowe": {"proper_name": False, "serves_niche": True, "people": False},
+        "fizjoterapeuta": {"proper_name": True, "serves_niche": False, "people": True},
+    }
+    warnings: list[str] = []
+    result = await DiscoverService(db, llm, offline_collectors(posts=posts)).expand(project_id, None, 3, _noop, warnings.append)
+
+    nodes = {n["label"]: n for n in result["nodes"]}
+    assert nodes["Spendee"]["kind"] == "competitor"
+    assert "edukacja.pl" not in nodes
+    assert nodes["aplikacje budżetowe"]["kind"] == "idea"
+    assert nodes["fizjoterapeuta"]["kind"] == "target_group"
+    assert "competitor: edukacja.pl" in warnings

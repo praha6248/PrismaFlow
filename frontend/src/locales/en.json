@@ -457,5 +457,6 @@
   "Tylko fakty z projektu; braki zostaną oznaczone „do uzupełnienia”.": "Project facts only; gaps will be marked “to fill in”.",
   "PDF: otwórz case-study.html i wydrukuj do PDF": "PDF: open case-study.html and print to PDF",
   "Napisz ponownie": "Write again",
-  "Odrzucam dyskusje nie na temat": "Dropping off-topic discussions"
+  "Odrzucam dyskusje nie na temat": "Dropping off-topic discussions",
+  "Google Trends ogranicza liczbę zapytań — wstrzymuję trendy na pewien czas, reszta mapy działa bez nich.": "Google Trends is limiting requests — trends are paused for a while, the rest of the map works without them."
 }

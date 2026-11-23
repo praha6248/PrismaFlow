@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, waitForJob } from "../api";
 import type { DiscoverStage, Graph, MapNode, Stage } from "../types";
 import { ComposerBar, ExpandProgress } from "./BottomBar";
+import { relativeScores } from "./kinds";
 import { EvidenceDrawer } from "./EvidenceDrawer";
 import { composeSlot } from "./layout";
 import { MindMap } from "./MindMap";
@@ -26,6 +27,18 @@ const WARNINGS: [string, string][] = [
   [
     "community:",
     t("Stack Exchange i Lemmy chwilowo nie odpowiadają — pomijam dyskusje."),
+  ],
+  [
+    "too many requests",
+    t(
+      "Google Trends ogranicza liczbę zapytań — wstrzymuję trendy na pewien czas, reszta mapy działa bez nich.",
+    ),
+  ],
+  [
+    "paused for",
+    t(
+      "Google Trends ogranicza liczbę zapytań — wstrzymuję trendy na pewien czas, reszta mapy działa bez nich.",
+    ),
   ],
   [
     "trends:",
@@ -55,6 +68,10 @@ export function DiscoverView({
   notify,
 }: Props) {
   const [graph, setGraph] = useState<Graph | null>(null);
+  const shown = useMemo(
+    () => (graph ? { ...graph, nodes: relativeScores(graph.nodes) } : null),
+    [graph],
+  );
   const [leaving, setLeaving] = useState(false);
   const [creating, setCreating] = useState(false);
   const [localStage, setLocalStage] = useState<DiscoverStage | null>(null);
@@ -151,9 +168,9 @@ export function DiscoverView({
       );
       const finished = await waitForJob(job.id, (j) => setJobStage(j.stage));
       for (const warning of finished.warnings) {
-        const match = WARNINGS.find(([prefix]) => warning.startsWith(prefix));
-        if (match && !shownWarnings.current.has(match[0])) {
-          shownWarnings.current.add(match[0]);
+        const match = WARNINGS.find(([prefix]) => warning.startsWith(prefix) || warning.includes(prefix));
+        if (match && !shownWarnings.current.has(match[1])) {
+          shownWarnings.current.add(match[1]);
           notify(match[1]);
         }
       }
@@ -242,7 +259,7 @@ export function DiscoverView({
         <ReactFlowProvider>
           <div className="pf-fade absolute inset-0">
             <MindMap
-              graph={graph}
+              graph={shown ?? graph}
               stage={mapStage}
               focusedId={focusedId}
               onFocus={setFocusedId}

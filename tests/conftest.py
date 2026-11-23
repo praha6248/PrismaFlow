@@ -20,6 +20,7 @@ class FakeLLM:
         self.fail = fail
         self.prompts: list[str] = []
         self.relevant = ""
+        self.competitors: dict[str, dict[str, str]] = {}
 
     async def structured(self, schema: Any, system: str, prompt: str, **_: Any) -> Any:
         self.prompts.append(prompt)
@@ -29,6 +30,9 @@ class FakeLLM:
             lines = [line.split(". ", 1)[1] for line in prompt.splitlines()]
             target = "en" if "into English" in system else "pl"
             return schema(items=[f"[{target}] {line}" for line in lines])
+        if schema.__name__ == "CompetitorCheck":
+            names = [line.split(". ", 1)[1] for line in prompt.splitlines() if line[:1].isdigit()]
+            return schema(items=[{"number": i, "name": n, **self.competitors[n]} for i, n in enumerate(names, 1) if n in self.competitors])
         if schema.__name__ == "RelevantItems":
             lines = [line for line in prompt.splitlines() if line[:1].isdigit()]
             return schema(relevant=[i for i, line in enumerate(lines, 1) if self.relevant in line])

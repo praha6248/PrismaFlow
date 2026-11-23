@@ -55,6 +55,25 @@ class ProposedNode(BaseModel):
         return " ".join(value.replace("_", " ").split())[:80]
 
 
+class CompetitorVerdict(BaseModel):
+    """Plain facts about one competitor name, judged by the model."""
+
+    number: int
+    name: str = ""
+    proper_name: bool = Field(
+        description="true only for the proper name of one specific company, app or website (Spotify, OLX, Duolingo); "
+        "false for common nouns such as libraries, physiotherapist, rehabilitation program, coffee shops"
+    )
+    serves_niche: bool = Field(description="true when people use it for the same need as the niche")
+    people: bool = Field(description="true when the name describes people (a profession or a group)")
+
+
+class CompetitorCheck(BaseModel):
+    """Verdicts for the competitor nodes of one expansion."""
+
+    items: list[CompetitorVerdict] = Field(default_factory=list)
+
+
 class RelevantItems(BaseModel):
     """Numbers of the search results that are real evidence for the niche."""
 

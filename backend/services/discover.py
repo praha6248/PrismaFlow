@@ -15,7 +15,7 @@ import httpx
 from ..collectors import CollectorUnavailable, autocomplete, community, trends
 from ..config import COUNTRY_FOR_LANGUAGE, settings
 from ..database import Database
-from ..models import ExpansionPlan, NodeKind, ProposedNode, RelevantItems
+from ..models import CompetitorCheck, ExpansionPlan, NodeKind, ProposedNode, RelevantItems
 from ..ollama_client import OllamaError
 from .jobs import ProgressFn, WarnFn
 from .translate import translate, trend_queries
@@ -39,7 +39,8 @@ You grow a mind map whose nodes have one of these kinds:
   "students"). Never an activity, place, job, benefit or object.
 - pain_point: a real frustration those people experience, phrased as a problem (e.g. "no time to cook", "food waste").
   Never a neutral or positive word such as "peace" or "relationships".
-- competitor: an existing named product, brand or service (e.g. "HelloFresh").
+- competitor: an existing named product, brand or service (e.g. "HelloFresh"). A profession, a place or a product
+  category ("physiotherapist", "libraries", "budgeting apps") is never a competitor.
 Rules:
 - Propose a competitor only when its name appears in the search suggestions or you are certain it exists and serves
   this exact niche. Never invent brand names or domains; when unsure, propose another kind instead.
@@ -59,6 +60,8 @@ RELEVANCE_SYSTEM = """You screen web search results collected as evidence for pr
 A result is relevant when it is about the people, problems, needs, habits or products of the given niche.
 Results that only share a word with the topic are irrelevant: pets, films, games, politics, memes, other products.
 Return the numbers of the relevant results only."""
+
+COMPETITOR_SYSTEM = "You label names from a product research mind map. Answer each field literally for every numbered name."
 
 RELEVANCE_LOW = 0.36
 RELEVANCE_HIGH = 0.58
@@ -341,8 +344,9 @@ class DiscoverService:
             progress(0.55, "evidence")
             await self._enrich(project, touched, http, progress, warn)
 
-        candidates = [n for n in touched if n["origin"] == "ai" and n["kind"] == NodeKind.competitor.value]
-        for label in self._drop_unconfirmed(project_id, candidates, suggestions):
+        current = [self.db.get_node(n["id"]) for n in touched]
+        candidates = [n for n in current if n and n["kind"] == NodeKind.competitor.value]
+        for label in await self._check_competitors(project, candidates, suggestions, warn):
             warn(f"competitor: {label}")
         self._reattach(project_id, focus)
 
@@ -398,26 +402,65 @@ class DiscoverService:
                 if entry.get(key):
                     entry[key] = [post for post in entry[key] if post is not None]
 
-    def _drop_unconfirmed(
-        self, project_id: int, candidates: list[dict[str, Any]], suggestions: list[str]
+    async def _check_competitors(
+        self, project: dict[str, Any], candidates: list[dict[str, Any]], suggestions: list[str], warn: WarnFn
     ) -> list[str]:
-        """Delete AI competitors whose name never shows up in real suggestions or discussions."""
+        """Keep named products, turn categories into ideas or groups, delete invented AI competitors."""
         if not candidates:
             return []
         texts = [s.casefold() for s in suggestions]
-        for node in self.db.list_nodes(project_id):
+        for node in self.db.list_nodes(project["id"]):
             for item in self.db.list_evidence(node["id"]):
                 if item["source"] in ("community", "reddit"):
-                    texts.append(f"{item['title']} {item.get('body') or ''}".casefold())
+                    texts.append(f"{item['title']} {item.get('body') or ''}")
                     original = item["meta"].get("original")
                     if original:
-                        texts.append(original.casefold())
+                        texts.append(original)
+        own = {
+            node["id"]: [i["title"] for i in self.db.list_evidence(node["id"]) if i["source"] == "autocomplete"][:6]
+            for node in candidates
+        }
+        mentioned = {n["id"]: any(mentions(text, n["label"]) for text in texts) for n in candidates}
+        searched = {n["id"]: any(mentions(text, n["label"]) for text in own[n["id"]]) for n in candidates}
+        lines = [f"{i}. {n['label']}" for i, n in enumerate(candidates, 1)]
+        verdicts: dict[int, Any] = {}
+        try:
+            check: CompetitorCheck = await self.llm.structured(
+                CompetitorCheck, COMPETITOR_SYSTEM, f'Niche: "{project["seed"]}"\n\n' + "\n".join(lines), temperature=0
+            )
+            verdicts = {v.number: v for v in check.items if 1 <= v.number <= len(candidates)}
+        except OllamaError as exc:
+            warn(f"competitors: {exc}")
+        near = await self._near_niche(project["seed"], {n["id"]: [t for t in own[n["id"]] if mentions(t, n["label"])] for n in candidates})
         dropped = []
-        for node in candidates:
-            if not any(mentions(text, node["label"]) for text in texts):
+        for i, node in enumerate(candidates, 1):
+            verdict = verdicts.get(i)
+            ai = node["origin"] == "ai"
+            grounded = mentioned[node["id"]] or near.get(node["id"], False)
+            if verdict is not None and verdict.people:
+                self.db.update_node(node["id"], kind=NodeKind.target_group.value)
+            elif verdict is not None and not verdict.proper_name:
+                self.db.update_node(node["id"], kind=NodeKind.idea.value)
+            elif not ai or grounded or (verdict is not None and verdict.serves_niche and searched[node["id"]]):
+                continue
+            else:
                 self.db.delete_node(node["id"])
                 dropped.append(node["label"])
         return dropped
+
+    async def _near_niche(self, seed: str, texts: dict[int, list[str]]) -> dict[int, bool]:
+        """Whether any of a node's own search suggestions is close to the niche in meaning."""
+        flat = [(node_id, text) for node_id, items in texts.items() for text in items]
+        if not flat or not callable(getattr(self.llm, "embed", None)):
+            return {}
+        try:
+            vectors = await self.llm.embed([seed, *(text for _, text in flat)])
+        except (OllamaError, httpx.HTTPError):
+            return {}
+        near: dict[int, bool] = {}
+        for (node_id, _), vector in zip(flat, vectors[1:]):
+            near[node_id] = near.get(node_id, False) or cosine(vectors[0], vector) >= RELEVANCE_HIGH
+        return near
 
     def _reattach(self, project_id: int, focus: dict[str, Any]) -> None:
         anchor = self.db.get_node(focus["id"]) or self.db.root_node(project_id)
