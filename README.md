@@ -32,6 +32,17 @@ cd frontend && npm run dev
 .venv/bin/python -m pytest
 ```
 
+### UX fine-tune for Deliver
+
+`training/` holds a LoRA fine-tune of Gemma 3 4B for the Deliver phase. It is trained on audit-driven
+flow fixes and flow drafts generated from the app's own prompts and audit, plus UX/UI knowledge distilled
+from WCAG 2.2, the GOV.UK Design System, MDN and Wikipedia. When `local/gemma3-4b-ux` is installed in
+Ollama, the flow generation and audit suggestions use it (`TASK_MODELS` in `backend/config.py`). The
+other phases keep the general model, and `PRISMFLOW_MODEL` overrides both. On held-out niches it cuts
+audit issues by 68%, against 34% for the base 4B and 42% for `gemma3:12b`, at about a third of the 12B's
+latency. Results, caveats and reproduction steps are in [training/REPORT.md](training/REPORT.md); the
+sources are in [docs/bibliography.md](docs/bibliography.md).
+
 ## Configuration
 
 Environment variables, or `KEY=value` lines in `~/.config/PrismFlow/prismflow.env`:

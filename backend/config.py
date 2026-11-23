@@ -100,6 +100,10 @@ PREFERRED_MODELS = (
     "llama3.1:8b",
 )
 
+TASK_MODELS = {
+    "deliver": ("local/gemma3-4b-ux",),
+}
+
 
 @dataclass(frozen=True)
 class Settings:

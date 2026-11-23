@@ -474,7 +474,7 @@ class DeliverService:
             ]
         )
         progress(0.3, "thinking")
-        draft = await self.llm.structured(FlowDraft, FLOW_SYSTEM.format(language=self._language(project_id)), prompt, temperature=0.4)
+        draft = await self.llm.structured(FlowDraft, FLOW_SYSTEM.format(language=self._language(project_id)), prompt, temperature=0.4, task="deliver")
         progress(0.8, "layout")
         flow = from_draft(draft, features)
         self.db.save_flow(project_id, flow.model_dump(), suggestions=[])
@@ -514,7 +514,7 @@ class DeliverService:
         progress(0.4, "thinking")
         try:
             answer = await self.llm.structured(
-                SuggestionSet, OPTIMIZE_SYSTEM.format(language=self._language(project_id)), prompt, temperature=0.3
+                SuggestionSet, OPTIMIZE_SYSTEM.format(language=self._language(project_id)), prompt, temperature=0.3, task="deliver"
             )
             suggestions = self._resolve(flow, answer)
         except OllamaError as exc:
