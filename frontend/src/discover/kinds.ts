@@ -48,13 +48,69 @@ export function styleFor(node: Pick<MapNode, "kind" | "is_root">): KindStyle {
 
 export const ROOT_DIAMETER = 84;
 
-export function diameterFor(
-  node: Pick<MapNode, "is_root" | "score" | "enriched_at">,
-): number {
+const CHAR_WIDTH = 0.56;
+const LINE_HEIGHT = 1.12;
+const fits = new Map<string, number>();
+
+function baseDiameter(node: Pick<MapNode, "is_root" | "score" | "enriched_at">): number {
   if (node.is_root) return ROOT_DIAMETER;
   if (!node.enriched_at) return 60;
   const score = Math.max(0, Math.min(1, node.score));
   return Math.round(56 + score * 42);
+}
+
+function wrappedLines(words: string[], font: number, width: number): number {
+  const perLine = Math.max(1, Math.floor(width / (font * CHAR_WIDTH)));
+  let lines = 1;
+  let used = 0;
+  for (const word of words) {
+    const length = word.length;
+    if (used === 0) used = length;
+    else if (used + 1 + length <= perLine) used += 1 + length;
+    else {
+      lines += 1;
+      used = length;
+    }
+  }
+  return lines;
+}
+
+function fitFont(label: string, diameter: number, largest: number): number {
+  const key = `${label}|${diameter}|${largest}`;
+  const cached = fits.get(key);
+  if (cached !== undefined) return cached;
+  const words = label.trim().split(/\s+/).filter(Boolean);
+  const longest = Math.max(1, ...words.map((w) => w.length));
+  const box = diameter * 0.72;
+  let font = largest;
+  while (font > 6) {
+    const lines = wrappedLines(words, font, box);
+    if (longest * font * CHAR_WIDTH <= box && lines * font * LINE_HEIGHT <= box) break;
+    font -= 0.25;
+  }
+  fits.set(key, font);
+  return font;
+}
+
+function largestFont(diameter: number, isRoot: boolean, label: string): number {
+  if (isRoot) return Math.min(20, diameter * 0.24);
+  return label.trim().includes(" ") ? diameter * 0.18 : diameter * 0.235;
+}
+
+export function diameterFor(
+  node: Pick<MapNode, "is_root" | "score" | "enriched_at" | "label">,
+): number {
+  const base = baseDiameter(node);
+  const readable = node.is_root ? 13 : 9.5;
+  const limit = node.is_root ? 190 : 130;
+  let diameter = base;
+  while (
+    diameter < limit &&
+    fitFont(node.label, diameter, largestFont(diameter, node.is_root, node.label)) < readable
+  ) {
+    diameter += 4;
+  }
+  return diameter;
 }
 
 export function fontSizeFor(
@@ -62,20 +118,7 @@ export function fontSizeFor(
   diameter: number,
   isRoot: boolean,
 ): number {
-  const byWord = (diameter * 0.84) / (longestWord(label) * 0.62);
-  if (isRoot) return Math.max(9, Math.min(20, byWord));
-  const words = label.trim().split(/\s+/);
-  const lines = Math.max(
-    words.length,
-    Math.ceil(label.length / Math.max(6, longestWord(label))),
-  );
-  const base = lines > 1 ? diameter * 0.18 : diameter * 0.235;
-  const byHeight = (diameter * 0.66) / (Math.min(lines, 3) * 1.15);
-  return Math.max(7, Math.min(base, byWord, byHeight));
-}
-
-function longestWord(label: string): number {
-  return Math.max(1, ...label.split(/\s+/).map((w) => w.length));
+  return fitFont(label, diameter, largestFont(diameter, isRoot, label));
 }
 
 export function badgeOffset(id: number, diameter: number): number {
