@@ -12,14 +12,14 @@ jobs:
   linux:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: System packages
         run: |
           sudo apt-get update
           sudo apt-get install -y python3-gi python3-venv gir1.2-webkit2-4.1 libwebkit2gtk-4.1-0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: "22"
+          node-version: "25"
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - name: Frontend
@@ -36,7 +36,7 @@ jobs:
         run: ../.venv/bin/pyinstaller --noconfirm --distpath ../dist --workpath ../build prismflow.spec
       - name: Archive
         run: tar -C dist -czf PrismFlow-linux-x86_64.tar.gz PrismFlow
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: PrismFlow-linux-x86_64
           path: PrismFlow-linux-x86_64.tar.gz
