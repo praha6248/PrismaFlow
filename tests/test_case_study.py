@@ -107,7 +107,9 @@ def test_guide_follows_the_researched_order() -> None:
     keys = [key for key, _, _ in GUIDE]
     assert keys[0] == "summary" and keys[-1] == "reflection"
     assert keys.index("research") < keys.index("synthesis") < keys.index("design") < keys.index("testing") < keys.index("outcomes")
-    assert all(url.startswith("https://") for url in GUIDE_SOURCES)
+    assert all(url.startswith("https://") for url in GUIDE_SOURCES) and len(set(GUIDE_SOURCES)) == len(GUIDE_SOURCES)
+    assert sum(1 for url in GUIDE_SOURCES if "gov" not in url) >= 20
+    assert not any(guide in url for url in GUIDE_SOURCES for guide in ("hubspot", "guvi", "thetailorcv", "uxcel", "logrocket"))
 
 
 def test_case_study_is_grounded_in_project_data(tmp_path) -> None:
