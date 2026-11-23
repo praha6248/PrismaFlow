@@ -87,11 +87,14 @@ jobs:
         working-directory: packaging
         run: pyinstaller --noconfirm --distpath ../dist --workpath ../build prismaflow.spec
       - name: Verify bundled Chromium
-        shell: pwsh
+        shell: python
         run: |
-          $browsers = "dist/PrismaFlow/_internal/playwright/driver/package/.local-browsers"
-          $shell = Get-ChildItem "$browsers/chromium_headless_shell-*" -Recurse -File -Include "chrome-headless-shell.exe","headless_shell.exe"
-          if (-not $shell) { throw "Chromium headless shell is missing from the Windows bundle" }
+          from pathlib import Path
+          browsers = Path("dist/PrismaFlow/_internal/playwright/driver/package/.local-browsers")
+          binaries = list(browsers.glob("chromium_headless_shell-*/**/*shell.exe"))
+          if not binaries:
+              raise SystemExit(f"Missing Chromium headless shell under {browsers}")
+          print(binaries)
       - name: Installer
         shell: pwsh
         run: |

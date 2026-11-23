@@ -23,7 +23,11 @@ if linux:
 a = Analysis(
     [str(root / "main.py")],
     pathex=[str(root)],
-    datas=[(str(dist), "frontend/dist"), *collect_data_files("webview")],
+    datas=[
+        (str(dist), "frontend/dist"),
+        (str(browser_dir), "playwright/driver/package/.local-browsers"),
+        *collect_data_files("webview"),
+    ],
     hiddenimports=hiddenimports,
     excludes=[
         "PyQt5",
