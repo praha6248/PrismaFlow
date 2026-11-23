@@ -12,8 +12,12 @@ export function CardDialog({ title, children, onClose }: {
   const heading = useId();
   useEffect(() => {
     const dialog = ref.current!;
+    const trigger = document.activeElement;
     dialog.showModal();
-    return () => dialog.close();
+    return () => {
+      dialog.close();
+      if (trigger instanceof HTMLElement && trigger.isConnected) trigger.focus();
+    };
   }, []);
   return createPortal(
     <dialog ref={ref} aria-labelledby={heading}

@@ -1,7 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, X } from "lucide-react";
-import { useState, type KeyboardEvent } from "react";
+import { CircleHelp, GripVertical, X } from "lucide-react";
+import { useId, useState, type KeyboardEvent } from "react";
 import { u } from "../components/ui";
 import type { Feature, Priority } from "../types";
 import { plural, t } from "../i18n";
@@ -63,6 +63,10 @@ export function FeatureCardView({
   const style = PRIORITY_STYLES[feature.priority];
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(feature.title);
+
+  const [showEvidence, setShowEvidence] = useState(false);
+  const tooltipId = useId();
+  const evidence = `${feature.support}/${feature.pool} ${evidenceLabel(feature.pool)}`;
 
   const commit = () => {
     setEditing(false);
@@ -186,9 +190,25 @@ export function FeatureCardView({
         >
           Popyt {feature.demand}/100
         </span>
-        <span className="text-haze" style={{ fontSize: "var(--text-small)" }}>
-          {feature.support}/{feature.pool} {evidenceLabel(feature.pool)}
-        </span>
+        <button type="button" aria-label={t("Pokaż dowody, na których to oparto")}
+          aria-describedby={showEvidence ? tooltipId : undefined}
+          className="flex items-center justify-center rounded-full text-haze hover:text-plum"
+          style={{width: u(14), height: u(14)}}
+          onPointerEnter={e => { if (e.pointerType !== "touch") setShowEvidence(true); }}
+          onPointerLeave={() => setShowEvidence(false)}
+          onFocus={() => setShowEvidence(true)} onBlur={() => setShowEvidence(false)}
+          onPointerDown={e => e.stopPropagation()}
+          onClick={e => { e.stopPropagation(); setShowEvidence(true); }}
+          onKeyDown={e => { e.stopPropagation(); if (e.key === "Escape") setShowEvidence(false); }}>
+          <CircleHelp size={16} />
+        </button>
+        {showEvidence && (
+          <span role="tooltip" id={tooltipId}
+            className="pointer-events-none absolute bottom-full left-0 z-10 mb-1 whitespace-nowrap rounded-md bg-plum px-2 py-1 text-white"
+            style={{fontSize: "var(--text-small)"}}>
+            {evidence}
+          </span>
+        )}
       </div>
     </div>
   );
