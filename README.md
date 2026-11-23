@@ -48,6 +48,8 @@ are sent to Anthropic in this mode. The key is stored only in the local settings
 
 ## Screenshots
 
+![PrismaFlow demo: from the topic map through problems, validation and the backlog to the user flow audit](docs/screenshots/demo.gif)
+
 | Discover | Define |
 | --- | --- |
 | ![Discover: mind map of topics grown from Google Autocomplete](docs/screenshots/discover.png) | ![Define: proto-personas and the problem to solve](docs/screenshots/define.png) |
