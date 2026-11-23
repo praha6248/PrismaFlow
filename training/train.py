@@ -1,7 +1,7 @@
-"""LoRA fine-tune of a copy of Gemma 3 4B instruct on the PrismaFlow Deliver tasks and UX knowledge.
+"""LoRA fine-tune of a copy of Gemma 3 instruct on the PrismaFlow Deliver tasks and UX knowledge.
 
 Loss is computed on the assistant answer only. Held-out losses of the base and the tuned model are
-written to out/losses.json; the merged bf16 model is saved to out/merged for GGUF conversion.
+written to out/<name>/losses.json; the merged bf16 model is saved to out/<name>/merged for GGUF conversion.
 """
 
 from __future__ import annotations
@@ -18,10 +18,11 @@ import torch
 from peft import LoraConfig, get_peft_model
 from transformers import AutoTokenizer, Gemma3ForConditionalGeneration, get_cosine_schedule_with_warmup
 
+from distill_mc import near_quiz
+
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
 OUT = ROOT / "out"
-BASE = ROOT / "weights" / "gemma-3-4b-it"
 TARGETS = r".*language_model.*\.(q_proj|k_proj|v_proj|o_proj|gate_proj|up_proj|down_proj)"
 
 
@@ -90,31 +91,42 @@ def main() -> None:
     parser.add_argument("--accum", type=int, default=8)
     parser.add_argument("--max-len", type=int, default=2048)
     parser.add_argument("--knowledge-share", type=float, default=0.35)
+    parser.add_argument("--mc-share", type=float, default=0.0, help="share of the knowledge slots given to multiple-choice items")
+    parser.add_argument("--base", default="gemma-3-4b-it")
+    parser.add_argument("--name", default="")
     args = parser.parse_args()
+    base = ROOT / "weights" / args.base
+    out = OUT / args.name if args.name else OUT
 
     rng = random.Random(0)
     torch.manual_seed(0)
-    tokenizer = AutoTokenizer.from_pretrained(BASE)
+    tokenizer = AutoTokenizer.from_pretrained(base)
     pad = tokenizer.pad_token_id
     tasks = load("train.jsonl")
-    knowledge = load("knowledge_train.jsonl")
+    extra = load("knowledge_mc_train.jsonl") if args.mc_share else []
+    knowledge = load("knowledge_train.jsonl") + [x for x in extra if x["task"] == "knowledge"]
+    if args.mc_share:
+        knowledge = [x for x in knowledge if not near_quiz(x["messages"][1]["content"])]
+    choices = [x for x in extra if x["task"] == "knowledge_mc"]
     cap = int(len(tasks) * args.knowledge_share / (1 - args.knowledge_share))
     rng.shuffle(knowledge)
-    train_raw = tasks + knowledge[:cap]
+    rng.shuffle(choices)
+    mc_cap = min(len(choices), int(cap * args.mc_share))
+    train_raw = tasks + choices[:mc_cap] + knowledge[: cap - mc_cap]
     train = [e for e in (encode(tokenizer, x, args.max_len) for x in train_raw) if e]
     test = [e for e in (encode(tokenizer, x, args.max_len) for x in load("test.jsonl") + load("knowledge_test.jsonl")) if e]
-    print(f"train {len(train)} (tasks {len(tasks)}, knowledge {min(cap, len(knowledge))}), test {len(test)}, "
+    print(f"train {len(train)} (tasks {len(tasks)}, multiple choice {mc_cap}, knowledge {min(cap - mc_cap, len(knowledge))}), test {len(test)}, "
           f"longest {max(len(e['input_ids']) for e in train)} tokens", flush=True)
 
-    model = Gemma3ForConditionalGeneration.from_pretrained(BASE, dtype=torch.bfloat16, attn_implementation="eager").cuda()
-    model.config.use_cache = False
+    model = Gemma3ForConditionalGeneration.from_pretrained(base, dtype=torch.bfloat16, attn_implementation="eager").cuda()
     model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
     model.enable_input_require_grads()
+    model.config.use_cache = False
     config = LoraConfig(r=args.rank, lora_alpha=2 * args.rank, lora_dropout=0.05, target_modules=TARGETS, task_type="CAUSAL_LM")
     model = get_peft_model(model, config)
     model.print_trainable_parameters()
 
-    OUT.mkdir(exist_ok=True)
+    out.mkdir(parents=True, exist_ok=True)
     with model.disable_adapter():
         base_losses = evaluate(model, test, pad)
     print("base held-out loss", base_losses, flush=True)
@@ -152,8 +164,8 @@ def main() -> None:
 
     tuned_losses = evaluate(model, test, pad)
     print("tuned held-out loss", tuned_losses, flush=True)
-    model.save_pretrained(OUT / "adapter")
-    (OUT / "losses.json").write_text(json.dumps({
+    model.save_pretrained(out / "adapter")
+    (out / "losses.json").write_text(json.dumps({
         "args": vars(args),
         "train_examples": len(train),
         "test_examples": len(test),
@@ -166,14 +178,14 @@ def main() -> None:
     }, indent=1), encoding="utf-8")
 
     merged = model.merge_and_unload()
-    target = OUT / "merged"
+    target = out / "merged"
     if target.exists():
         shutil.rmtree(target)
     merged.save_pretrained(target, safe_serialization=True)
     tokenizer.save_pretrained(target)
     for name in ("tokenizer.model", "preprocessor_config.json", "processor_config.json", "chat_template.json", "chat_template.jinja", "generation_config.json"):
-        if (BASE / name).exists():
-            shutil.copy(BASE / name, target / name)
+        if (base / name).exists():
+            shutil.copy(base / name, target / name)
     print(f"merged model -> {target}")
 
 
