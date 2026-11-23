@@ -197,7 +197,7 @@ def test_deliver_endpoints(tmp_path) -> None:
         assert "Start" in pack["figma_prompt"] and "MoSCoW" in pack["claude_md"]
         assert "Wytyczne UX/UI" in pack["claude_md"] and "WCAG" in pack["claude_md"] and "Audyt UX" not in pack["claude_md"]
         assert (tmp_path / "exports" / "sport" / "CLAUDE.md").is_file()
-        assert "Styl produktu" in pack["figma_prompt"] and "#F783E9" not in pack["figma_prompt"]
+        assert "Styl produktu" in pack["figma_prompt"]
 
 
 def test_optimize_falls_back_without_the_model(tmp_path) -> None:

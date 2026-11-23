@@ -647,8 +647,6 @@ class DeliverService:
             style = StyleDraft.model_validate(draft.model_dump()).model_dump()
         except (OllamaError, ValueError, TypeError, AttributeError):
             return fallback_style(project["seed"])
-        if _distance(style["primary"], APP_ACCENT) < 60:
-            return fallback_style(project["seed"])
         return style
 
     async def handoff(self, project_id: int) -> dict[str, Any]:
@@ -673,7 +671,6 @@ Rules:
 - Pick a heading and a body font from the allowed list; they may be the same family.
 - Colours are #RRGGBB."""
 
-APP_ACCENT = "#F783E9"
 CORNER_PIXELS = {"sharp": 4, "soft": 12, "round": 24}
 FALLBACK_STYLES = (
     {"mood": ["spokojny", "rzeczowy", "zaufany"], "background": "#F4F7FB", "surface": "#FFFFFF", "primary": "#1F6FEB", "text": "#16202C", "heading_font": "Manrope", "body_font": "Inter", "corners": "soft"},
@@ -699,10 +696,6 @@ def contrast(a: str, b: str) -> float:
 
 def _darken(color: str, factor: float) -> str:
     return "#" + "".join(f"{int(int(color[i : i + 2], 16) * factor):02X}" for i in (1, 3, 5))
-
-
-def _distance(a: str, b: str) -> float:
-    return sum((int(a[i : i + 2], 16) - int(b[i : i + 2], 16)) ** 2 for i in (1, 3, 5)) ** 0.5
 
 
 def fallback_style(seed: str) -> dict[str, Any]:
